@@ -431,6 +431,31 @@
       ctx.closePath();ctx.fill();
     }
 
+    // ===== Trail endpoint trimming =====
+    // Trim the last point of a trail so the arrow/bar doesn't overlap the magnet
+    function trimTrailEnd(pts,margin){
+      if(!pts||pts.length<2)return pts;
+      const trimmed=[...pts];
+      const end=trimmed[trimmed.length-1];
+      const prev=trimmed[trimmed.length-2];
+      const dx=end.x-prev.x,dy=end.y-prev.y;
+      const l=Math.sqrt(dx*dx+dy*dy);
+      if(l>margin){
+        trimmed[trimmed.length-1]={x:end.x-(dx/l)*margin,y:end.y-(dy/l)*margin};
+      }
+      return trimmed;
+    }
+
+    // Get rim position in pixel coords
+    function getRimPos(){
+      const bx=COURT.width/2,by=COURT.basketFromBaseline;
+      if(state.courtType==='half'){
+        return{x:cx(bx),y:cy(by)};
+      } else {
+        return{x:cx(bx),y:cy(by)};
+      }
+    }
+
     // ===== Drawing System =====
     function redrawDrawings(){drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height);state.drawings.forEach(d=>drawSingleDrawing(drawCtx,d));}
 
@@ -444,20 +469,26 @@
         for(let i=1;i<d.points.length;i++)ctx.lineTo(d.points[i].x,d.points[i].y);
         ctx.stroke();
       } else if(d.type==='pmove'){
-        // Move trail: smooth curve + arrowhead
-        const pts=d.points;if(!pts||pts.length<2)return;
+        // Move trail: smooth curve + arrowhead (trimmed from magnet)
+        const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
+        const gap=CONFIG.player.radius*s+6*s;
+        const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
         drawSmoothCurve(ctx,pts);ctx.stroke();
         drawArrowHead(ctx,pts[pts.length-1],getEndDir(pts),d.color);
         drawSeqNumber(ctx,d);
       } else if(d.type==='dribble'){
-        // Dribble trail: zigzag along path + arrowhead
-        const pts=d.points;if(!pts||pts.length<2)return;
+        // Dribble trail: zigzag along path + arrowhead (trimmed from magnet)
+        const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
+        const gap=CONFIG.player.radius*s+6*s;
+        const pts=trimTrailEnd(rawPts,gap);
         drawCurvedZigzag(ctx,pts,d.color,d.width*s);
         drawSeqNumber(ctx,d);
       } else if(d.type==='screen'){
-        // Screen trail: smooth curve + perpendicular bar at end
-        const pts=d.points;if(!pts||pts.length<2)return;
+        // Screen trail: smooth curve + perpendicular bar (trimmed from magnet)
+        const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
+        const gap=CONFIG.player.radius*s+6*s;
+        const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
         drawSmoothCurve(ctx,pts);ctx.stroke();
         const dir=getEndDir(pts),end=pts[pts.length-1],barL=14*s;
@@ -466,8 +497,10 @@
         ctx.moveTo(end.x-barL*px,end.y-barL*py);ctx.lineTo(end.x+barL*px,end.y+barL*py);ctx.stroke();
         drawSeqNumber(ctx,d);
       } else if(d.type==='pass'){
-        // Pass trail: dotted smooth curve + arrowhead
-        const pts=d.points;if(!pts||pts.length<2)return;
+        // Pass trail: dotted smooth curve + arrowhead (trimmed from ball)
+        const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
+        const gap=CONFIG.ballRadius*s+6*s;
+        const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';
         ctx.setLineDash([7*s,5*s]);
         drawSmoothCurve(ctx,pts);ctx.stroke();
@@ -695,6 +728,34 @@
         state.players[state.dragPlayer].x=pos.x;
         state.players[state.dragPlayer].y=pos.y;
         state.trailPath.push({x:pos.x,y:pos.y});
+        // Dribble: move ball with the player, positioned left/right based on direction
+        if(state.currentTool==='dribble'){
+          const ballIdx=state.players.findIndex(p=>p.team==='ball');
+          if(ballIdx>=0){
+            const rim=getRimPos();
+            const pR=CONFIG.player.radius*S();
+            const bR=CONFIG.ballRadius*S();
+            const stickDist=pR+bR+1;
+            // Vector from rim to player
+            const toPlayerX=pos.x-rim.x,toPlayerY=pos.y-rim.y;
+            const toPlayerLen=Math.sqrt(toPlayerX*toPlayerX+toPlayerY*toPlayerY)||1;
+            // Perpendicular to rim-player line (right-hand normal)
+            const perpX=-toPlayerY/toPlayerLen,perpY=toPlayerX/toPlayerLen;
+            // Determine if moving right or left relative to rim-player axis
+            // Use recent movement direction
+            let moveDir=0;
+            if(state.trailPath.length>=2){
+              const prev=state.trailPath[state.trailPath.length-2];
+              const moveDx=pos.x-prev.x,moveDy=pos.y-prev.y;
+              // Project movement onto perpendicular axis
+              moveDir=moveDx*perpX+moveDy*perpY;
+            }
+            // Position ball on left or right side of player
+            const side=moveDir>=0?1:-1;
+            state.players[ballIdx].x=pos.x+perpX*stickDist*side;
+            state.players[ballIdx].y=pos.y+perpY*stickDist*side;
+          }
+        }
         drawPlayers();
         // Draw trail preview
         redrawDrawings();
