@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basketball Strategy Board</title>
+  <style>
+    :root {
+      --court-color: #c8823c;
+      --court-line: #ffffff;
+      --offense-color: #2563eb;
+      --defense-color: #dc2626;
+      --ball-color: #f97316;
+      --sidebar-bg: #1e293b;
+      --sidebar-text: #f1f5f9;
+      --btn-bg: #334155;
+      --btn-hover: #475569;
+      --btn-active: #2563eb;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: var(--sidebar-text);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--sidebar-bg);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    header h1 span {
+      color: var(--ball-color);
+    }
+
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: var(--sidebar-bg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      border-right: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .tool-btn {
+      background: var(--btn-bg);
+      border: 2px solid transparent;
+      color: var(--sidebar-text);
+      padding: 8px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: center;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tool-btn:hover {
+      background: var(--btn-hover);
+    }
+
+    .tool-btn.active {
+      border-color: var(--btn-active);
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    .tool-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .action-btn {
+      background: var(--btn-bg);
+      border: none;
+      color: var(--sidebar-text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .action-btn:hover {
+      background: var(--btn-hover);
+    }
+
+    .action-btn.danger {
+      color: #fca5a5;
+    }
+
+    .action-btn.danger:hover {
+      background: rgba(220, 38, 38, 0.3);
+    }
+
+    .formation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .color-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+    }
+
+    .color-swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .color-swatch.active {
+      border-color: white;
+    }
+
+    .line-width-slider {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .court-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      border-radius: 4px;
+    }
+
+    canvas {
+      display: block;
+      border-radius: 4px;
+    }
+
+    #courtCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #drawCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #interactionCanvas {
+      position: relative;
+      cursor: default;
+    }
+
+    .court-type-toggle {
+      display: flex;
+      gap: 4px;
+    }
+
+    .court-type-btn {
+      flex: 1;
+      background: var(--btn-bg);
+      border: 2px solid transparent;
+      color: var(--sidebar-text);
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .court-type-btn:hover {
+      background: var(--btn-hover);
+    }
+
+    .court-type-btn.active {
+      border-color: var(--btn-active);
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    .history-info {
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .undo-redo-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .undo-redo-btns .action-btn {
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 180px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><span>&#127936;</span> Basketball Strategy Board</h1>
+    <div style="font-size: 12px; color: #64748b;">Drag players &bull; Draw plays &bull; Plan strategy</div>
+  </header>
+
+  <div class="main-layout">
+    <div class="sidebar">
+      <!-- Court Type -->
+      <div class="sidebar-section">
+        <h3>Court</h3>
+        <div class="court-type-toggle">
+          <button class="court-type-btn active" data-court="full">Full</button>
+          <button class="court-type-btn" data-court="half">Half</button>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="sidebar-section">
+        <h3>Tools</h3>
+        <div class="tool-grid">
+          <button class="tool-btn active" data-tool="move" title="Move players">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            Move
+          </button>
+          <button class="tool-btn" data-tool="draw" title="Freehand draw">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
+            Draw
+          </button>
+          <button class="tool-btn" data-tool="arrow" title="Draw arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            Arrow
+          </button>
+          <button class="tool-btn" data-tool="dashed" title="Dashed line (screen/cut)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+            Dashed
+          </button>
+          <button class="tool-btn" data-tool="eraser" title="Eraser">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l9-9 8 8-4 4z"/><line x1="7" y1="20" x2="16" y2="20"/></svg>
+            Eraser
+          </button>
+          <button class="tool-btn" data-tool="text" title="Add text label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
+            Text
+          </button>
+        </div>
+      </div>
+
+      <!-- Draw Options -->
+      <div class="sidebar-section" id="drawOptions">
+        <h3>Pen Color</h3>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <div class="color-swatch active" data-color="#ffffff" style="background: #ffffff;"></div>
+          <div class="color-swatch" data-color="#facc15" style="background: #facc15;"></div>
+          <div class="color-swatch" data-color="#4ade80" style="background: #4ade80;"></div>
+          <div class="color-swatch" data-color="#60a5fa" style="background: #60a5fa;"></div>
+          <div class="color-swatch" data-color="#f87171" style="background: #f87171;"></div>
+          <div class="color-swatch" data-color="#c084fc" style="background: #c084fc;"></div>
+        </div>
+        <h3 style="margin-top: 10px;">Line Width</h3>
+        <input type="range" class="line-width-slider" id="lineWidth" min="1" max="8" value="3">
+      </div>
+
+      <!-- Formations -->
+      <div class="sidebar-section">
+        <h3>Formations</h3>
+        <div class="formation-list">
+          <button class="action-btn" data-formation="1-3-1">1-3-1</button>
+          <button class="action-btn" data-formation="2-3">2-3 Zone</button>
+          <button class="action-btn" data-formation="3-2">3-2 Zone</button>
+          <button class="action-btn" data-formation="man-to-man">Man-to-Man</button>
+          <button class="action-btn" data-formation="horns">Horns</button>
+          <button class="action-btn" data-formation="box">Box</button>
+        </div>
+      </div>
+
+      <!-- Undo/Redo -->
+      <div class="sidebar-section">
+        <h3>History</h3>
+        <div class="undo-redo-btns">
+          <button class="action-btn" id="undoBtn">Undo</button>
+          <button class="action-btn" id="redoBtn">Redo</button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="sidebar-section">
+        <h3>Actions</h3>
+        <button class="action-btn" id="clearDrawings">Clear Drawings</button>
+        <button class="action-btn danger" id="resetAll" style="margin-top: 4px;">Reset All</button>
+        <button class="action-btn" id="exportBtn" style="margin-top: 4px;">Export as PNG</button>
+      </div>
+    </div>
+
+    <div class="court-container">
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="courtCanvas"></canvas>
+        <canvas id="drawCanvas"></canvas>
+        <canvas id="interactionCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Configuration =====
+    const CONFIG = {
+      court: {
+        fullWidth: 940,
+        fullHeight: 500,
+        halfWidth: 500,
+        halfHeight: 470,
+        color: '#c8823c',
+        lineColor: '#ffffff',
+        lineWidth: 2,
+      },
+      player: {
+        radius: 18,
+        fontSize: 14,
+        offenseColor: '#2563eb',
+        defenseColor: '#dc2626',
+        ballColor: '#f97316',
+        strokeColor: '#ffffff',
+        strokeWidth: 2,
+      },
+    };
+
+    // ===== State =====
+    const state = {
+      courtType: 'full',
+      currentTool: 'move',
+      penColor: '#ffffff',
+      lineWidth: 3,
+      players: [],
+      drawings: [],
+      undoStack: [],
+      redoStack: [],
+      isDragging: false,
+      dragPlayer: null,
+      dragOffset: { x: 0, y: 0 },
+      isDrawing: false,
+      currentPath: [],
+      arrowStart: null,
+      scale: 1,
+    };
+
+    // ===== Canvas Setup =====
+    const courtCanvas = document.getElementById('courtCanvas');
+    const drawCanvas = document.getElementById('drawCanvas');
+    const interactionCanvas = document.getElementById('interactionCanvas');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const courtCtx = courtCanvas.getContext('2d');
+    const drawCtx = drawCanvas.getContext('2d');
+    const interCtx = interactionCanvas.getContext('2d');
+
+    function resizeCanvases() {
+      const container = document.querySelector('.court-container');
+      const maxW = container.clientWidth - 32;
+      const maxH = container.clientHeight - 32;
+
+      let courtW, courtH;
+      if (state.courtType === 'full') {
+        courtW = CONFIG.court.fullWidth;
+        courtH = CONFIG.court.fullHeight;
+      } else {
+        courtW = CONFIG.court.halfWidth;
+        courtH = CONFIG.court.halfHeight;
+      }
+
+      const scaleX = maxW / courtW;
+      const scaleY = maxH / courtH;
+      state.scale = Math.min(scaleX, scaleY, 1.2);
+
+      const w = Math.floor(courtW * state.scale);
+      const h = Math.floor(courtH * state.scale);
+
+      [courtCanvas, drawCanvas, interactionCanvas].forEach(c => {
+        c.width = w;
+        c.height = h;
+      });
+
+      canvasWrapper.style.width = w + 'px';
+      canvasWrapper.style.height = h + 'px';
+
+      drawCourt();
+      redrawDrawings();
+      drawPlayers();
+    }
+
+    // ===== Court Drawing =====
+    function drawCourt() {
+      const ctx = courtCtx;
+      const w = courtCanvas.width;
+      const h = courtCanvas.height;
+      const s = state.scale;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Court background
+      ctx.fillStyle = CONFIG.court.color;
+      ctx.fillRect(0, 0, w, h);
+
+      // Court border
+      ctx.strokeStyle = CONFIG.court.lineColor;
+      ctx.lineWidth = CONFIG.court.lineWidth * s;
+
+      const margin = 20 * s;
+
+      if (state.courtType === 'full') {
+        drawFullCourt(ctx, w, h, s, margin);
+      } else {
+        drawHalfCourt(ctx, w, h, s, margin);
+      }
+    }
+
+    function drawFullCourt(ctx, w, h, s, margin) {
+      // Outer boundary
+      ctx.strokeRect(margin, margin, w - 2 * margin, h - 2 * margin);
+
+      // Center line
+      ctx.beginPath();
+      ctx.moveTo(w / 2, margin);
+      ctx.lineTo(w / 2, h - margin);
+      ctx.stroke();
+
+      // Center circle
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 36 * s, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Small center circle
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 6 * s, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Left side
+      drawCourtSide(ctx, margin, h, s, false);
+      // Right side
+      drawCourtSide(ctx, w - margin, h, s, true);
+    }
+
+    function drawCourtSide(ctx, baseX, h, s, flip) {
+      const dir = flip ? -1 : 1;
+      const margin = 20 * s;
+
+      // Three-point line
+      ctx.beginPath();
+      ctx.moveTo(baseX, margin);
+      ctx.lineTo(baseX + dir * 140 * s, margin);
+      ctx.arc(baseX + dir * 55 * s, h / 2, 118 * s, -Math.acos((h / 2 - margin) / (118 * s)), Math.acos((h / 2 - margin) / (118 * s)));
+      ctx.lineTo(baseX, h - margin);
+      ctx.stroke();
+
+      // Key / Paint area
+      ctx.strokeRect(
+        flip ? baseX - 190 * s : baseX,
+        h / 2 - 60 * s,
+        190 * s,
+        120 * s
+      );
+
+      // Free throw circle
+      ctx.beginPath();
+      ctx.arc(
+        baseX + dir * 190 * s,
+        h / 2,
+        36 * s,
+        flip ? Math.PI / 2 : -Math.PI / 2,
+        flip ? -Math.PI / 2 : Math.PI / 2
+      );
+      ctx.stroke();
+
+      // Free throw circle dashed
+      ctx.setLineDash([5 * s, 5 * s]);
+      ctx.beginPath();
+      ctx.arc(
+        baseX + dir * 190 * s,
+        h / 2,
+        36 * s,
+        flip ? -Math.PI / 2 : Math.PI / 2,
+        flip ? Math.PI / 2 : -Math.PI / 2
+      );
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Backboard
+      ctx.lineWidth = 3 * s;
+      ctx.beginPath();
+      ctx.moveTo(baseX + dir * 22 * s, h / 2 - 18 * s);
+      ctx.lineTo(baseX + dir * 22 * s, h / 2 + 18 * s);
+      ctx.stroke();
+      ctx.lineWidth = CONFIG.court.lineWidth * s;
+
+      // Rim
+      ctx.beginPath();
+      ctx.arc(baseX + dir * 31 * s, h / 2, 8 * s, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Restricted area
+      ctx.beginPath();
+      ctx.arc(baseX + dir * 31 * s, h / 2, 20 * s, flip ? Math.PI / 2 : -Math.PI / 2, flip ? -Math.PI / 2 : Math.PI / 2);
+      ctx.stroke();
+    }
+
+    function drawHalfCourt(ctx, w, h, s, margin) {
+      // Outer boundary
+      ctx.strokeRect(margin, margin, w - 2 * margin, h - 2 * margin);
+
+      // Baseline at bottom
+      const baseY = h - margin;
+      const centerX = w / 2;
+
+      // Center circle (half) at top
+      ctx.beginPath();
+      ctx.arc(centerX, margin, 36 * s, 0, Math.PI);
+      ctx.stroke();
+
+      // Three-point line
+      ctx.beginPath();
+      ctx.moveTo(margin, baseY - 140 * s);
+      const threeRadius = 118 * s;
+      const dx = centerX - margin;
+      const angleOffset = Math.acos(Math.min((w / 2 - margin) / threeRadius, 1));
+      ctx.lineTo(margin, baseY);
+      ctx.moveTo(margin, baseY - 140 * s);
+      ctx.arc(centerX, baseY - 55 * s, threeRadius, Math.PI - angleOffset, angleOffset);
+      ctx.lineTo(w - margin, baseY);
+      ctx.stroke();
+
+      // Key / Paint
+      const keyW = 120 * s;
+      const keyH = 190 * s;
+      ctx.strokeRect(centerX - keyW / 2, baseY - keyH, keyW, keyH);
+
+      // Free throw circle
+      ctx.beginPath();
+      ctx.arc(centerX, baseY - keyH, 36 * s, Math.PI, 2 * Math.PI);
+      ctx.stroke();
+
+      ctx.setLineDash([5 * s, 5 * s]);
+      ctx.beginPath();
+      ctx.arc(centerX, baseY - keyH, 36 * s, 0, Math.PI);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Backboard
+      ctx.lineWidth = 3 * s;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 18 * s, baseY - 22 * s);
+      ctx.lineTo(centerX + 18 * s, baseY - 22 * s);
+      ctx.stroke();
+      ctx.lineWidth = CONFIG.court.lineWidth * s;
+
+      // Rim
+      ctx.beginPath();
+      ctx.arc(centerX, baseY - 31 * s, 8 * s, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Restricted area
+      ctx.beginPath();
+      ctx.arc(centerX, baseY - 31 * s, 20 * s, Math.PI, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    // ===== Player Management =====
+    function createDefaultPlayers() {
+      state.players = [];
+      const s = state.scale;
+      const w = courtCanvas.width;
+      const h = courtCanvas.height;
+
+      if (state.courtType === 'full') {
+        // Offense (left side) - standard positions
+        const offensePositions = [
+          { x: 0.28, y: 0.5, label: 'PG' },
+          { x: 0.18, y: 0.25, label: 'SG' },
+          { x: 0.18, y: 0.75, label: 'SF' },
+          { x: 0.10, y: 0.35, label: 'PF' },
+          { x: 0.10, y: 0.65, label: 'C' },
+        ];
+        // Defense (right side)
+        const defensePositions = [
+          { x: 0.72, y: 0.5, label: '1' },
+          { x: 0.82, y: 0.25, label: '2' },
+          { x: 0.82, y: 0.75, label: '3' },
+          { x: 0.90, y: 0.35, label: '4' },
+          { x: 0.90, y: 0.65, label: '5' },
+        ];
+
+        offensePositions.forEach(p => {
+          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'offense' });
+        });
+        defensePositions.forEach(p => {
+          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'defense' });
+        });
+      } else {
+        // Half court positions
+        const offensePositions = [
+          { x: 0.50, y: 0.30, label: 'PG' },
+          { x: 0.20, y: 0.45, label: 'SG' },
+          { x: 0.80, y: 0.45, label: 'SF' },
+          { x: 0.30, y: 0.60, label: 'PF' },
+          { x: 0.70, y: 0.60, label: 'C' },
+        ];
+        const defensePositions = [
+          { x: 0.50, y: 0.45, label: '1' },
+          { x: 0.25, y: 0.58, label: '2' },
+          { x: 0.75, y: 0.58, label: '3' },
+          { x: 0.35, y: 0.72, label: '4' },
+          { x: 0.65, y: 0.72, label: '5' },
+        ];
+
+        offensePositions.forEach(p => {
+          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'offense' });
+        });
+        defensePositions.forEach(p => {
+          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'defense' });
+        });
+      }
+
+      // Ball
+      state.players.push({ x: state.players[0].x - 25 * s, y: state.players[0].y - 25 * s, label: '', team: 'ball' });
+    }
+
+    function drawPlayers() {
+      const ctx = interCtx;
+      const w = interactionCanvas.width;
+      const h = interactionCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      state.players.forEach(player => {
+        const r = CONFIG.player.radius * state.scale;
+
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, r, 0, Math.PI * 2);
+
+        if (player.team === 'offense') {
+          ctx.fillStyle = CONFIG.player.offenseColor;
+        } else if (player.team === 'defense') {
+          ctx.fillStyle = CONFIG.player.defenseColor;
+        } else {
+          ctx.fillStyle = CONFIG.player.ballColor;
+        }
+        ctx.fill();
+
+        ctx.strokeStyle = CONFIG.player.strokeColor;
+        ctx.lineWidth = CONFIG.player.strokeWidth * state.scale;
+        ctx.stroke();
+
+        if (player.label) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold ${CONFIG.player.fontSize * state.scale}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(player.label, player.x, player.y);
+        }
+      });
+    }
+
+    // ===== Drawing System =====
+    function redrawDrawings() {
+      const ctx = drawCtx;
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+
+      state.drawings.forEach(drawing => {
+        drawSingleDrawing(ctx, drawing);
+      });
+    }
+
+    function drawSingleDrawing(ctx, drawing) {
+      if (drawing.type === 'path') {
+        if (drawing.points.length < 2) return;
+        ctx.beginPath();
+        ctx.strokeStyle = drawing.color;
+        ctx.lineWidth = drawing.width * state.scale;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.setLineDash([]);
+        ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+        for (let i = 1; i < drawing.points.length; i++) {
+          ctx.lineTo(drawing.points[i].x, drawing.points[i].y);
+        }
+        ctx.stroke();
+      } else if (drawing.type === 'arrow') {
+        drawArrowLine(ctx, drawing.from, drawing.to, drawing.color, drawing.width * state.scale, false);
+      } else if (drawing.type === 'dashed') {
+        drawArrowLine(ctx, drawing.from, drawing.to, drawing.color, drawing.width * state.scale, true);
+      } else if (drawing.type === 'text') {
+        ctx.fillStyle = drawing.color;
+        ctx.font = `bold ${14 * state.scale}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(drawing.text, drawing.x, drawing.y);
+      }
+    }
+
+    function drawArrowLine(ctx, from, to, color, width, dashed) {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const angle = Math.atan2(dy, dx);
+      const headLen = 14 * state.scale;
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+
+      if (dashed) {
+        ctx.setLineDash([8 * state.scale, 6 * state.scale]);
+      } else {
+        ctx.setLineDash([]);
+      }
+
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+
+      // Arrowhead
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.fillStyle = color;
+      ctx.moveTo(to.x, to.y);
+      ctx.lineTo(to.x - headLen * Math.cos(angle - Math.PI / 6), to.y - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(to.x - headLen * Math.cos(angle + Math.PI / 6), to.y - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // ===== Undo/Redo =====
+    function saveState() {
+      state.undoStack.push({
+        players: JSON.parse(JSON.stringify(state.players)),
+        drawings: JSON.parse(JSON.stringify(state.drawings)),
+      });
+      state.redoStack = [];
+      if (state.undoStack.length > 50) state.undoStack.shift();
+    }
+
+    function undo() {
+      if (state.undoStack.length === 0) return;
+      state.redoStack.push({
+        players: JSON.parse(JSON.stringify(state.players)),
+        drawings: JSON.parse(JSON.stringify(state.drawings)),
+      });
+      const prev = state.undoStack.pop();
+      state.players = prev.players;
+      state.drawings = prev.drawings;
+      redrawDrawings();
+      drawPlayers();
+    }
+
+    function redo() {
+      if (state.redoStack.length === 0) return;
+      state.undoStack.push({
+        players: JSON.parse(JSON.stringify(state.players)),
+        drawings: JSON.parse(JSON.stringify(state.drawings)),
+      });
+      const next = state.redoStack.pop();
+      state.players = next.players;
+      state.drawings = next.drawings;
+      redrawDrawings();
+      drawPlayers();
+    }
+
+    // ===== Formations =====
+    function applyFormation(name) {
+      saveState();
+      const w = courtCanvas.width;
+      const h = courtCanvas.height;
+
+      const formations = {
+        'full': {
+          '1-3-1': {
+            offense: [
+              { x: 0.28, y: 0.5 }, { x: 0.18, y: 0.20 }, { x: 0.18, y: 0.80 },
+              { x: 0.12, y: 0.5 }, { x: 0.05, y: 0.5 },
+            ],
+            defense: [
+              { x: 0.72, y: 0.5 }, { x: 0.82, y: 0.20 }, { x: 0.82, y: 0.80 },
+              { x: 0.88, y: 0.5 }, { x: 0.95, y: 0.5 },
+            ],
+          },
+          '2-3': {
+            offense: [
+              { x: 0.25, y: 0.35 }, { x: 0.25, y: 0.65 }, { x: 0.13, y: 0.25 },
+              { x: 0.13, y: 0.50 }, { x: 0.13, y: 0.75 },
+            ],
+            defense: [
+              { x: 0.75, y: 0.35 }, { x: 0.75, y: 0.65 }, { x: 0.87, y: 0.25 },
+              { x: 0.87, y: 0.50 }, { x: 0.87, y: 0.75 },
+            ],
+          },
+          '3-2': {
+            offense: [
+              { x: 0.22, y: 0.25 }, { x: 0.22, y: 0.50 }, { x: 0.22, y: 0.75 },
+              { x: 0.10, y: 0.35 }, { x: 0.10, y: 0.65 },
+            ],
+            defense: [
+              { x: 0.78, y: 0.25 }, { x: 0.78, y: 0.50 }, { x: 0.78, y: 0.75 },
+              { x: 0.90, y: 0.35 }, { x: 0.90, y: 0.65 },
+            ],
+          },
+          'man-to-man': {
+            offense: [
+              { x: 0.28, y: 0.50 }, { x: 0.20, y: 0.22 }, { x: 0.20, y: 0.78 },
+              { x: 0.10, y: 0.35 }, { x: 0.10, y: 0.65 },
+            ],
+            defense: [
+              { x: 0.32, y: 0.50 }, { x: 0.24, y: 0.22 }, { x: 0.24, y: 0.78 },
+              { x: 0.14, y: 0.35 }, { x: 0.14, y: 0.65 },
+            ],
+          },
+          'horns': {
+            offense: [
+              { x: 0.30, y: 0.50 }, { x: 0.18, y: 0.30 }, { x: 0.18, y: 0.70 },
+              { x: 0.06, y: 0.25 }, { x: 0.06, y: 0.75 },
+            ],
+            defense: [
+              { x: 0.70, y: 0.50 }, { x: 0.82, y: 0.30 }, { x: 0.82, y: 0.70 },
+              { x: 0.94, y: 0.25 }, { x: 0.94, y: 0.75 },
+            ],
+          },
+          'box': {
+            offense: [
+              { x: 0.25, y: 0.50 }, { x: 0.12, y: 0.30 }, { x: 0.12, y: 0.70 },
+              { x: 0.18, y: 0.30 }, { x: 0.18, y: 0.70 },
+            ],
+            defense: [
+              { x: 0.75, y: 0.50 }, { x: 0.88, y: 0.30 }, { x: 0.88, y: 0.70 },
+              { x: 0.82, y: 0.30 }, { x: 0.82, y: 0.70 },
+            ],
+          },
+        },
+        'half': {
+          '1-3-1': {
+            offense: [
+              { x: 0.50, y: 0.25 }, { x: 0.20, y: 0.45 }, { x: 0.80, y: 0.45 },
+              { x: 0.50, y: 0.55 }, { x: 0.50, y: 0.80 },
+            ],
+            defense: [
+              { x: 0.50, y: 0.35 }, { x: 0.28, y: 0.55 }, { x: 0.72, y: 0.55 },
+              { x: 0.50, y: 0.65 }, { x: 0.50, y: 0.85 },
+            ],
+          },
+          '2-3': {
+            offense: [
+              { x: 0.35, y: 0.28 }, { x: 0.65, y: 0.28 }, { x: 0.20, y: 0.55 },
+              { x: 0.50, y: 0.65 }, { x: 0.80, y: 0.55 },
+            ],
+            defense: [
+              { x: 0.40, y: 0.38 }, { x: 0.60, y: 0.38 }, { x: 0.25, y: 0.62 },
+              { x: 0.50, y: 0.72 }, { x: 0.75, y: 0.62 },
+            ],
+          },
+          '3-2': {
+            offense: [
+              { x: 0.20, y: 0.35 }, { x: 0.50, y: 0.28 }, { x: 0.80, y: 0.35 },
+              { x: 0.35, y: 0.60 }, { x: 0.65, y: 0.60 },
+            ],
+            defense: [
+              { x: 0.25, y: 0.45 }, { x: 0.50, y: 0.38 }, { x: 0.75, y: 0.45 },
+              { x: 0.38, y: 0.68 }, { x: 0.62, y: 0.68 },
+            ],
+          },
+          'man-to-man': {
+            offense: [
+              { x: 0.50, y: 0.25 }, { x: 0.18, y: 0.40 }, { x: 0.82, y: 0.40 },
+              { x: 0.30, y: 0.60 }, { x: 0.70, y: 0.60 },
+            ],
+            defense: [
+              { x: 0.50, y: 0.32 }, { x: 0.22, y: 0.46 }, { x: 0.78, y: 0.46 },
+              { x: 0.34, y: 0.66 }, { x: 0.66, y: 0.66 },
+            ],
+          },
+          'horns': {
+            offense: [
+              { x: 0.50, y: 0.22 }, { x: 0.30, y: 0.42 }, { x: 0.70, y: 0.42 },
+              { x: 0.18, y: 0.72 }, { x: 0.82, y: 0.72 },
+            ],
+            defense: [
+              { x: 0.50, y: 0.32 }, { x: 0.35, y: 0.50 }, { x: 0.65, y: 0.50 },
+              { x: 0.23, y: 0.78 }, { x: 0.77, y: 0.78 },
+            ],
+          },
+          'box': {
+            offense: [
+              { x: 0.50, y: 0.25 }, { x: 0.32, y: 0.52 }, { x: 0.68, y: 0.52 },
+              { x: 0.32, y: 0.72 }, { x: 0.68, y: 0.72 },
+            ],
+            defense: [
+              { x: 0.50, y: 0.35 }, { x: 0.38, y: 0.58 }, { x: 0.62, y: 0.58 },
+              { x: 0.38, y: 0.78 }, { x: 0.62, y: 0.78 },
+            ],
+          },
+        },
+      };
+
+      const f = formations[state.courtType][name];
+      if (!f) return;
+
+      const labels = { offense: ['PG', 'SG', 'SF', 'PF', 'C'], defense: ['1', '2', '3', '4', '5'] };
+      const newPlayers = [];
+
+      f.offense.forEach((pos, i) => {
+        newPlayers.push({ x: pos.x * w, y: pos.y * h, label: labels.offense[i], team: 'offense' });
+      });
+      f.defense.forEach((pos, i) => {
+        newPlayers.push({ x: pos.x * w, y: pos.y * h, label: labels.defense[i], team: 'defense' });
+      });
+      // Ball near PG
+      newPlayers.push({ x: newPlayers[0].x - 25 * state.scale, y: newPlayers[0].y - 25 * state.scale, label: '', team: 'ball' });
+
+      state.players = newPlayers;
+      drawPlayers();
+    }
+
+    // ===== Event Handlers =====
+    function getCanvasPos(e) {
+      const rect = interactionCanvas.getBoundingClientRect();
+      const touch = e.touches ? e.touches[0] : e;
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+      };
+    }
+
+    function findPlayerAt(pos) {
+      const r = CONFIG.player.radius * state.scale;
+      for (let i = state.players.length - 1; i >= 0; i--) {
+        const p = state.players[i];
+        const dx = pos.x - p.x;
+        const dy = pos.y - p.y;
+        if (dx * dx + dy * dy <= r * r) return i;
+      }
+      return -1;
+    }
+
+    function onPointerDown(e) {
+      e.preventDefault();
+      const pos = getCanvasPos(e);
+
+      if (state.currentTool === 'move') {
+        const idx = findPlayerAt(pos);
+        if (idx >= 0) {
+          saveState();
+          state.isDragging = true;
+          state.dragPlayer = idx;
+          state.dragOffset = {
+            x: pos.x - state.players[idx].x,
+            y: pos.y - state.players[idx].y,
+          };
+          interactionCanvas.style.cursor = 'grabbing';
+        }
+      } else if (state.currentTool === 'draw') {
+        saveState();
+        state.isDrawing = true;
+        state.currentPath = [{ x: pos.x, y: pos.y }];
+      } else if (state.currentTool === 'arrow' || state.currentTool === 'dashed') {
+        saveState();
+        state.isDrawing = true;
+        state.arrowStart = { x: pos.x, y: pos.y };
+      } else if (state.currentTool === 'eraser') {
+        eraseAt(pos);
+      } else if (state.currentTool === 'text') {
+        const text = prompt('Enter text:');
+        if (text) {
+          saveState();
+          state.drawings.push({ type: 'text', x: pos.x, y: pos.y, text, color: state.penColor });
+          redrawDrawings();
+        }
+      }
+    }
+
+    function onPointerMove(e) {
+      e.preventDefault();
+      const pos = getCanvasPos(e);
+
+      if (state.currentTool === 'move') {
+        if (state.isDragging && state.dragPlayer !== null) {
+          state.players[state.dragPlayer].x = pos.x - state.dragOffset.x;
+          state.players[state.dragPlayer].y = pos.y - state.dragOffset.y;
+          drawPlayers();
+        } else {
+          const idx = findPlayerAt(pos);
+          interactionCanvas.style.cursor = idx >= 0 ? 'grab' : 'default';
+        }
+      } else if (state.currentTool === 'draw' && state.isDrawing) {
+        state.currentPath.push({ x: pos.x, y: pos.y });
+        // Draw live preview
+        redrawDrawings();
+        const ctx = drawCtx;
+        ctx.beginPath();
+        ctx.strokeStyle = state.penColor;
+        ctx.lineWidth = state.lineWidth * state.scale;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.setLineDash([]);
+        ctx.moveTo(state.currentPath[0].x, state.currentPath[0].y);
+        for (let i = 1; i < state.currentPath.length; i++) {
+          ctx.lineTo(state.currentPath[i].x, state.currentPath[i].y);
+        }
+        ctx.stroke();
+      } else if ((state.currentTool === 'arrow' || state.currentTool === 'dashed') && state.isDrawing) {
+        redrawDrawings();
+        const isDashed = state.currentTool === 'dashed';
+        drawArrowLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * state.scale, isDashed);
+      } else if (state.currentTool === 'eraser' && e.buttons > 0) {
+        eraseAt(pos);
+      }
+    }
+
+    function onPointerUp(e) {
+      if (state.currentTool === 'move' && state.isDragging) {
+        state.isDragging = false;
+        state.dragPlayer = null;
+        interactionCanvas.style.cursor = 'default';
+      } else if (state.currentTool === 'draw' && state.isDrawing) {
+        state.isDrawing = false;
+        if (state.currentPath.length > 1) {
+          state.drawings.push({
+            type: 'path',
+            points: [...state.currentPath],
+            color: state.penColor,
+            width: state.lineWidth,
+          });
+        }
+        state.currentPath = [];
+        redrawDrawings();
+      } else if ((state.currentTool === 'arrow' || state.currentTool === 'dashed') && state.isDrawing) {
+        state.isDrawing = false;
+        if (state.arrowStart) {
+          const pos = getCanvasPos(e);
+          const dx = pos.x - state.arrowStart.x;
+          const dy = pos.y - state.arrowStart.y;
+          if (Math.sqrt(dx * dx + dy * dy) > 10) {
+            state.drawings.push({
+              type: state.currentTool === 'dashed' ? 'dashed' : 'arrow',
+              from: { ...state.arrowStart },
+              to: pos,
+              color: state.penColor,
+              width: state.lineWidth,
+            });
+          }
+        }
+        state.arrowStart = null;
+        redrawDrawings();
+      }
+    }
+
+    function eraseAt(pos) {
+      const eraserRadius = 20 * state.scale;
+      let erased = false;
+
+      for (let i = state.drawings.length - 1; i >= 0; i--) {
+        const d = state.drawings[i];
+        if (d.type === 'path') {
+          for (const pt of d.points) {
+            const dx = pt.x - pos.x;
+            const dy = pt.y - pos.y;
+            if (dx * dx + dy * dy < eraserRadius * eraserRadius) {
+              if (!erased) saveState();
+              state.drawings.splice(i, 1);
+              erased = true;
+              break;
+            }
+          }
+        } else if (d.type === 'arrow' || d.type === 'dashed') {
+          if (distToSegment(pos, d.from, d.to) < eraserRadius) {
+            if (!erased) saveState();
+            state.drawings.splice(i, 1);
+            erased = true;
+          }
+        } else if (d.type === 'text') {
+          const dx = d.x - pos.x;
+          const dy = d.y - pos.y;
+          if (dx * dx + dy * dy < eraserRadius * eraserRadius * 2) {
+            if (!erased) saveState();
+            state.drawings.splice(i, 1);
+            erased = true;
+          }
+        }
+      }
+
+      if (erased) redrawDrawings();
+    }
+
+    function distToSegment(p, v, w) {
+      const l2 = (w.x - v.x) ** 2 + (w.y - v.y) ** 2;
+      if (l2 === 0) return Math.sqrt((p.x - v.x) ** 2 + (p.y - v.y) ** 2);
+      let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return Math.sqrt((p.x - (v.x + t * (w.x - v.x))) ** 2 + (p.y - (v.y + t * (w.y - v.y))) ** 2);
+    }
+
+    // ===== Export =====
+    function exportPNG() {
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = courtCanvas.width;
+      exportCanvas.height = courtCanvas.height;
+      const ctx = exportCanvas.getContext('2d');
+
+      ctx.drawImage(courtCanvas, 0, 0);
+      ctx.drawImage(drawCanvas, 0, 0);
+      ctx.drawImage(interactionCanvas, 0, 0);
+
+      const link = document.createElement('a');
+      link.download = 'basketball-strategy.png';
+      link.href = exportCanvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // ===== UI Event Bindings =====
+    // Tool selection
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentTool = btn.dataset.tool;
+
+        if (state.currentTool === 'eraser') {
+          interactionCanvas.style.cursor = 'crosshair';
+        } else if (state.currentTool === 'draw' || state.currentTool === 'arrow' || state.currentTool === 'dashed') {
+          interactionCanvas.style.cursor = 'crosshair';
+        } else if (state.currentTool === 'text') {
+          interactionCanvas.style.cursor = 'text';
+        } else {
+          interactionCanvas.style.cursor = 'default';
+        }
+      });
+    });
+
+    // Court type
+    document.querySelectorAll('.court-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.court-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.courtType = btn.dataset.court;
+        state.drawings = [];
+        state.undoStack = [];
+        state.redoStack = [];
+        createDefaultPlayers();
+        resizeCanvases();
+      });
+    });
+
+    // Color swatches
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        state.penColor = swatch.dataset.color;
+      });
+    });
+
+    // Line width
+    document.getElementById('lineWidth').addEventListener('input', (e) => {
+      state.lineWidth = parseInt(e.target.value);
+    });
+
+    // Formations
+    document.querySelectorAll('[data-formation]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyFormation(btn.dataset.formation);
+      });
+    });
+
+    // Undo/Redo
+    document.getElementById('undoBtn').addEventListener('click', undo);
+    document.getElementById('redoBtn').addEventListener('click', redo);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+      if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+    });
+
+    // Clear / Reset
+    document.getElementById('clearDrawings').addEventListener('click', () => {
+      saveState();
+      state.drawings = [];
+      redrawDrawings();
+    });
+
+    document.getElementById('resetAll').addEventListener('click', () => {
+      if (confirm('Reset all players and drawings?')) {
+        state.drawings = [];
+        state.undoStack = [];
+        state.redoStack = [];
+        createDefaultPlayers();
+        redrawDrawings();
+        drawPlayers();
+      }
+    });
+
+    // Export
+    document.getElementById('exportBtn').addEventListener('click', exportPNG);
+
+    // Canvas events (mouse)
+    interactionCanvas.addEventListener('mousedown', onPointerDown);
+    interactionCanvas.addEventListener('mousemove', onPointerMove);
+    interactionCanvas.addEventListener('mouseup', onPointerUp);
+    interactionCanvas.addEventListener('mouseleave', onPointerUp);
+
+    // Canvas events (touch)
+    interactionCanvas.addEventListener('touchstart', onPointerDown, { passive: false });
+    interactionCanvas.addEventListener('touchmove', onPointerMove, { passive: false });
+    interactionCanvas.addEventListener('touchend', onPointerUp);
+
+    // Window resize
+    window.addEventListener('resize', resizeCanvases);
+
+    // ===== Initialize =====
+    createDefaultPlayers();
+    resizeCanvases();
+  </script>
+</body>
+</html>
