@@ -17,211 +17,95 @@
       --btn-hover: #475569;
       --btn-active: #2563eb;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0f172a;
-      color: var(--sidebar-text);
-      overflow: hidden;
-      height: 100vh;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      touch-action: none;
+      background: #0f172a; color: var(--sidebar-text);
+      overflow: hidden; height: 100vh; height: 100dvh;
+      display: flex; flex-direction: column; touch-action: none;
     }
-
     header {
-      background: var(--sidebar-bg);
-      padding: 6px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #334155;
-      flex-shrink: 0;
+      background: var(--sidebar-bg); padding: 6px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #334155; flex-shrink: 0;
     }
-
     header h1 { font-size: 16px; font-weight: 600; }
     header h1 span { color: var(--ball-color); }
-
-    .main-layout {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-
+    .main-layout { display: flex; flex: 1; overflow: hidden; }
     .sidebar {
-      width: 200px;
-      background: var(--sidebar-bg);
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
-      border-right: 1px solid #334155;
-      flex-shrink: 0;
+      width: 200px; background: var(--sidebar-bg); padding: 12px;
+      display: flex; flex-direction: column; gap: 12px;
+      overflow-y: auto; border-right: 1px solid #334155; flex-shrink: 0;
     }
-
     .sidebar-section h3 {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      margin-bottom: 6px;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      color: #94a3b8; margin-bottom: 6px;
     }
-
-    .tool-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-    }
-
+    .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
     .tool-btn {
-      background: var(--btn-bg);
-      border: 2px solid transparent;
-      color: var(--sidebar-text);
-      padding: 6px 4px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      text-align: center;
-      transition: all 0.15s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
+      background: var(--btn-bg); border: 2px solid transparent;
+      color: var(--sidebar-text); padding: 6px 4px; border-radius: 6px;
+      cursor: pointer; font-size: 10px; text-align: center;
+      transition: all 0.15s; display: flex; flex-direction: column;
+      align-items: center; gap: 2px;
     }
-
     .tool-btn:hover { background: var(--btn-hover); }
-    .tool-btn.active {
-      border-color: var(--btn-active);
-      background: rgba(37, 99, 235, 0.2);
-    }
+    .tool-btn.active { border-color: var(--btn-active); background: rgba(37,99,235,0.2); }
     .tool-btn svg { width: 18px; height: 18px; }
-
     .action-btn {
-      background: var(--btn-bg);
-      border: none;
-      color: var(--sidebar-text);
-      padding: 7px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      transition: all 0.15s;
-      width: 100%;
-      text-align: center;
+      background: var(--btn-bg); border: none; color: var(--sidebar-text);
+      padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;
+      transition: all 0.15s; width: 100%; text-align: center;
     }
-
     .action-btn:hover { background: var(--btn-hover); }
     .action-btn.danger { color: #fca5a5; }
-    .action-btn.danger:hover { background: rgba(220, 38, 38, 0.3); }
-
-    .formation-list {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
+    .action-btn.danger:hover { background: rgba(220,38,38,0.3); }
+    .formation-list { display: flex; flex-direction: column; gap: 3px; }
     .color-swatch {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: border-color 0.15s;
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer; transition: border-color 0.15s;
     }
     .color-swatch.active { border-color: white; }
-
     .court-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      position: relative;
-      overflow: hidden;
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 12px; position: relative; overflow: hidden;
     }
-
-    .canvas-wrapper {
-      position: relative;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-      border-radius: 4px;
-    }
-
+    .canvas-wrapper { position: relative; box-shadow: 0 4px 24px rgba(0,0,0,0.5); border-radius: 4px; }
     canvas { display: block; border-radius: 4px; }
     #courtCanvas { position: absolute; top: 0; left: 0; }
     #drawCanvas { position: absolute; top: 0; left: 0; }
     #interactionCanvas { position: relative; cursor: default; }
-
     .court-type-toggle { display: flex; gap: 4px; }
     .court-type-btn {
-      flex: 1;
-      background: var(--btn-bg);
-      border: 2px solid transparent;
-      color: var(--sidebar-text);
-      padding: 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      text-align: center;
-      transition: all 0.15s;
+      flex: 1; background: var(--btn-bg); border: 2px solid transparent;
+      color: var(--sidebar-text); padding: 5px; border-radius: 6px;
+      cursor: pointer; font-size: 11px; text-align: center; transition: all 0.15s;
     }
     .court-type-btn:hover { background: var(--btn-hover); }
-    .court-type-btn.active {
-      border-color: var(--btn-active);
-      background: rgba(37, 99, 235, 0.2);
-    }
-
+    .court-type-btn.active { border-color: var(--btn-active); background: rgba(37,99,235,0.2); }
     .undo-redo-btns { display: flex; gap: 4px; }
     .undo-redo-btns .action-btn { flex: 1; }
-
-    /* Mobile bottom toolbar */
     .mobile-toolbar {
-      display: none;
-      background: var(--sidebar-bg);
-      border-top: 1px solid #334155;
-      flex-shrink: 0;
+      display: none; background: var(--sidebar-bg);
+      border-top: 1px solid #334155; flex-shrink: 0;
     }
-
     .mobile-toolbar-row {
-      display: flex;
-      overflow-x: auto;
-      gap: 2px;
-      padding: 6px 8px;
+      display: flex; overflow-x: auto; gap: 2px; padding: 6px 8px;
       -webkit-overflow-scrolling: touch;
     }
-
     .mobile-toolbar-row::-webkit-scrollbar { display: none; }
-
     .mobile-tool-btn {
-      background: var(--btn-bg);
-      border: 2px solid transparent;
-      color: var(--sidebar-text);
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      background: var(--btn-bg); border: 2px solid transparent;
+      color: var(--sidebar-text); padding: 6px 10px; border-radius: 6px;
+      cursor: pointer; font-size: 11px; white-space: nowrap; flex-shrink: 0;
     }
     .mobile-tool-btn:hover { background: var(--btn-hover); }
-    .mobile-tool-btn.active {
-      border-color: var(--btn-active);
-      background: rgba(37, 99, 235, 0.2);
-    }
-
+    .mobile-tool-btn.active { border-color: var(--btn-active); background: rgba(37,99,235,0.2); }
     .mobile-expand-panel {
-      display: none;
-      padding: 8px;
-      gap: 6px;
-      flex-wrap: wrap;
-      border-top: 1px solid #334155;
-      max-height: 200px;
-      overflow-y: auto;
+      display: none; padding: 8px; gap: 6px; flex-wrap: wrap;
+      border-top: 1px solid #334155; max-height: 200px; overflow-y: auto;
     }
     .mobile-expand-panel.open { display: flex; }
-
     @media (max-width: 768px) {
       header { padding: 4px 12px; }
       header h1 { font-size: 14px; }
@@ -234,9 +118,8 @@
 <body>
   <header>
     <h1><span>&#127936;</span> Basketball Strategy Board</h1>
-    <div style="font-size: 11px; color: #64748b;" class="header-subtitle">Drag &bull; Draw &bull; Plan</div>
+    <div style="font-size:11px;color:#64748b;" class="header-subtitle">Drag &bull; Draw &bull; Plan</div>
   </header>
-
   <div class="main-layout">
     <div class="sidebar">
       <div class="sidebar-section">
@@ -246,33 +129,32 @@
           <button class="court-type-btn active" data-court="half">Half</button>
         </div>
       </div>
-
       <div class="sidebar-section">
         <h3>Tools</h3>
         <div class="tool-grid">
-          <button class="tool-btn active" data-tool="move" title="Move players">
+          <button class="tool-btn active" data-tool="cursor" title="Select & reposition players">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            Select
+          </button>
+          <button class="tool-btn" data-tool="dribble" title="Dribble: drag offense player with zigzag trail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 20 8 14 12 18 16 10 20 4"/></svg>
+            Dribble
+          </button>
+          <button class="tool-btn" data-tool="pmove" title="Move: drag offense player with line trail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17 Q12 8 19 12"/><polyline points="15 9 19 12 16 15"/></svg>
             Move
+          </button>
+          <button class="tool-btn" data-tool="screen" title="Screen: drag offense player with screen trail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 18 Q12 10 18 8"/><line x1="15" y1="4" x2="21" y2="12" stroke-width="3"/></svg>
+            Screen
+          </button>
+          <button class="tool-btn" data-tool="pass" title="Pass: drag ball with dotted trail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="14 7 19 12 14 17" stroke-dasharray="none"/></svg>
+            Pass
           </button>
           <button class="tool-btn" data-tool="draw" title="Freehand draw">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
             Draw
-          </button>
-          <button class="tool-btn" data-tool="arrow" title="Pass / Cut">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            Arrow
-          </button>
-          <button class="tool-btn" data-tool="dashed" title="Screen / Cut">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"><line x1="5" y1="19" x2="19" y2="5"/></svg>
-            Dashed
-          </button>
-          <button class="tool-btn" data-tool="screen" title="Screen">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="12" x2="18" y2="12"/></svg>
-            Screen
-          </button>
-          <button class="tool-btn" data-tool="zigzag" title="Dribble">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 20 8 14 12 18 16 10 20 4"/></svg>
-            Dribble
           </button>
           <button class="tool-btn" data-tool="eraser" title="Eraser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l9-9 8 8-4 4z"/><line x1="7" y1="20" x2="16" y2="20"/></svg>
@@ -284,10 +166,9 @@
           </button>
         </div>
       </div>
-
       <div class="sidebar-section">
         <h3>Pen Color</h3>
-        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
           <div class="color-swatch active" data-color="#ffffff" style="background:#ffffff;"></div>
           <div class="color-swatch" data-color="#facc15" style="background:#facc15;"></div>
           <div class="color-swatch" data-color="#4ade80" style="background:#4ade80;"></div>
@@ -298,7 +179,6 @@
         <h3 style="margin-top:8px;">Line Width</h3>
         <input type="range" style="width:100%;" id="lineWidth" min="1" max="8" value="3">
       </div>
-
       <div class="sidebar-section">
         <h3>Defense Formations</h3>
         <div class="formation-list">
@@ -309,7 +189,6 @@
           <button class="action-btn" data-formation="box-one">Box & One</button>
         </div>
       </div>
-
       <div class="sidebar-section">
         <h3>History</h3>
         <div class="undo-redo-btns">
@@ -317,7 +196,6 @@
           <button class="action-btn" id="redoBtn">Redo</button>
         </div>
       </div>
-
       <div class="sidebar-section">
         <h3>Actions</h3>
         <button class="action-btn" id="clearDrawings">Clear Drawings</button>
@@ -325,7 +203,6 @@
         <button class="action-btn" id="exportBtn" style="margin-top:3px;">Export PNG</button>
       </div>
     </div>
-
     <div class="court-container">
       <div class="canvas-wrapper" id="canvasWrapper">
         <canvas id="courtCanvas"></canvas>
@@ -334,16 +211,14 @@
       </div>
     </div>
   </div>
-
-  <!-- Mobile bottom toolbar -->
   <div class="mobile-toolbar">
     <div class="mobile-toolbar-row" id="mobileTools">
-      <button class="mobile-tool-btn active" data-tool="move">Move</button>
-      <button class="mobile-tool-btn" data-tool="draw">Draw</button>
-      <button class="mobile-tool-btn" data-tool="arrow">Arrow</button>
-      <button class="mobile-tool-btn" data-tool="dashed">Dashed</button>
+      <button class="mobile-tool-btn active" data-tool="cursor">Select</button>
+      <button class="mobile-tool-btn" data-tool="dribble">Dribble</button>
+      <button class="mobile-tool-btn" data-tool="pmove">Move</button>
       <button class="mobile-tool-btn" data-tool="screen">Screen</button>
-      <button class="mobile-tool-btn" data-tool="zigzag">Dribble</button>
+      <button class="mobile-tool-btn" data-tool="pass">Pass</button>
+      <button class="mobile-tool-btn" data-tool="draw">Draw</button>
       <button class="mobile-tool-btn" data-tool="eraser">Eraser</button>
       <button class="mobile-tool-btn" data-tool="text">Text</button>
       <button class="mobile-tool-btn" id="mobileMoreBtn">More...</button>
@@ -363,1086 +238,589 @@
       <button class="mobile-tool-btn" id="mobileExport">Export</button>
     </div>
   </div>
-
   <script>
-    // ===== Court dimensions in feet (NBA) =====
-    const COURT = {
-      width: 50,        // sideline to sideline
-      halfLength: 47,   // baseline to half-court
-      fullLength: 94,
-      basketFromBaseline: 5.25,
-      basketHeight: 10,
-      paintWidth: 16,
-      paintLength: 19,
-      ftCircleRadius: 6,
-      threePointRadius: 23.75,
-      threeCornerDist: 3,   // from sideline
-      restrictedRadius: 4,
-      backboardWidth: 6,
-      rimRadius: 0.75,
-      centerCircleRadius: 6,
-    };
+    const COURT={width:50,halfLength:47,fullLength:94,basketFromBaseline:5.25,paintWidth:16,paintLength:19,ftCircleRadius:6,threePointRadius:23.75,threeCornerDist:3,restrictedRadius:4,backboardWidth:6,rimRadius:0.75,centerCircleRadius:6};
+    const CONFIG={margin:20,courtColor:'#c8823c',paintColor:'rgba(80,50,20,0.25)',lineColor:'#ffffff',lineWidth:2,player:{radius:16,fontSize:11,offenseColor:'#2563eb',defenseColor:'#dc2626',strokeColor:'#ffffff',strokeWidth:2},ballRadius:8};
+    const state={courtType:'half',currentTool:'cursor',penColor:'#ffffff',lineWidth:3,players:[],drawings:[],undoStack:[],redoStack:[],isDragging:false,dragPlayer:null,dragOffset:{x:0,y:0},isDrawing:false,currentPath:[],arrowStart:null,pxPerFt:10,marginPx:20,moveCounter:0,trailPath:[],trailStartPos:null};
 
-    // ===== Config =====
-    const CONFIG = {
-      margin: 20,
-      courtColor: '#c8823c',
-      paintColor: 'rgba(80, 50, 20, 0.25)',
-      lineColor: '#ffffff',
-      lineWidth: 2,
-      player: {
-        radius: 16,
-        fontSize: 11,
-        offenseColor: '#2563eb',
-        defenseColor: '#dc2626',
-        ballColor: '#f97316',
-        strokeColor: '#ffffff',
-        strokeWidth: 2,
-      },
-      ballRadius: 8,
-    };
+    const courtCanvas=document.getElementById('courtCanvas');
+    const drawCanvas=document.getElementById('drawCanvas');
+    const interactionCanvas=document.getElementById('interactionCanvas');
+    const canvasWrapper=document.getElementById('canvasWrapper');
+    const courtCtx=courtCanvas.getContext('2d');
+    const drawCtx=drawCanvas.getContext('2d');
+    const interCtx=interactionCanvas.getContext('2d');
 
-    // ===== State =====
-    const state = {
-      courtType: 'half',
-      currentTool: 'move',
-      penColor: '#ffffff',
-      lineWidth: 3,
-      players: [],
-      drawings: [],
-      undoStack: [],
-      redoStack: [],
-      isDragging: false,
-      dragPlayer: null,
-      dragOffset: { x: 0, y: 0 },
-      isDrawing: false,
-      currentPath: [],
-      arrowStart: null,
-      pxPerFt: 10,
-      marginPx: 20,
-    };
+    function cx(ft){return state.marginPx+ft*state.pxPerFt;}
+    function cy(ft){return state.marginPx+ft*state.pxPerFt;}
+    function sc(ft){return ft*state.pxPerFt;}
+    function S(){return state.pxPerFt/10;}
 
-    // ===== Canvas =====
-    const courtCanvas = document.getElementById('courtCanvas');
-    const drawCanvas = document.getElementById('drawCanvas');
-    const interactionCanvas = document.getElementById('interactionCanvas');
-    const canvasWrapper = document.getElementById('canvasWrapper');
-    const courtCtx = courtCanvas.getContext('2d');
-    const drawCtx = drawCanvas.getContext('2d');
-    const interCtx = interactionCanvas.getContext('2d');
-
-    // Convert court feet to canvas pixels
-    function cx(ft) { return state.marginPx + ft * state.pxPerFt; }
-    function cy(ft) { return state.marginPx + ft * state.pxPerFt; }
-    function sc(ft) { return ft * state.pxPerFt; }
-
-    function resizeCanvases() {
-      const container = document.querySelector('.court-container');
-      const maxW = container.clientWidth - 24;
-      const maxH = container.clientHeight - 24;
-
-      let courtFtW, courtFtH;
-      if (state.courtType === 'full') {
-        courtFtW = COURT.width;
-        courtFtH = COURT.fullLength;
-      } else {
-        courtFtW = COURT.width;
-        courtFtH = COURT.halfLength;
-      }
-
-      const totalFtW = courtFtW + CONFIG.margin * 2 / 10;
-      const totalFtH = courtFtH + CONFIG.margin * 2 / 10;
-
-      const scaleX = maxW / (courtFtW * 10 + CONFIG.margin * 2);
-      const scaleY = maxH / (courtFtH * 10 + CONFIG.margin * 2);
-      const scale = Math.min(scaleX, scaleY, 1.3);
-
-      state.pxPerFt = 10 * scale;
-      state.marginPx = CONFIG.margin * scale;
-
-      const w = Math.floor(courtFtW * state.pxPerFt + state.marginPx * 2);
-      const h = Math.floor(courtFtH * state.pxPerFt + state.marginPx * 2);
-
-      [courtCanvas, drawCanvas, interactionCanvas].forEach(c => {
-        c.width = w;
-        c.height = h;
-      });
-      canvasWrapper.style.width = w + 'px';
-      canvasWrapper.style.height = h + 'px';
-
-      drawCourt();
-      redrawDrawings();
-      drawPlayers();
+    function resizeCanvases(){
+      const container=document.querySelector('.court-container');
+      const maxW=container.clientWidth-24,maxH=container.clientHeight-24;
+      let courtFtW,courtFtH;
+      if(state.courtType==='full'){courtFtW=COURT.width;courtFtH=COURT.fullLength;}
+      else{courtFtW=COURT.width;courtFtH=COURT.halfLength;}
+      const scaleX=maxW/(courtFtW*10+CONFIG.margin*2);
+      const scaleY=maxH/(courtFtH*10+CONFIG.margin*2);
+      const scale=Math.min(scaleX,scaleY,1.3);
+      state.pxPerFt=10*scale;state.marginPx=CONFIG.margin*scale;
+      const w=Math.floor(courtFtW*state.pxPerFt+state.marginPx*2);
+      const h=Math.floor(courtFtH*state.pxPerFt+state.marginPx*2);
+      [courtCanvas,drawCanvas,interactionCanvas].forEach(c=>{c.width=w;c.height=h;});
+      canvasWrapper.style.width=w+'px';canvasWrapper.style.height=h+'px';
+      drawCourt();redrawDrawings();drawPlayers();
     }
 
     // ===== Court Drawing =====
-    function drawCourt() {
-      const ctx = courtCtx;
-      const w = courtCanvas.width;
-      const h = courtCanvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      // Background
-      ctx.fillStyle = CONFIG.courtColor;
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.strokeStyle = CONFIG.lineColor;
-      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
-      ctx.setLineDash([]);
-
-      if (state.courtType === 'half') {
-        drawHalfCourt(ctx);
-      } else {
-        drawFullCourt(ctx);
-      }
+    function drawCourt(){
+      const ctx=courtCtx,w=courtCanvas.width,h=courtCanvas.height;
+      ctx.clearRect(0,0,w,h);ctx.fillStyle=CONFIG.courtColor;ctx.fillRect(0,0,w,h);
+      ctx.strokeStyle=CONFIG.lineColor;ctx.lineWidth=CONFIG.lineWidth*S();ctx.setLineDash([]);
+      if(state.courtType==='half') drawHalfCourt(ctx); else drawFullCourt(ctx);
     }
-
-    function drawHalfCourt(ctx) {
-      const cw = COURT.width;
-      const ch = COURT.halfLength;
-
-      // Court boundary
-      ctx.strokeRect(cx(0), cy(0), sc(cw), sc(ch));
-
-      // Basket position (at TOP of court - baseline is y=0)
-      const bx = cw / 2;
-      const by = COURT.basketFromBaseline;
-
-      // Paint area
-      const paintLeft = (cw - COURT.paintWidth) / 2;
-      ctx.fillStyle = CONFIG.paintColor;
-      ctx.fillRect(cx(paintLeft), cy(0), sc(COURT.paintWidth), sc(COURT.paintLength));
-      ctx.strokeRect(cx(paintLeft), cy(0), sc(COURT.paintWidth), sc(COURT.paintLength));
-
-      // Hash marks on paint sides
-      const hashPositions = [7, 8, 11, 14];
-      const hashLen = 0.8;
-      hashPositions.forEach(yy => {
-        // Left side
-        ctx.beginPath();
-        ctx.moveTo(cx(paintLeft - hashLen), cy(yy));
-        ctx.lineTo(cx(paintLeft), cy(yy));
-        ctx.stroke();
-        // Right side
-        ctx.beginPath();
-        ctx.moveTo(cx(paintLeft + COURT.paintWidth), cy(yy));
-        ctx.lineTo(cx(paintLeft + COURT.paintWidth + hashLen), cy(yy));
-        ctx.stroke();
+    function drawHalfCourt(ctx){
+      const cw=COURT.width,ch=COURT.halfLength,bx=cw/2,by=COURT.basketFromBaseline;
+      ctx.strokeRect(cx(0),cy(0),sc(cw),sc(ch));
+      const pL=(cw-COURT.paintWidth)/2;
+      ctx.fillStyle=CONFIG.paintColor;ctx.fillRect(cx(pL),cy(0),sc(COURT.paintWidth),sc(COURT.paintLength));
+      ctx.strokeRect(cx(pL),cy(0),sc(COURT.paintWidth),sc(COURT.paintLength));
+      [7,8,11,14].forEach(yy=>{
+        ctx.beginPath();ctx.moveTo(cx(pL-0.8),cy(yy));ctx.lineTo(cx(pL),cy(yy));ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx(pL+COURT.paintWidth),cy(yy));ctx.lineTo(cx(pL+COURT.paintWidth+0.8),cy(yy));ctx.stroke();
       });
-
-      // Free throw circle - solid top half (away from basket)
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(COURT.paintLength), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
-      ctx.stroke();
-
-      // Free throw circle - dashed bottom half (toward basket)
-      ctx.setLineDash([sc(0.5), sc(0.5)]);
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(COURT.paintLength), sc(COURT.ftCircleRadius), 0, Math.PI);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // 3-point line
-      drawThreePointLine(ctx, bx, by, cw, 0);
-
-      // Restricted area
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(by), sc(COURT.restrictedRadius), 0, Math.PI);
-      ctx.stroke();
-
-      // Backboard
-      const bbW = COURT.backboardWidth;
-      ctx.lineWidth = (CONFIG.lineWidth + 1) * state.pxPerFt / 10;
-      ctx.beginPath();
-      ctx.moveTo(cx(bx - bbW / 2), cy(by - 1.25));
-      ctx.lineTo(cx(bx + bbW / 2), cy(by - 1.25));
-      ctx.stroke();
-      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
-
-      // Rim
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(by), sc(COURT.rimRadius), 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Center circle (half) at bottom
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(ch), sc(COURT.centerCircleRadius), Math.PI, 2 * Math.PI);
-      ctx.stroke();
+      ctx.beginPath();ctx.arc(cx(bx),cy(COURT.paintLength),sc(COURT.ftCircleRadius),Math.PI,2*Math.PI);ctx.stroke();
+      ctx.setLineDash([sc(0.5),sc(0.5)]);ctx.beginPath();ctx.arc(cx(bx),cy(COURT.paintLength),sc(COURT.ftCircleRadius),0,Math.PI);ctx.stroke();ctx.setLineDash([]);
+      drawThreePointLine(ctx,bx,by,cw,0);
+      ctx.beginPath();ctx.arc(cx(bx),cy(by),sc(COURT.restrictedRadius),0,Math.PI);ctx.stroke();
+      const bbW=COURT.backboardWidth;ctx.lineWidth=(CONFIG.lineWidth+1)*S();
+      ctx.beginPath();ctx.moveTo(cx(bx-bbW/2),cy(by-1.25));ctx.lineTo(cx(bx+bbW/2),cy(by-1.25));ctx.stroke();
+      ctx.lineWidth=CONFIG.lineWidth*S();
+      ctx.beginPath();ctx.arc(cx(bx),cy(by),sc(COURT.rimRadius),0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.arc(cx(bx),cy(ch),sc(COURT.centerCircleRadius),Math.PI,2*Math.PI);ctx.stroke();
     }
-
-    function drawThreePointLine(ctx, basketX, basketY, courtWidth, baselineY) {
-      const r = COURT.threePointRadius;
-      const cornerX = COURT.threeCornerDist;
-
-      // Calculate where the arc meets the straight corner lines
-      const dx = (courtWidth / 2) - cornerX;
-      const dySquared = r * r - dx * dx;
-      if (dySquared < 0) return;
-      const junctionY = basketY + Math.sqrt(dySquared);
-
-      // Left straight section
-      ctx.beginPath();
-      ctx.moveTo(cx(cornerX), cy(baselineY));
-      ctx.lineTo(cx(cornerX), cy(junctionY));
-      ctx.stroke();
-
-      // Right straight section
-      ctx.beginPath();
-      ctx.moveTo(cx(courtWidth - cornerX), cy(baselineY));
-      ctx.lineTo(cx(courtWidth - cornerX), cy(junctionY));
-      ctx.stroke();
-
-      // Arc from right junction to left junction (going downward/away from basket)
-      const startAngle = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - basketX);
-      const endAngle = Math.atan2(junctionY - basketY, cornerX - basketX);
-
-      ctx.beginPath();
-      ctx.arc(cx(basketX), cy(basketY), sc(r), startAngle, endAngle);
-      ctx.stroke();
+    function drawThreePointLine(ctx,basketX,basketY,courtWidth,baselineY){
+      const r=COURT.threePointRadius,cornerX=COURT.threeCornerDist;
+      const dx=(courtWidth/2)-cornerX,dyS=r*r-dx*dx;if(dyS<0)return;
+      const jY=basketY+Math.sqrt(dyS);
+      ctx.beginPath();ctx.moveTo(cx(cornerX),cy(baselineY));ctx.lineTo(cx(cornerX),cy(jY));ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx(courtWidth-cornerX),cy(baselineY));ctx.lineTo(cx(courtWidth-cornerX),cy(jY));ctx.stroke();
+      const sa=Math.atan2(jY-basketY,(courtWidth-cornerX)-basketX),ea=Math.atan2(jY-basketY,cornerX-basketX);
+      ctx.beginPath();ctx.arc(cx(basketX),cy(basketY),sc(r),sa,ea);ctx.stroke();
     }
-
-    function drawFullCourt(ctx) {
-      const cw = COURT.width;
-      const ch = COURT.fullLength;
-
-      // Court boundary
-      ctx.strokeRect(cx(0), cy(0), sc(cw), sc(ch));
-
-      // Center line
-      ctx.beginPath();
-      ctx.moveTo(cx(0), cy(ch / 2));
-      ctx.lineTo(cx(cw), cy(ch / 2));
-      ctx.stroke();
-
-      // Center circle
-      ctx.beginPath();
-      ctx.arc(cx(cw / 2), cy(ch / 2), sc(COURT.centerCircleRadius), 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Top half (basket at top, baseline y=0)
-      drawHalfCourtSide(ctx, cw, 0, COURT.basketFromBaseline, false);
-
-      // Bottom half (basket at bottom, baseline y=94)
-      drawHalfCourtSide(ctx, cw, ch, ch - COURT.basketFromBaseline, true);
+    function drawFullCourt(ctx){
+      const cw=COURT.width,ch=COURT.fullLength;
+      ctx.strokeRect(cx(0),cy(0),sc(cw),sc(ch));
+      ctx.beginPath();ctx.moveTo(cx(0),cy(ch/2));ctx.lineTo(cx(cw),cy(ch/2));ctx.stroke();
+      ctx.beginPath();ctx.arc(cx(cw/2),cy(ch/2),sc(COURT.centerCircleRadius),0,Math.PI*2);ctx.stroke();
+      drawHalfCourtSide(ctx,cw,0,COURT.basketFromBaseline,false);
+      drawHalfCourtSide(ctx,cw,ch,ch-COURT.basketFromBaseline,true);
     }
-
-    function drawHalfCourtSide(ctx, courtWidth, baselineY, basketY, flipped) {
-      const bx = courtWidth / 2;
-      const dir = flipped ? -1 : 1;
-
-      // Paint
-      const paintLeft = (courtWidth - COURT.paintWidth) / 2;
-      const paintTop = flipped ? baselineY - COURT.paintLength : baselineY;
-      ctx.fillStyle = CONFIG.paintColor;
-      ctx.fillRect(cx(paintLeft), cy(Math.min(baselineY, baselineY - dir * COURT.paintLength)),
-        sc(COURT.paintWidth), sc(COURT.paintLength));
-      ctx.strokeRect(cx(paintLeft), cy(Math.min(baselineY, baselineY - dir * COURT.paintLength)),
-        sc(COURT.paintWidth), sc(COURT.paintLength));
-
-      // Hash marks
-      const hashPositions = [7, 8, 11, 14];
-      const hashLen = 0.8;
-      hashPositions.forEach(d => {
-        const yy = baselineY + dir * d;
-        ctx.beginPath();
-        ctx.moveTo(cx(paintLeft - hashLen), cy(yy));
-        ctx.lineTo(cx(paintLeft), cy(yy));
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(cx(paintLeft + COURT.paintWidth), cy(yy));
-        ctx.lineTo(cx(paintLeft + COURT.paintWidth + hashLen), cy(yy));
-        ctx.stroke();
-      });
-
-      // Free throw circle
-      const ftY = baselineY + dir * COURT.paintLength;
-      ctx.beginPath();
-      if (flipped) {
-        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), 0, Math.PI);
-      } else {
-        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
-      }
-      ctx.stroke();
-
-      ctx.setLineDash([sc(0.5), sc(0.5)]);
-      ctx.beginPath();
-      if (flipped) {
-        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
-      } else {
-        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), 0, Math.PI);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // 3-point line
-      const r = COURT.threePointRadius;
-      const cornerX = COURT.threeCornerDist;
-      const dx = (courtWidth / 2) - cornerX;
-      const junctionDist = Math.sqrt(r * r - dx * dx);
-      const junctionY = basketY + dir * junctionDist;
-
-      // Corner straight lines
-      ctx.beginPath();
-      ctx.moveTo(cx(cornerX), cy(baselineY));
-      ctx.lineTo(cx(cornerX), cy(junctionY));
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(cx(courtWidth - cornerX), cy(baselineY));
-      ctx.lineTo(cx(courtWidth - cornerX), cy(junctionY));
-      ctx.stroke();
-
-      // Arc
-      const startAngle = Math.atan2((junctionY - basketY) * dir, dx) * dir;
-      const endAngle = Math.atan2((junctionY - basketY) * dir, -dx) * dir;
-
-      ctx.beginPath();
-      if (flipped) {
-        const sa = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - bx);
-        const ea = Math.atan2(junctionY - basketY, cornerX - bx);
-        ctx.arc(cx(bx), cy(basketY), sc(r), sa, ea, true);
-      } else {
-        const sa = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - bx);
-        const ea = Math.atan2(junctionY - basketY, cornerX - bx);
-        ctx.arc(cx(bx), cy(basketY), sc(r), sa, ea);
-      }
-      ctx.stroke();
-
-      // Restricted area
-      ctx.beginPath();
-      if (flipped) {
-        ctx.arc(cx(bx), cy(basketY), sc(COURT.restrictedRadius), Math.PI, 2 * Math.PI);
-      } else {
-        ctx.arc(cx(bx), cy(basketY), sc(COURT.restrictedRadius), 0, Math.PI);
-      }
-      ctx.stroke();
-
-      // Backboard
-      const bbW = COURT.backboardWidth;
-      const bbY = basketY - dir * 1.25;
-      ctx.lineWidth = (CONFIG.lineWidth + 1) * state.pxPerFt / 10;
-      ctx.beginPath();
-      ctx.moveTo(cx(bx - bbW / 2), cy(bbY));
-      ctx.lineTo(cx(bx + bbW / 2), cy(bbY));
-      ctx.stroke();
-      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
-
-      // Rim
-      ctx.beginPath();
-      ctx.arc(cx(bx), cy(basketY), sc(COURT.rimRadius), 0, Math.PI * 2);
-      ctx.stroke();
+    function drawHalfCourtSide(ctx,cW,baseY,bY,flip){
+      const bx=cW/2,dir=flip?-1:1,pL=(cW-COURT.paintWidth)/2;
+      ctx.fillStyle=CONFIG.paintColor;
+      ctx.fillRect(cx(pL),cy(Math.min(baseY,baseY-dir*COURT.paintLength)),sc(COURT.paintWidth),sc(COURT.paintLength));
+      ctx.strokeRect(cx(pL),cy(Math.min(baseY,baseY-dir*COURT.paintLength)),sc(COURT.paintWidth),sc(COURT.paintLength));
+      [7,8,11,14].forEach(d2=>{const yy=baseY+dir*d2;ctx.beginPath();ctx.moveTo(cx(pL-0.8),cy(yy));ctx.lineTo(cx(pL),cy(yy));ctx.stroke();ctx.beginPath();ctx.moveTo(cx(pL+COURT.paintWidth),cy(yy));ctx.lineTo(cx(pL+COURT.paintWidth+0.8),cy(yy));ctx.stroke();});
+      const ftY=baseY+dir*COURT.paintLength;
+      ctx.beginPath();ctx.arc(cx(bx),cy(ftY),sc(COURT.ftCircleRadius),flip?0:Math.PI,flip?Math.PI:2*Math.PI);ctx.stroke();
+      ctx.setLineDash([sc(0.5),sc(0.5)]);ctx.beginPath();ctx.arc(cx(bx),cy(ftY),sc(COURT.ftCircleRadius),flip?Math.PI:0,flip?2*Math.PI:Math.PI);ctx.stroke();ctx.setLineDash([]);
+      const r=COURT.threePointRadius,cX=COURT.threeCornerDist,dx2=(cW/2)-cX,jD=Math.sqrt(r*r-dx2*dx2),jY=bY+dir*jD;
+      ctx.beginPath();ctx.moveTo(cx(cX),cy(baseY));ctx.lineTo(cx(cX),cy(jY));ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx(cW-cX),cy(baseY));ctx.lineTo(cx(cW-cX),cy(jY));ctx.stroke();
+      const sa2=Math.atan2(jY-bY,(cW-cX)-bx),ea2=Math.atan2(jY-bY,cX-bx);
+      ctx.beginPath();ctx.arc(cx(bx),cy(bY),sc(r),sa2,ea2,flip);ctx.stroke();
+      ctx.beginPath();ctx.arc(cx(bx),cy(bY),sc(COURT.restrictedRadius),flip?Math.PI:0,flip?2*Math.PI:Math.PI);ctx.stroke();
+      const bbY2=bY-dir*1.25;ctx.lineWidth=(CONFIG.lineWidth+1)*S();
+      ctx.beginPath();ctx.moveTo(cx(bx-COURT.backboardWidth/2),cy(bbY2));ctx.lineTo(cx(bx+COURT.backboardWidth/2),cy(bbY2));ctx.stroke();
+      ctx.lineWidth=CONFIG.lineWidth*S();
+      ctx.beginPath();ctx.arc(cx(bx),cy(bY),sc(COURT.rimRadius),0,Math.PI*2);ctx.stroke();
     }
 
     // ===== Players =====
-    const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];
-
-    // 5-Out offense positions (fractions of court)
-    function get5OutPositions() {
-      if (state.courtType === 'half') {
-        return [
-          { x: 0.50, y: 0.58 }, // PG - top of key
-          { x: 0.15, y: 0.40 }, // SG - left wing
-          { x: 0.85, y: 0.40 }, // SF - right wing
-          { x: 0.10, y: 0.12 }, // PF - left corner
-          { x: 0.90, y: 0.12 }, // C - right corner
+    const POSITIONS=['PG','SG','SF','PF','C'];
+    function get5OutPositions(){
+      if(state.courtType==='half'){
+        return[
+          {x:0.50,y:0.70},  // PG top of key - well beyond 3pt arc
+          {x:0.17,y:0.55},  // SG left wing - beyond arc
+          {x:0.83,y:0.55},  // SF right wing - beyond arc
+          {x:0.06,y:0.18},  // PF left corner - beyond 3pt line
+          {x:0.94,y:0.18},  // C right corner - beyond 3pt line
         ];
       } else {
-        return [
-          { x: 0.50, y: 0.22 }, // PG
-          { x: 0.15, y: 0.32 }, // SG
-          { x: 0.85, y: 0.32 }, // SF
-          { x: 0.10, y: 0.44 }, // PF
-          { x: 0.90, y: 0.44 }, // C
+        return[
+          {x:0.50,y:0.365}, // PG top - beyond arc
+          {x:0.17,y:0.29},  // SG left wing - beyond arc
+          {x:0.83,y:0.29},  // SF right wing - beyond arc
+          {x:0.06,y:0.09},  // PF left corner - beyond 3pt line
+          {x:0.94,y:0.09},  // C right corner - beyond 3pt line
         ];
       }
     }
-
-    function createDefaultPlayers() {
-      state.players = [];
-      const w = courtCanvas.width;
-      const h = courtCanvas.height;
-
-      const offPos = get5OutPositions();
-      offPos.forEach((p, i) => {
-        state.players.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'offense' });
-      });
-
-      // Defense in Man-to-Man by default (slightly between offense and basket)
-      const defPositions = getDefenseFormation('man-to-man');
-      defPositions.forEach((p, i) => {
-        state.players.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'defense' });
-      });
-
-      // Ball
-      const ballX = offPos[0].x * w + CONFIG.ballRadius * state.pxPerFt / 10 + CONFIG.player.radius * state.pxPerFt / 10;
-      const ballY = offPos[0].y * h;
-      state.players.push({ x: ballX, y: ballY, label: '', team: 'ball' });
+    function createDefaultPlayers(){
+      state.players=[];const w=courtCanvas.width,h=courtCanvas.height;
+      const offPos=get5OutPositions();
+      offPos.forEach((p,i)=>{state.players.push({x:p.x*w,y:p.y*h,label:POSITIONS[i],team:'offense'});});
+      const defPos=getDefenseFormation('man-to-man');
+      defPos.forEach((p,i)=>{state.players.push({x:p.x*w,y:p.y*h,label:POSITIONS[i],team:'defense'});});
+      const bR=CONFIG.ballRadius*S(),pR=CONFIG.player.radius*S();
+      state.players.push({x:offPos[0].x*w+pR+bR+2,y:offPos[0].y*h,label:'',team:'ball'});
     }
-
-    function getDefenseFormation(name) {
-      const formations = {
-        half: {
-          '2-3': [
-            { x: 0.38, y: 0.35 }, { x: 0.62, y: 0.35 },
-            { x: 0.18, y: 0.18 }, { x: 0.50, y: 0.12 }, { x: 0.82, y: 0.18 },
-          ],
-          '3-2': [
-            { x: 0.25, y: 0.35 }, { x: 0.50, y: 0.38 }, { x: 0.75, y: 0.35 },
-            { x: 0.35, y: 0.18 }, { x: 0.65, y: 0.18 },
-          ],
-          '1-3-1': [
-            { x: 0.50, y: 0.42 }, { x: 0.22, y: 0.28 }, { x: 0.78, y: 0.28 },
-            { x: 0.50, y: 0.28 }, { x: 0.50, y: 0.10 },
-          ],
-          'man-to-man': [
-            { x: 0.50, y: 0.50 }, { x: 0.18, y: 0.34 }, { x: 0.82, y: 0.34 },
-            { x: 0.15, y: 0.14 }, { x: 0.85, y: 0.14 },
-          ],
-          'box-one': [
-            { x: 0.50, y: 0.52 }, // chaser follows PG
-            { x: 0.35, y: 0.28 }, { x: 0.65, y: 0.28 },
-            { x: 0.35, y: 0.12 }, { x: 0.65, y: 0.12 },
-          ],
-        },
-        full: {
-          '2-3': [
-            { x: 0.38, y: 0.14 }, { x: 0.62, y: 0.14 },
-            { x: 0.18, y: 0.08 }, { x: 0.50, y: 0.05 }, { x: 0.82, y: 0.08 },
-          ],
-          '3-2': [
-            { x: 0.25, y: 0.14 }, { x: 0.50, y: 0.16 }, { x: 0.75, y: 0.14 },
-            { x: 0.35, y: 0.07 }, { x: 0.65, y: 0.07 },
-          ],
-          '1-3-1': [
-            { x: 0.50, y: 0.18 }, { x: 0.22, y: 0.12 }, { x: 0.78, y: 0.12 },
-            { x: 0.50, y: 0.12 }, { x: 0.50, y: 0.04 },
-          ],
-          'man-to-man': [
-            { x: 0.50, y: 0.20 }, { x: 0.18, y: 0.30 }, { x: 0.82, y: 0.30 },
-            { x: 0.13, y: 0.42 }, { x: 0.87, y: 0.42 },
-          ],
-          'box-one': [
-            { x: 0.50, y: 0.20 },
-            { x: 0.35, y: 0.12 }, { x: 0.65, y: 0.12 },
-            { x: 0.35, y: 0.05 }, { x: 0.65, y: 0.05 },
-          ],
-        },
+    function getDefenseFormation(name){
+      const f={
+        half:{'2-3':[{x:0.38,y:0.35},{x:0.62,y:0.35},{x:0.18,y:0.18},{x:0.50,y:0.12},{x:0.82,y:0.18}],
+          '3-2':[{x:0.25,y:0.35},{x:0.50,y:0.38},{x:0.75,y:0.35},{x:0.35,y:0.18},{x:0.65,y:0.18}],
+          '1-3-1':[{x:0.50,y:0.42},{x:0.22,y:0.28},{x:0.78,y:0.28},{x:0.50,y:0.28},{x:0.50,y:0.10}],
+          'man-to-man':[{x:0.50,y:0.62},{x:0.19,y:0.49},{x:0.81,y:0.49},{x:0.10,y:0.20},{x:0.90,y:0.20}],
+          'box-one':[{x:0.50,y:0.62},{x:0.35,y:0.28},{x:0.65,y:0.28},{x:0.35,y:0.12},{x:0.65,y:0.12}]},
+        full:{'2-3':[{x:0.38,y:0.14},{x:0.62,y:0.14},{x:0.18,y:0.08},{x:0.50,y:0.05},{x:0.82,y:0.08}],
+          '3-2':[{x:0.25,y:0.14},{x:0.50,y:0.16},{x:0.75,y:0.14},{x:0.35,y:0.07},{x:0.65,y:0.07}],
+          '1-3-1':[{x:0.50,y:0.18},{x:0.22,y:0.12},{x:0.78,y:0.12},{x:0.50,y:0.12},{x:0.50,y:0.04}],
+          'man-to-man':[{x:0.50,y:0.34},{x:0.19,y:0.27},{x:0.81,y:0.27},{x:0.08,y:0.10},{x:0.92,y:0.10}],
+          'box-one':[{x:0.50,y:0.34},{x:0.35,y:0.12},{x:0.65,y:0.12},{x:0.35,y:0.05},{x:0.65,y:0.05}]}
       };
-      return formations[state.courtType][name] || formations[state.courtType]['man-to-man'];
+      return f[state.courtType][name]||f[state.courtType]['man-to-man'];
     }
-
-    function drawPlayers() {
-      const ctx = interCtx;
-      ctx.clearRect(0, 0, interactionCanvas.width, interactionCanvas.height);
-
-      state.players.forEach(player => {
-        if (player.team === 'ball') {
-          drawBasketball(ctx, player.x, player.y);
-          return;
-        }
-
-        const r = CONFIG.player.radius * state.pxPerFt / 10;
-
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = player.team === 'offense' ? CONFIG.player.offenseColor : CONFIG.player.defenseColor;
-        ctx.fill();
-        ctx.strokeStyle = CONFIG.player.strokeColor;
-        ctx.lineWidth = CONFIG.player.strokeWidth * state.pxPerFt / 10;
-        ctx.stroke();
-
-        if (player.label) {
-          ctx.fillStyle = '#ffffff';
-          ctx.font = `bold ${CONFIG.player.fontSize * state.pxPerFt / 10}px sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(player.label, player.x, player.y + 0.5);
-        }
+    function drawPlayers(){
+      const ctx=interCtx;ctx.clearRect(0,0,interactionCanvas.width,interactionCanvas.height);
+      state.players.forEach(p=>{
+        if(p.team==='ball'){drawBasketball(ctx,p.x,p.y);return;}
+        const r=CONFIG.player.radius*S();
+        ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);
+        ctx.fillStyle=p.team==='offense'?CONFIG.player.offenseColor:CONFIG.player.defenseColor;
+        ctx.fill();ctx.strokeStyle=CONFIG.player.strokeColor;ctx.lineWidth=CONFIG.player.strokeWidth*S();ctx.stroke();
+        if(p.label){ctx.fillStyle='#fff';ctx.font=`bold ${CONFIG.player.fontSize*S()}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.label,p.x,p.y+0.5);}
       });
     }
+    function drawBasketball(ctx,x,y){
+      const r=CONFIG.ballRadius*S();
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='#f97316';ctx.fill();
+      ctx.strokeStyle='#7c2d12';ctx.lineWidth=1.2*S();ctx.stroke();
+      ctx.strokeStyle='#7c2d1280';ctx.lineWidth=0.8*S();
+      ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();
+      ctx.beginPath();ctx.arc(x-r*0.3,y,r*0.75,-Math.PI*0.4,Math.PI*0.4);ctx.stroke();
+      ctx.beginPath();ctx.arc(x+r*0.3,y,r*0.75,Math.PI-Math.PI*0.4,Math.PI+Math.PI*0.4);ctx.stroke();
+    }
 
-    function drawBasketball(ctx, x, y) {
-      const r = CONFIG.ballRadius * state.pxPerFt / 10;
-
-      // Orange ball
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = '#f97316';
-      ctx.fill();
-      ctx.strokeStyle = '#7c2d12';
-      ctx.lineWidth = 1.2 * state.pxPerFt / 10;
-      ctx.stroke();
-
-      // Ball lines
-      ctx.strokeStyle = '#7c2d1280';
-      ctx.lineWidth = 0.8 * state.pxPerFt / 10;
-
-      // Horizontal line
-      ctx.beginPath();
-      ctx.moveTo(x - r, y);
-      ctx.lineTo(x + r, y);
-      ctx.stroke();
-
-      // Vertical line
-      ctx.beginPath();
-      ctx.moveTo(x, y - r);
-      ctx.lineTo(x, y + r);
-      ctx.stroke();
-
-      // Curved lines
-      ctx.beginPath();
-      ctx.arc(x - r * 0.3, y, r * 0.75, -Math.PI * 0.4, Math.PI * 0.4);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(x + r * 0.3, y, r * 0.75, Math.PI - Math.PI * 0.4, Math.PI + Math.PI * 0.4);
-      ctx.stroke();
+    // ===== Path helpers =====
+    function simplifyPath(pts,minD){
+      if(pts.length<3)return[...pts];
+      const r=[pts[0]];
+      for(let i=1;i<pts.length-1;i++){const l=r[r.length-1],dx=pts[i].x-l.x,dy=pts[i].y-l.y;if(dx*dx+dy*dy>=minD*minD)r.push(pts[i]);}
+      r.push(pts[pts.length-1]);return r;
+    }
+    function getEndDir(pts){
+      if(pts.length<2)return{dx:0,dy:-1};
+      const a=pts[pts.length-2],b=pts[pts.length-1],dx=b.x-a.x,dy=b.y-a.y,l=Math.sqrt(dx*dx+dy*dy);
+      return l>0?{dx:dx/l,dy:dy/l}:{dx:0,dy:-1};
+    }
+    function drawSmoothCurve(ctx,pts){
+      if(pts.length<2)return;
+      ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+      if(pts.length===2){ctx.lineTo(pts[1].x,pts[1].y);}
+      else{for(let i=1;i<pts.length-1;i++){const mx=(pts[i].x+pts[i+1].x)/2,my=(pts[i].y+pts[i+1].y)/2;ctx.quadraticCurveTo(pts[i].x,pts[i].y,mx,my);}ctx.lineTo(pts[pts.length-1].x,pts[pts.length-1].y);}
+    }
+    function drawArrowHead(ctx,end,dir,color){
+      const hl=12*S(),a=Math.atan2(dir.dy,dir.dx);
+      ctx.beginPath();ctx.fillStyle=color;ctx.moveTo(end.x,end.y);
+      ctx.lineTo(end.x-hl*Math.cos(a-Math.PI/6),end.y-hl*Math.sin(a-Math.PI/6));
+      ctx.lineTo(end.x-hl*Math.cos(a+Math.PI/6),end.y-hl*Math.sin(a+Math.PI/6));
+      ctx.closePath();ctx.fill();
     }
 
     // ===== Drawing System =====
-    function redrawDrawings() {
-      const ctx = drawCtx;
-      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-      state.drawings.forEach(d => drawSingleDrawing(ctx, d));
-    }
+    function redrawDrawings(){drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height);state.drawings.forEach(d=>drawSingleDrawing(drawCtx,d));}
 
-    function drawSingleDrawing(ctx, d) {
-      const s = state.pxPerFt / 10;
-      if (d.type === 'path') {
-        if (d.points.length < 2) return;
-        ctx.beginPath();
-        ctx.strokeStyle = d.color;
-        ctx.lineWidth = d.width * s;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.setLineDash([]);
-        ctx.moveTo(d.points[0].x, d.points[0].y);
-        for (let i = 1; i < d.points.length; i++) {
-          ctx.lineTo(d.points[i].x, d.points[i].y);
-        }
+    function drawSingleDrawing(ctx,d){
+      const s=S();
+      if(d.type==='path'){
+        // Freehand draw
+        if(d.points.length<2)return;
+        ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+        ctx.beginPath();ctx.moveTo(d.points[0].x,d.points[0].y);
+        for(let i=1;i<d.points.length;i++)ctx.lineTo(d.points[i].x,d.points[i].y);
         ctx.stroke();
-      } else if (d.type === 'arrow') {
-        drawArrowLine(ctx, d.from, d.to, d.color, d.width * s, false);
-      } else if (d.type === 'dashed') {
-        drawArrowLine(ctx, d.from, d.to, d.color, d.width * s, true);
-      } else if (d.type === 'screen') {
-        drawScreenSymbol(ctx, d.x, d.y, d.angle, d.color, d.width * s);
-      } else if (d.type === 'zigzag') {
-        drawZigzagLine(ctx, d.from, d.to, d.color, d.width * s);
-      } else if (d.type === 'text') {
-        ctx.fillStyle = d.color;
-        ctx.font = `bold ${14 * s}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(d.text, d.x, d.y);
+      } else if(d.type==='pmove'){
+        // Move trail: smooth curve + arrowhead
+        const pts=d.points;if(!pts||pts.length<2)return;
+        ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+        drawSmoothCurve(ctx,pts);ctx.stroke();
+        drawArrowHead(ctx,pts[pts.length-1],getEndDir(pts),d.color);
+        drawSeqNumber(ctx,d);
+      } else if(d.type==='dribble'){
+        // Dribble trail: zigzag along path + arrowhead
+        const pts=d.points;if(!pts||pts.length<2)return;
+        drawCurvedZigzag(ctx,pts,d.color,d.width*s);
+        drawSeqNumber(ctx,d);
+      } else if(d.type==='screen'){
+        // Screen trail: smooth curve + perpendicular bar at end
+        const pts=d.points;if(!pts||pts.length<2)return;
+        ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+        drawSmoothCurve(ctx,pts);ctx.stroke();
+        const dir=getEndDir(pts),end=pts[pts.length-1],barL=14*s;
+        const px=-dir.dy,py=dir.dx;
+        ctx.lineWidth=Math.max(d.width*2*s,5*s);ctx.beginPath();
+        ctx.moveTo(end.x-barL*px,end.y-barL*py);ctx.lineTo(end.x+barL*px,end.y+barL*py);ctx.stroke();
+        drawSeqNumber(ctx,d);
+      } else if(d.type==='pass'){
+        // Pass trail: dotted smooth curve + arrowhead
+        const pts=d.points;if(!pts||pts.length<2)return;
+        ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';
+        ctx.setLineDash([7*s,5*s]);
+        drawSmoothCurve(ctx,pts);ctx.stroke();
+        ctx.setLineDash([]);
+        drawArrowHead(ctx,pts[pts.length-1],getEndDir(pts),d.color);
+        drawSeqNumber(ctx,d);
+      } else if(d.type==='text'){
+        ctx.fillStyle=d.color;ctx.font=`bold ${14*s}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(d.text,d.x,d.y);
       }
     }
 
-    function drawArrowLine(ctx, from, to, color, width, dashed) {
-      const dx = to.x - from.x;
-      const dy = to.y - from.y;
-      const angle = Math.atan2(dy, dx);
-      const headLen = 12 * state.pxPerFt / 10;
-
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.setLineDash(dashed ? [7 * state.pxPerFt / 10, 5 * state.pxPerFt / 10] : []);
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.stroke();
-
-      ctx.setLineDash([]);
-      ctx.beginPath();
-      ctx.fillStyle = color;
-      ctx.moveTo(to.x, to.y);
-      ctx.lineTo(to.x - headLen * Math.cos(angle - Math.PI / 6), to.y - headLen * Math.sin(angle - Math.PI / 6));
-      ctx.lineTo(to.x - headLen * Math.cos(angle + Math.PI / 6), to.y - headLen * Math.sin(angle + Math.PI / 6));
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function drawScreenSymbol(ctx, x, y, angle, color, width) {
-      const len = 14 * state.pxPerFt / 10;
-      const perpAngle = angle + Math.PI / 2;
-
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = Math.max(width * 2, 5 * state.pxPerFt / 10);
-      ctx.lineCap = 'round';
-      ctx.setLineDash([]);
-      ctx.moveTo(x - len * Math.cos(perpAngle), y - len * Math.sin(perpAngle));
-      ctx.lineTo(x + len * Math.cos(perpAngle), y + len * Math.sin(perpAngle));
-      ctx.stroke();
-    }
-
-    function drawZigzagLine(ctx, from, to, color, width) {
-      const dx = to.x - from.x;
-      const dy = to.y - from.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 5) return;
-
-      const numZigs = Math.max(4, Math.round(dist / (12 * state.pxPerFt / 10)));
-      const nx = -dy / dist;
-      const ny = dx / dist;
-      const amp = 6 * state.pxPerFt / 10;
-
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.setLineDash([]);
-      ctx.moveTo(from.x, from.y);
-
-      for (let i = 1; i <= numZigs; i++) {
-        const t = i / numZigs;
-        const mx = from.x + dx * t;
-        const my = from.y + dy * t;
-        if (i < numZigs) {
-          const side = (i % 2 === 1) ? 1 : -1;
-          ctx.lineTo(mx + nx * amp * side, my + ny * amp * side);
-        } else {
-          ctx.lineTo(to.x, to.y);
+    function drawCurvedZigzag(ctx,pts,color,width){
+      const segs=[];let totalLen=0;
+      for(let i=1;i<pts.length;i++){const dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y;const l=Math.sqrt(dx*dx+dy*dy);segs.push({len:l,dx,dy});totalLen+=l;}
+      if(totalLen<5)return;
+      const amp=7*S(),numZ=Math.max(4,Math.round(totalLen/(12*S()))),step=totalLen/numZ;
+      const zPts=[{x:pts[0].x,y:pts[0].y}];
+      let side=1;
+      for(let i=1;i<=numZ;i++){
+        const tD=i*step;let walked=0,px2,py2,nx,ny;
+        for(let j=0;j<segs.length;j++){
+          if(walked+segs[j].len>=tD||j===segs.length-1){
+            const t=segs[j].len>0?Math.max(0,Math.min(1,(tD-walked)/segs[j].len)):0;
+            px2=pts[j].x+t*segs[j].dx;py2=pts[j].y+t*segs[j].dy;
+            const sl=segs[j].len||1;nx=-segs[j].dy/sl;ny=segs[j].dx/sl;break;
+          }walked+=segs[j].len;
         }
+        if(i<numZ){zPts.push({x:px2+nx*amp*side,y:py2+ny*amp*side});side*=-1;}
+        else zPts.push({x:pts[pts.length-1].x,y:pts[pts.length-1].y});
       }
+      ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+      ctx.beginPath();ctx.moveTo(zPts[0].x,zPts[0].y);
+      for(let i=1;i<zPts.length;i++)ctx.lineTo(zPts[i].x,zPts[i].y);
       ctx.stroke();
+      const dir=getEndDir(pts);
+      drawArrowHead(ctx,pts[pts.length-1],dir,color);
+    }
 
-      // Small arrowhead
-      const angle = Math.atan2(dy, dx);
-      const headLen = 8 * state.pxPerFt / 10;
-      ctx.beginPath();
-      ctx.fillStyle = color;
-      ctx.moveTo(to.x, to.y);
-      ctx.lineTo(to.x - headLen * Math.cos(angle - Math.PI / 6), to.y - headLen * Math.sin(angle - Math.PI / 6));
-      ctx.lineTo(to.x - headLen * Math.cos(angle + Math.PI / 6), to.y - headLen * Math.sin(angle + Math.PI / 6));
-      ctx.closePath();
-      ctx.fill();
+    // ===== Sequence Number Drawing =====
+    function drawSeqNumber(ctx,d){
+      if(!d.seq)return;
+      const s=S(),pts=d.points;
+      if(!pts||pts.length<2)return;
+      // Place number near the midpoint of the trail, offset perpendicular
+      const midIdx=Math.floor(pts.length/2);
+      const mid=pts[midIdx];
+      let nx=0,ny=-1;
+      if(midIdx>0){
+        const dx=pts[midIdx].x-pts[midIdx-1].x,dy=pts[midIdx].y-pts[midIdx-1].y;
+        const l=Math.sqrt(dx*dx+dy*dy);
+        if(l>0){nx=-dy/l;ny=dx/l;}
+      }
+      const offDist=16*s;
+      const numX=mid.x+nx*offDist;
+      const numY=mid.y+ny*offDist;
+      // Draw circle background
+      const r=10*s;
+      ctx.fillStyle='rgba(0,0,0,0.75)';
+      ctx.beginPath();ctx.arc(numX,numY,r,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1*s;
+      ctx.beginPath();ctx.arc(numX,numY,r,0,Math.PI*2);ctx.stroke();
+      // Draw number
+      ctx.fillStyle='#ffffff';
+      ctx.font=`bold ${11*s}px sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(d.seq.toString(),numX,numY);
+    }
+
+    // ===== Trail Preview during drag =====
+    function drawTrailPreview(tool,path,color,width){
+      const ctx=drawCtx,s=S();
+      if(path.length<2)return;
+      ctx.strokeStyle=color;ctx.lineWidth=width*s;ctx.lineCap='round';ctx.lineJoin='round';
+      if(tool==='pass'){
+        ctx.setLineDash([7*s,5*s]);
+      } else {
+        ctx.setLineDash([]);
+      }
+      ctx.beginPath();ctx.moveTo(path[0].x,path[0].y);
+      for(let i=1;i<path.length;i++)ctx.lineTo(path[i].x,path[i].y);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
 
     // ===== Undo/Redo =====
-    function saveState() {
+    function saveState(){
       state.undoStack.push({
-        players: JSON.parse(JSON.stringify(state.players)),
-        drawings: JSON.parse(JSON.stringify(state.drawings)),
+        players:JSON.parse(JSON.stringify(state.players)),
+        drawings:JSON.parse(JSON.stringify(state.drawings)),
+        moveCounter:state.moveCounter
       });
-      state.redoStack = [];
-      if (state.undoStack.length > 50) state.undoStack.shift();
+      state.redoStack=[];
+      if(state.undoStack.length>50)state.undoStack.shift();
     }
-
-    function undo() {
-      if (state.undoStack.length === 0) return;
+    function undo(){
+      if(!state.undoStack.length)return;
       state.redoStack.push({
-        players: JSON.parse(JSON.stringify(state.players)),
-        drawings: JSON.parse(JSON.stringify(state.drawings)),
+        players:JSON.parse(JSON.stringify(state.players)),
+        drawings:JSON.parse(JSON.stringify(state.drawings)),
+        moveCounter:state.moveCounter
       });
-      const prev = state.undoStack.pop();
-      state.players = prev.players;
-      state.drawings = prev.drawings;
-      redrawDrawings();
-      drawPlayers();
+      const p=state.undoStack.pop();
+      state.players=p.players;state.drawings=p.drawings;state.moveCounter=p.moveCounter;
+      redrawDrawings();drawPlayers();
     }
-
-    function redo() {
-      if (state.redoStack.length === 0) return;
+    function redo(){
+      if(!state.redoStack.length)return;
       state.undoStack.push({
-        players: JSON.parse(JSON.stringify(state.players)),
-        drawings: JSON.parse(JSON.stringify(state.drawings)),
+        players:JSON.parse(JSON.stringify(state.players)),
+        drawings:JSON.parse(JSON.stringify(state.drawings)),
+        moveCounter:state.moveCounter
       });
-      const next = state.redoStack.pop();
-      state.players = next.players;
-      state.drawings = next.drawings;
-      redrawDrawings();
-      drawPlayers();
+      const n=state.redoStack.pop();
+      state.players=n.players;state.drawings=n.drawings;state.moveCounter=n.moveCounter;
+      redrawDrawings();drawPlayers();
     }
 
     // ===== Formations =====
-    function applyFormation(name) {
-      saveState();
-      const w = courtCanvas.width;
-      const h = courtCanvas.height;
-
-      // Offense stays 5-out
-      const offPos = get5OutPositions();
-      const defPos = getDefenseFormation(name);
-      const newPlayers = [];
-
-      offPos.forEach((p, i) => {
-        newPlayers.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'offense' });
-      });
-      defPos.forEach((p, i) => {
-        newPlayers.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'defense' });
-      });
-
-      // Ball near PG
-      const ballR = CONFIG.ballRadius * state.pxPerFt / 10;
-      const playerR = CONFIG.player.radius * state.pxPerFt / 10;
-      newPlayers.push({
-        x: newPlayers[0].x + playerR + ballR + 2,
-        y: newPlayers[0].y,
-        label: '', team: 'ball',
-      });
-
-      state.players = newPlayers;
-      drawPlayers();
+    function applyFormation(name){
+      saveState();const w=courtCanvas.width,h=courtCanvas.height;
+      const offPos=get5OutPositions(),defPos=getDefenseFormation(name),np=[];
+      offPos.forEach((p,i)=>{np.push({x:p.x*w,y:p.y*h,label:POSITIONS[i],team:'offense'});});
+      defPos.forEach((p,i)=>{np.push({x:p.x*w,y:p.y*h,label:POSITIONS[i],team:'defense'});});
+      const bR=CONFIG.ballRadius*S(),pR=CONFIG.player.radius*S();
+      np.push({x:np[0].x+pR+bR+2,y:np[0].y,label:'',team:'ball'});
+      state.players=np;drawPlayers();
     }
 
-    // ===== Event Handlers =====
-    function getCanvasPos(e) {
-      const rect = interactionCanvas.getBoundingClientRect();
-      const src = e.touches ? e.touches[0] || e.changedTouches[0] : e;
-      return { x: src.clientX - rect.left, y: src.clientY - rect.top };
-    }
+    // ===== Player finding helpers =====
+    function getCanvasPos(e){const r=interactionCanvas.getBoundingClientRect(),src=e.touches?e.touches[0]||e.changedTouches[0]:e;return{x:src.clientX-r.left,y:src.clientY-r.top};}
 
-    function findPlayerAt(pos) {
-      const r = CONFIG.player.radius * state.pxPerFt / 10;
-      for (let i = state.players.length - 1; i >= 0; i--) {
-        const p = state.players[i];
-        const pr = p.team === 'ball' ? CONFIG.ballRadius * state.pxPerFt / 10 : r;
-        const dx = pos.x - p.x;
-        const dy = pos.y - p.y;
-        if (dx * dx + dy * dy <= (pr + 4) * (pr + 4)) return i;
+    function findPlayerAt(pos){
+      const r=CONFIG.player.radius*S();
+      for(let i=state.players.length-1;i>=0;i--){
+        const p=state.players[i],pr=p.team==='ball'?CONFIG.ballRadius*S():r;
+        const dx=pos.x-p.x,dy=pos.y-p.y;
+        if(dx*dx+dy*dy<=(pr+4)*(pr+4))return i;
       }
-      return -1;
+      return-1;
     }
 
-    function onPointerDown(e) {
-      e.preventDefault();
-      const pos = getCanvasPos(e);
+    function findOffensePlayerAt(pos){
+      const r=CONFIG.player.radius*S();
+      for(let i=state.players.length-1;i>=0;i--){
+        const p=state.players[i];
+        if(p.team!=='offense')continue;
+        const dx=pos.x-p.x,dy=pos.y-p.y;
+        if(dx*dx+dy*dy<=(r+6)*(r+6))return i;
+      }
+      return-1;
+    }
 
-      if (state.currentTool === 'move') {
-        const idx = findPlayerAt(pos);
-        if (idx >= 0) {
-          saveState();
-          state.isDragging = true;
-          state.dragPlayer = idx;
-          state.dragOffset = { x: pos.x - state.players[idx].x, y: pos.y - state.players[idx].y };
-          interactionCanvas.style.cursor = 'grabbing';
+    function findBallAt(pos){
+      const br=CONFIG.ballRadius*S();
+      for(let i=state.players.length-1;i>=0;i--){
+        const p=state.players[i];
+        if(p.team!=='ball')continue;
+        const dx=pos.x-p.x,dy=pos.y-p.y;
+        if(dx*dx+dy*dy<=(br+8)*(br+8))return i;
+      }
+      return-1;
+    }
+
+    // ===== Trail tool types =====
+    const TRAIL_TOOLS=['dribble','pmove','screen','pass'];
+
+    // ===== Events =====
+    function onPointerDown(e){
+      e.preventDefault();const pos=getCanvasPos(e);
+
+      if(state.currentTool==='cursor'){
+        // Select: drag any player to reposition (no trail)
+        const idx=findPlayerAt(pos);
+        if(idx>=0){
+          saveState();state.isDragging=true;state.dragPlayer=idx;
+          state.dragOffset={x:pos.x-state.players[idx].x,y:pos.y-state.players[idx].y};
+          interactionCanvas.style.cursor='grabbing';
         }
-      } else if (state.currentTool === 'draw') {
-        saveState();
-        state.isDrawing = true;
-        state.currentPath = [{ x: pos.x, y: pos.y }];
-      } else if (state.currentTool === 'arrow' || state.currentTool === 'dashed' || state.currentTool === 'zigzag') {
-        saveState();
-        state.isDrawing = true;
-        state.arrowStart = { x: pos.x, y: pos.y };
-      } else if (state.currentTool === 'screen') {
-        saveState();
-        state.isDrawing = true;
-        state.arrowStart = { x: pos.x, y: pos.y };
-      } else if (state.currentTool === 'eraser') {
+      } else if(['dribble','pmove','screen'].includes(state.currentTool)){
+        // Trail tools for offense players
+        const idx=findOffensePlayerAt(pos);
+        if(idx>=0){
+          saveState();
+          state.isDragging=true;
+          state.dragPlayer=idx;
+          state.trailStartPos={x:state.players[idx].x,y:state.players[idx].y};
+          state.trailPath=[{x:state.players[idx].x,y:state.players[idx].y}];
+          interactionCanvas.style.cursor='grabbing';
+        }
+      } else if(state.currentTool==='pass'){
+        // Pass tool: drag ball
+        const idx=findBallAt(pos);
+        if(idx>=0){
+          saveState();
+          state.isDragging=true;
+          state.dragPlayer=idx;
+          state.trailStartPos={x:state.players[idx].x,y:state.players[idx].y};
+          state.trailPath=[{x:state.players[idx].x,y:state.players[idx].y}];
+          interactionCanvas.style.cursor='grabbing';
+        }
+      } else if(state.currentTool==='draw'){
+        saveState();state.isDrawing=true;state.currentPath=[{x:pos.x,y:pos.y}];
+      } else if(state.currentTool==='eraser'){
         eraseAt(pos);
-      } else if (state.currentTool === 'text') {
-        const text = prompt('Enter text:');
-        if (text) {
-          saveState();
-          state.drawings.push({ type: 'text', x: pos.x, y: pos.y, text, color: state.penColor });
-          redrawDrawings();
-        }
+      } else if(state.currentTool==='text'){
+        const t=prompt('Enter text:');
+        if(t){saveState();state.drawings.push({type:'text',x:pos.x,y:pos.y,text:t,color:state.penColor});redrawDrawings();}
       }
     }
 
-    function onPointerMove(e) {
-      e.preventDefault();
-      const pos = getCanvasPos(e);
-      const s = state.pxPerFt / 10;
+    function onPointerMove(e){
+      e.preventDefault();const pos=getCanvasPos(e),s=S();
 
-      if (state.currentTool === 'move') {
-        if (state.isDragging && state.dragPlayer !== null) {
-          state.players[state.dragPlayer].x = pos.x - state.dragOffset.x;
-          state.players[state.dragPlayer].y = pos.y - state.dragOffset.y;
+      if(state.currentTool==='cursor'){
+        if(state.isDragging&&state.dragPlayer!==null){
+          state.players[state.dragPlayer].x=pos.x-state.dragOffset.x;
+          state.players[state.dragPlayer].y=pos.y-state.dragOffset.y;
           drawPlayers();
         } else {
-          interactionCanvas.style.cursor = findPlayerAt(pos) >= 0 ? 'grab' : 'default';
+          interactionCanvas.style.cursor=findPlayerAt(pos)>=0?'grab':'default';
         }
-      } else if (state.currentTool === 'draw' && state.isDrawing) {
+      } else if(TRAIL_TOOLS.includes(state.currentTool)&&state.isDragging){
+        // Move the player/ball to cursor position and record trail
+        state.players[state.dragPlayer].x=pos.x;
+        state.players[state.dragPlayer].y=pos.y;
+        state.trailPath.push({x:pos.x,y:pos.y});
+        drawPlayers();
+        // Draw trail preview
+        redrawDrawings();
+        drawTrailPreview(state.currentTool,state.trailPath,state.penColor,state.lineWidth);
+      } else if(state.currentTool==='draw'&&state.isDrawing){
         state.currentPath.push(pos);
         redrawDrawings();
-        const ctx = drawCtx;
-        ctx.beginPath();
-        ctx.strokeStyle = state.penColor;
-        ctx.lineWidth = state.lineWidth * s;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.setLineDash([]);
-        ctx.moveTo(state.currentPath[0].x, state.currentPath[0].y);
-        for (let i = 1; i < state.currentPath.length; i++) {
-          ctx.lineTo(state.currentPath[i].x, state.currentPath[i].y);
-        }
+        const ctx=drawCtx;
+        ctx.beginPath();ctx.strokeStyle=state.penColor;ctx.lineWidth=state.lineWidth*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
+        ctx.moveTo(state.currentPath[0].x,state.currentPath[0].y);
+        for(let i=1;i<state.currentPath.length;i++)ctx.lineTo(state.currentPath[i].x,state.currentPath[i].y);
         ctx.stroke();
-      } else if ((state.currentTool === 'arrow' || state.currentTool === 'dashed') && state.isDrawing) {
-        redrawDrawings();
-        drawArrowLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * s, state.currentTool === 'dashed');
-      } else if (state.currentTool === 'zigzag' && state.isDrawing) {
-        redrawDrawings();
-        drawZigzagLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * s);
-      } else if (state.currentTool === 'screen' && state.isDrawing) {
-        redrawDrawings();
-        const dx = pos.x - state.arrowStart.x;
-        const dy = pos.y - state.arrowStart.y;
-        const angle = Math.atan2(dy, dx);
-        drawScreenSymbol(drawCtx, state.arrowStart.x, state.arrowStart.y, angle, state.penColor, state.lineWidth * s);
-      } else if (state.currentTool === 'eraser' && (e.buttons > 0 || e.touches)) {
+      } else if(state.currentTool==='eraser'&&(e.buttons>0||e.touches)){
         eraseAt(pos);
+      } else if(TRAIL_TOOLS.includes(state.currentTool)&&!state.isDragging){
+        // Show grab cursor when hovering over valid targets
+        if(state.currentTool==='pass'){
+          interactionCanvas.style.cursor=findBallAt(pos)>=0?'grab':'crosshair';
+        } else {
+          interactionCanvas.style.cursor=findOffensePlayerAt(pos)>=0?'grab':'crosshair';
+        }
       }
     }
 
-    function onPointerUp(e) {
-      const s = state.pxPerFt / 10;
-
-      if (state.currentTool === 'move' && state.isDragging) {
-        state.isDragging = false;
-        state.dragPlayer = null;
-        interactionCanvas.style.cursor = 'default';
-      } else if (state.currentTool === 'draw' && state.isDrawing) {
-        state.isDrawing = false;
-        if (state.currentPath.length > 1) {
-          state.drawings.push({ type: 'path', points: [...state.currentPath], color: state.penColor, width: state.lineWidth });
-        }
-        state.currentPath = [];
-        redrawDrawings();
-      } else if ((state.currentTool === 'arrow' || state.currentTool === 'dashed') && state.isDrawing) {
-        state.isDrawing = false;
-        if (state.arrowStart) {
-          const pos = getCanvasPos(e);
-          const dx = pos.x - state.arrowStart.x;
-          const dy = pos.y - state.arrowStart.y;
-          if (Math.sqrt(dx * dx + dy * dy) > 10) {
-            state.drawings.push({
-              type: state.currentTool === 'dashed' ? 'dashed' : 'arrow',
-              from: { ...state.arrowStart }, to: pos,
-              color: state.penColor, width: state.lineWidth,
-            });
-          }
-        }
-        state.arrowStart = null;
-        redrawDrawings();
-      } else if (state.currentTool === 'zigzag' && state.isDrawing) {
-        state.isDrawing = false;
-        if (state.arrowStart) {
-          const pos = getCanvasPos(e);
-          const dx = pos.x - state.arrowStart.x;
-          const dy = pos.y - state.arrowStart.y;
-          if (Math.sqrt(dx * dx + dy * dy) > 10) {
-            state.drawings.push({
-              type: 'zigzag', from: { ...state.arrowStart }, to: pos,
-              color: state.penColor, width: state.lineWidth,
-            });
-          }
-        }
-        state.arrowStart = null;
-        redrawDrawings();
-      } else if (state.currentTool === 'screen' && state.isDrawing) {
-        state.isDrawing = false;
-        if (state.arrowStart) {
-          const pos = getCanvasPos(e);
-          const dx = pos.x - state.arrowStart.x;
-          const dy = pos.y - state.arrowStart.y;
-          const angle = Math.atan2(dy, dx);
+    function onPointerUp(e){
+      if(state.currentTool==='cursor'&&state.isDragging){
+        state.isDragging=false;state.dragPlayer=null;interactionCanvas.style.cursor='default';
+      } else if(TRAIL_TOOLS.includes(state.currentTool)&&state.isDragging){
+        state.isDragging=false;
+        if(state.trailPath.length>2){
+          state.moveCounter++;
+          const simplified=simplifyPath(state.trailPath,8*S());
           state.drawings.push({
-            type: 'screen', x: state.arrowStart.x, y: state.arrowStart.y, angle,
-            color: state.penColor, width: state.lineWidth,
+            type:state.currentTool,
+            points:simplified,
+            color:state.penColor,
+            width:state.lineWidth,
+            seq:state.moveCounter
           });
         }
-        state.arrowStart = null;
+        state.trailPath=[];
+        state.trailStartPos=null;
+        state.dragPlayer=null;
+        interactionCanvas.style.cursor='crosshair';
+        redrawDrawings();drawPlayers();
+      } else if(state.currentTool==='draw'&&state.isDrawing){
+        state.isDrawing=false;
+        if(state.currentPath.length>1)state.drawings.push({type:'path',points:[...state.currentPath],color:state.penColor,width:state.lineWidth});
+        state.currentPath=[];redrawDrawings();
+      }
+    }
+
+    function eraseAt(pos){
+      const er=18*S();let erased=false;
+      for(let i=state.drawings.length-1;i>=0;i--){
+        const d=state.drawings[i];let hit=false;
+        if(d.type==='path'||d.type==='pmove'||d.type==='dribble'||d.type==='screen'||d.type==='pass'){
+          if(d.points)for(const pt of d.points){if((pt.x-pos.x)**2+(pt.y-pos.y)**2<er*er){hit=true;break;}}
+        } else if(d.type==='text'){hit=(d.x-pos.x)**2+(d.y-pos.y)**2<er*er*2;}
+        if(hit){
+          if(!erased)saveState();
+          // If erasing a trail with a sequence number, adjust counter
+          state.drawings.splice(i,1);erased=true;
+        }
+      }
+      if(erased){
+        // Renumber remaining trail sequences
+        let counter=0;
+        state.drawings.forEach(d=>{
+          if(d.seq!==undefined){counter++;d.seq=counter;}
+        });
+        state.moveCounter=counter;
         redrawDrawings();
       }
     }
-
-    function eraseAt(pos) {
-      const eraserRadius = 18 * state.pxPerFt / 10;
-      let erased = false;
-      for (let i = state.drawings.length - 1; i >= 0; i--) {
-        const d = state.drawings[i];
-        let hit = false;
-        if (d.type === 'path') {
-          for (const pt of d.points) {
-            if ((pt.x - pos.x) ** 2 + (pt.y - pos.y) ** 2 < eraserRadius ** 2) { hit = true; break; }
-          }
-        } else if (d.type === 'arrow' || d.type === 'dashed' || d.type === 'zigzag') {
-          hit = distToSegment(pos, d.from, d.to) < eraserRadius;
-        } else if (d.type === 'screen') {
-          hit = (d.x - pos.x) ** 2 + (d.y - pos.y) ** 2 < eraserRadius ** 2 * 2;
-        } else if (d.type === 'text') {
-          hit = (d.x - pos.x) ** 2 + (d.y - pos.y) ** 2 < eraserRadius ** 2 * 2;
-        }
-        if (hit) {
-          if (!erased) saveState();
-          state.drawings.splice(i, 1);
-          erased = true;
-        }
-      }
-      if (erased) redrawDrawings();
-    }
-
-    function distToSegment(p, v, w) {
-      const l2 = (w.x - v.x) ** 2 + (w.y - v.y) ** 2;
-      if (l2 === 0) return Math.sqrt((p.x - v.x) ** 2 + (p.y - v.y) ** 2);
-      let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-      t = Math.max(0, Math.min(1, t));
-      return Math.sqrt((p.x - (v.x + t * (w.x - v.x))) ** 2 + (p.y - (v.y + t * (w.y - v.y))) ** 2);
-    }
+    function distToSeg(p,v,w){const l2=(w.x-v.x)**2+(w.y-v.y)**2;if(l2===0)return Math.sqrt((p.x-v.x)**2+(p.y-v.y)**2);let t=((p.x-v.x)*(w.x-v.x)+(p.y-v.y)*(w.y-v.y))/l2;t=Math.max(0,Math.min(1,t));return Math.sqrt((p.x-(v.x+t*(w.x-v.x)))**2+(p.y-(v.y+t*(w.y-v.y)))**2);}
 
     // ===== Export =====
-    function exportPNG() {
-      const c = document.createElement('canvas');
-      c.width = courtCanvas.width;
-      c.height = courtCanvas.height;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(courtCanvas, 0, 0);
-      ctx.drawImage(drawCanvas, 0, 0);
-      ctx.drawImage(interactionCanvas, 0, 0);
-      const link = document.createElement('a');
-      link.download = 'basketball-strategy.png';
-      link.href = c.toDataURL('image/png');
-      link.click();
+    function exportPNG(){const c=document.createElement('canvas');c.width=courtCanvas.width;c.height=courtCanvas.height;const ctx=c.getContext('2d');ctx.drawImage(courtCanvas,0,0);ctx.drawImage(drawCanvas,0,0);ctx.drawImage(interactionCanvas,0,0);const l=document.createElement('a');l.download='basketball-strategy.png';l.href=c.toDataURL('image/png');l.click();}
+
+    // ===== Tool/Court selection =====
+    function selectTool(tool){
+      state.currentTool=tool;
+      document.querySelectorAll('.tool-btn').forEach(b=>{b.classList.toggle('active',b.dataset.tool===tool);});
+      document.querySelectorAll('#mobileTools .mobile-tool-btn').forEach(b=>{b.classList.toggle('active',b.dataset.tool===tool);});
+      if(tool==='cursor')interactionCanvas.style.cursor='default';
+      else if(tool==='text')interactionCanvas.style.cursor='text';
+      else interactionCanvas.style.cursor='crosshair';
+    }
+    function selectCourtType(type){
+      state.courtType=type;state.drawings=[];state.undoStack=[];state.redoStack=[];state.moveCounter=0;
+      document.querySelectorAll('.court-type-btn').forEach(b=>{b.classList.toggle('active',b.dataset.court===type);});
+      document.querySelectorAll('[data-court-m]').forEach(b=>{b.classList.toggle('active',b.dataset.courtM===type);});
+      createDefaultPlayers();resizeCanvases();
     }
 
-    // ===== Tool Selection Helper =====
-    function selectTool(tool) {
-      state.currentTool = tool;
-      // Desktop buttons
-      document.querySelectorAll('.tool-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.tool === tool);
-      });
-      // Mobile buttons
-      document.querySelectorAll('#mobileTools .mobile-tool-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.tool === tool);
-      });
-      // Cursor
-      if (tool === 'move') interactionCanvas.style.cursor = 'default';
-      else if (tool === 'text') interactionCanvas.style.cursor = 'text';
-      else interactionCanvas.style.cursor = 'crosshair';
-    }
-
-    function selectCourtType(type) {
-      state.courtType = type;
-      state.drawings = [];
-      state.undoStack = [];
-      state.redoStack = [];
-      // Desktop buttons
-      document.querySelectorAll('.court-type-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.court === type);
-      });
-      // Mobile buttons
-      document.querySelectorAll('[data-court-m]').forEach(b => {
-        b.classList.toggle('active', b.dataset.courtM === type);
-      });
-      createDefaultPlayers();
-      resizeCanvases();
-    }
-
-    // ===== UI Event Bindings =====
-    // Desktop tool buttons
-    document.querySelectorAll('.tool-btn').forEach(btn => {
-      btn.addEventListener('click', () => selectTool(btn.dataset.tool));
-    });
-
-    // Desktop court type
-    document.querySelectorAll('.court-type-btn').forEach(btn => {
-      btn.addEventListener('click', () => selectCourtType(btn.dataset.court));
-    });
-
-    // Color swatches
-    document.querySelectorAll('.color-swatch').forEach(swatch => {
-      swatch.addEventListener('click', () => {
-        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        state.penColor = swatch.dataset.color;
-      });
-    });
-
-    // Line width
-    document.getElementById('lineWidth').addEventListener('input', e => {
-      state.lineWidth = parseInt(e.target.value);
-    });
-
-    // Desktop formations
-    document.querySelectorAll('[data-formation]').forEach(btn => {
-      btn.addEventListener('click', () => applyFormation(btn.dataset.formation));
-    });
-
-    // Undo/Redo desktop
-    document.getElementById('undoBtn').addEventListener('click', undo);
-    document.getElementById('redoBtn').addEventListener('click', redo);
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
-      if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
-    });
-
-    // Clear / Reset desktop
-    document.getElementById('clearDrawings').addEventListener('click', () => {
-      saveState();
-      state.drawings = [];
-      redrawDrawings();
-    });
-
-    document.getElementById('resetAll').addEventListener('click', () => {
-      if (confirm('Reset all?')) {
-        state.drawings = [];
-        state.undoStack = [];
-        state.redoStack = [];
-        createDefaultPlayers();
-        redrawDrawings();
-        drawPlayers();
-      }
-    });
-
-    document.getElementById('exportBtn').addEventListener('click', exportPNG);
-
-    // ===== Mobile toolbar bindings =====
-    document.querySelectorAll('#mobileTools .mobile-tool-btn[data-tool]').forEach(btn => {
-      btn.addEventListener('click', () => selectTool(btn.dataset.tool));
-    });
-
-    document.getElementById('mobileMoreBtn').addEventListener('click', () => {
-      document.getElementById('mobilePanel').classList.toggle('open');
-    });
-
-    document.querySelectorAll('[data-court-m]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectCourtType(btn.dataset.courtM);
-        document.getElementById('mobilePanel').classList.remove('open');
-      });
-    });
-
-    document.querySelectorAll('[data-formation-m]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyFormation(btn.dataset.formationM);
-        document.getElementById('mobilePanel').classList.remove('open');
-      });
-    });
-
-    document.getElementById('mobileUndo').addEventListener('click', undo);
-    document.getElementById('mobileRedo').addEventListener('click', redo);
-    document.getElementById('mobileClear').addEventListener('click', () => {
-      saveState(); state.drawings = []; redrawDrawings();
-    });
-    document.getElementById('mobileReset').addEventListener('click', () => {
-      if (confirm('Reset all?')) {
-        state.drawings = []; state.undoStack = []; state.redoStack = [];
-        createDefaultPlayers(); redrawDrawings(); drawPlayers();
-      }
-    });
-    document.getElementById('mobileExport').addEventListener('click', exportPNG);
-
-    // ===== Canvas events =====
-    interactionCanvas.addEventListener('mousedown', onPointerDown);
-    interactionCanvas.addEventListener('mousemove', onPointerMove);
-    interactionCanvas.addEventListener('mouseup', onPointerUp);
-    interactionCanvas.addEventListener('mouseleave', onPointerUp);
-    interactionCanvas.addEventListener('touchstart', onPointerDown, { passive: false });
-    interactionCanvas.addEventListener('touchmove', onPointerMove, { passive: false });
-    interactionCanvas.addEventListener('touchend', onPointerUp);
-
-    window.addEventListener('resize', resizeCanvases);
-
-    // ===== Initialize =====
-    createDefaultPlayers();
-    resizeCanvases();
+    // ===== UI Bindings =====
+    document.querySelectorAll('.tool-btn').forEach(b=>{b.addEventListener('click',()=>selectTool(b.dataset.tool));});
+    document.querySelectorAll('.court-type-btn').forEach(b=>{b.addEventListener('click',()=>selectCourtType(b.dataset.court));});
+    document.querySelectorAll('.color-swatch').forEach(sw=>{sw.addEventListener('click',()=>{document.querySelectorAll('.color-swatch').forEach(s2=>s2.classList.remove('active'));sw.classList.add('active');state.penColor=sw.dataset.color;});});
+    document.getElementById('lineWidth').addEventListener('input',e=>{state.lineWidth=parseInt(e.target.value);});
+    document.querySelectorAll('[data-formation]').forEach(b=>{b.addEventListener('click',()=>applyFormation(b.dataset.formation));});
+    document.getElementById('undoBtn').addEventListener('click',undo);
+    document.getElementById('redoBtn').addEventListener('click',redo);
+    document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='z'){e.preventDefault();undo();}if(e.ctrlKey&&e.key==='y'){e.preventDefault();redo();}});
+    document.getElementById('clearDrawings').addEventListener('click',()=>{saveState();state.drawings=[];state.moveCounter=0;redrawDrawings();});
+    document.getElementById('resetAll').addEventListener('click',()=>{if(confirm('Reset all?')){state.drawings=[];state.undoStack=[];state.redoStack=[];state.moveCounter=0;createDefaultPlayers();redrawDrawings();drawPlayers();}});
+    document.getElementById('exportBtn').addEventListener('click',exportPNG);
+    // Mobile
+    document.querySelectorAll('#mobileTools .mobile-tool-btn[data-tool]').forEach(b=>{b.addEventListener('click',()=>selectTool(b.dataset.tool));});
+    document.getElementById('mobileMoreBtn').addEventListener('click',()=>{document.getElementById('mobilePanel').classList.toggle('open');});
+    document.querySelectorAll('[data-court-m]').forEach(b=>{b.addEventListener('click',()=>{selectCourtType(b.dataset.courtM);document.getElementById('mobilePanel').classList.remove('open');});});
+    document.querySelectorAll('[data-formation-m]').forEach(b=>{b.addEventListener('click',()=>{applyFormation(b.dataset.formationM);document.getElementById('mobilePanel').classList.remove('open');});});
+    document.getElementById('mobileUndo').addEventListener('click',undo);
+    document.getElementById('mobileRedo').addEventListener('click',redo);
+    document.getElementById('mobileClear').addEventListener('click',()=>{saveState();state.drawings=[];state.moveCounter=0;redrawDrawings();});
+    document.getElementById('mobileReset').addEventListener('click',()=>{if(confirm('Reset all?')){state.drawings=[];state.undoStack=[];state.redoStack=[];state.moveCounter=0;createDefaultPlayers();redrawDrawings();drawPlayers();}});
+    document.getElementById('mobileExport').addEventListener('click',exportPNG);
+    // Canvas events
+    interactionCanvas.addEventListener('mousedown',onPointerDown);interactionCanvas.addEventListener('mousemove',onPointerMove);
+    interactionCanvas.addEventListener('mouseup',onPointerUp);interactionCanvas.addEventListener('mouseleave',onPointerUp);
+    interactionCanvas.addEventListener('touchstart',onPointerDown,{passive:false});interactionCanvas.addEventListener('touchmove',onPointerMove,{passive:false});
+    interactionCanvas.addEventListener('touchend',onPointerUp);
+    window.addEventListener('resize',resizeCanvases);
+    // Init
+    createDefaultPlayers();resizeCanvases();
   </script>
 </body>
 </html>
