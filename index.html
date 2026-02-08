@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Basketball Strategy Board</title>
   <style>
     :root {
@@ -18,11 +18,7 @@
       --btn-active: #2563eb;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,13 +26,15 @@
       color: var(--sidebar-text);
       overflow: hidden;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
+      touch-action: none;
     }
 
     header {
       background: var(--sidebar-bg);
-      padding: 8px 20px;
+      padding: 6px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -44,15 +42,8 @@
       flex-shrink: 0;
     }
 
-    header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    header h1 span {
-      color: var(--ball-color);
-    }
+    header h1 { font-size: 16px; font-weight: 600; }
+    header h1 span { color: var(--ball-color); }
 
     .main-layout {
       display: flex;
@@ -61,97 +52,75 @@
     }
 
     .sidebar {
-      width: 220px;
+      width: 200px;
       background: var(--sidebar-bg);
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       overflow-y: auto;
       border-right: 1px solid #334155;
       flex-shrink: 0;
     }
 
     .sidebar-section h3 {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #94a3b8;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .tool-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 4px;
     }
 
     .tool-btn {
       background: var(--btn-bg);
       border: 2px solid transparent;
       color: var(--sidebar-text);
-      padding: 8px 6px;
+      padding: 6px 4px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
       transition: all 0.15s;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
     }
 
-    .tool-btn:hover {
-      background: var(--btn-hover);
-    }
-
+    .tool-btn:hover { background: var(--btn-hover); }
     .tool-btn.active {
       border-color: var(--btn-active);
       background: rgba(37, 99, 235, 0.2);
     }
-
-    .tool-btn svg {
-      width: 20px;
-      height: 20px;
-    }
+    .tool-btn svg { width: 18px; height: 18px; }
 
     .action-btn {
       background: var(--btn-bg);
       border: none;
       color: var(--sidebar-text);
-      padding: 8px 12px;
+      padding: 7px 10px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       transition: all 0.15s;
       width: 100%;
       text-align: center;
     }
 
-    .action-btn:hover {
-      background: var(--btn-hover);
-    }
-
-    .action-btn.danger {
-      color: #fca5a5;
-    }
-
-    .action-btn.danger:hover {
-      background: rgba(220, 38, 38, 0.3);
-    }
+    .action-btn:hover { background: var(--btn-hover); }
+    .action-btn.danger { color: #fca5a5; }
+    .action-btn.danger:hover { background: rgba(220, 38, 38, 0.3); }
 
     .formation-list {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-    }
-
-    .color-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px;
+      gap: 3px;
     }
 
     .color-swatch {
@@ -162,22 +131,14 @@
       cursor: pointer;
       transition: border-color 0.15s;
     }
-
-    .color-swatch.active {
-      border-color: white;
-    }
-
-    .line-width-slider {
-      width: 100%;
-      margin-top: 4px;
-    }
+    .color-swatch.active { border-color: white; }
 
     .court-container {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 12px;
       position: relative;
       overflow: hidden;
     }
@@ -188,96 +149,104 @@
       border-radius: 4px;
     }
 
-    canvas {
-      display: block;
-      border-radius: 4px;
-    }
+    canvas { display: block; border-radius: 4px; }
+    #courtCanvas { position: absolute; top: 0; left: 0; }
+    #drawCanvas { position: absolute; top: 0; left: 0; }
+    #interactionCanvas { position: relative; cursor: default; }
 
-    #courtCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    #drawCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    #interactionCanvas {
-      position: relative;
-      cursor: default;
-    }
-
-    .court-type-toggle {
-      display: flex;
-      gap: 4px;
-    }
-
+    .court-type-toggle { display: flex; gap: 4px; }
     .court-type-btn {
       flex: 1;
       background: var(--btn-bg);
       border: 2px solid transparent;
       color: var(--sidebar-text);
-      padding: 6px;
+      padding: 5px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
       text-align: center;
       transition: all 0.15s;
     }
-
-    .court-type-btn:hover {
-      background: var(--btn-hover);
-    }
-
+    .court-type-btn:hover { background: var(--btn-hover); }
     .court-type-btn.active {
       border-color: var(--btn-active);
       background: rgba(37, 99, 235, 0.2);
     }
 
-    .history-info {
-      font-size: 11px;
-      color: #64748b;
-      text-align: center;
+    .undo-redo-btns { display: flex; gap: 4px; }
+    .undo-redo-btns .action-btn { flex: 1; }
+
+    /* Mobile bottom toolbar */
+    .mobile-toolbar {
+      display: none;
+      background: var(--sidebar-bg);
+      border-top: 1px solid #334155;
+      flex-shrink: 0;
     }
 
-    .undo-redo-btns {
+    .mobile-toolbar-row {
       display: flex;
-      gap: 6px;
+      overflow-x: auto;
+      gap: 2px;
+      padding: 6px 8px;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .undo-redo-btns .action-btn {
-      flex: 1;
+    .mobile-toolbar-row::-webkit-scrollbar { display: none; }
+
+    .mobile-tool-btn {
+      background: var(--btn-bg);
+      border: 2px solid transparent;
+      color: var(--sidebar-text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
+    .mobile-tool-btn:hover { background: var(--btn-hover); }
+    .mobile-tool-btn.active {
+      border-color: var(--btn-active);
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    .mobile-expand-panel {
+      display: none;
+      padding: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-top: 1px solid #334155;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .mobile-expand-panel.open { display: flex; }
 
     @media (max-width: 768px) {
-      .sidebar {
-        width: 180px;
-        padding: 10px;
-      }
+      header { padding: 4px 12px; }
+      header h1 { font-size: 14px; }
+      .sidebar { display: none; }
+      .mobile-toolbar { display: block; }
+      .court-container { padding: 8px; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1><span>&#127936;</span> Basketball Strategy Board</h1>
-    <div style="font-size: 12px; color: #64748b;">Drag players &bull; Draw plays &bull; Plan strategy</div>
+    <div style="font-size: 11px; color: #64748b;" class="header-subtitle">Drag &bull; Draw &bull; Plan</div>
   </header>
 
   <div class="main-layout">
     <div class="sidebar">
-      <!-- Court Type -->
       <div class="sidebar-section">
         <h3>Court</h3>
         <div class="court-type-toggle">
-          <button class="court-type-btn active" data-court="full">Full</button>
-          <button class="court-type-btn" data-court="half">Half</button>
+          <button class="court-type-btn" data-court="full">Full</button>
+          <button class="court-type-btn active" data-court="half">Half</button>
         </div>
       </div>
 
-      <!-- Tools -->
       <div class="sidebar-section">
         <h3>Tools</h3>
         <div class="tool-grid">
@@ -289,54 +258,58 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>
             Draw
           </button>
-          <button class="tool-btn" data-tool="arrow" title="Draw arrow">
+          <button class="tool-btn" data-tool="arrow" title="Pass / Cut">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             Arrow
           </button>
-          <button class="tool-btn" data-tool="dashed" title="Dashed line (screen/cut)">
+          <button class="tool-btn" data-tool="dashed" title="Screen / Cut">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"><line x1="5" y1="19" x2="19" y2="5"/></svg>
             Dashed
+          </button>
+          <button class="tool-btn" data-tool="screen" title="Screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="12" x2="18" y2="12"/></svg>
+            Screen
+          </button>
+          <button class="tool-btn" data-tool="zigzag" title="Dribble">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 20 8 14 12 18 16 10 20 4"/></svg>
+            Dribble
           </button>
           <button class="tool-btn" data-tool="eraser" title="Eraser">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l9-9 8 8-4 4z"/><line x1="7" y1="20" x2="16" y2="20"/></svg>
             Eraser
           </button>
-          <button class="tool-btn" data-tool="text" title="Add text label">
+          <button class="tool-btn" data-tool="text" title="Text label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
             Text
           </button>
         </div>
       </div>
 
-      <!-- Draw Options -->
-      <div class="sidebar-section" id="drawOptions">
+      <div class="sidebar-section">
         <h3>Pen Color</h3>
-        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-          <div class="color-swatch active" data-color="#ffffff" style="background: #ffffff;"></div>
-          <div class="color-swatch" data-color="#facc15" style="background: #facc15;"></div>
-          <div class="color-swatch" data-color="#4ade80" style="background: #4ade80;"></div>
-          <div class="color-swatch" data-color="#60a5fa" style="background: #60a5fa;"></div>
-          <div class="color-swatch" data-color="#f87171" style="background: #f87171;"></div>
-          <div class="color-swatch" data-color="#c084fc" style="background: #c084fc;"></div>
+        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+          <div class="color-swatch active" data-color="#ffffff" style="background:#ffffff;"></div>
+          <div class="color-swatch" data-color="#facc15" style="background:#facc15;"></div>
+          <div class="color-swatch" data-color="#4ade80" style="background:#4ade80;"></div>
+          <div class="color-swatch" data-color="#60a5fa" style="background:#60a5fa;"></div>
+          <div class="color-swatch" data-color="#f87171" style="background:#f87171;"></div>
+          <div class="color-swatch" data-color="#c084fc" style="background:#c084fc;"></div>
         </div>
-        <h3 style="margin-top: 10px;">Line Width</h3>
-        <input type="range" class="line-width-slider" id="lineWidth" min="1" max="8" value="3">
+        <h3 style="margin-top:8px;">Line Width</h3>
+        <input type="range" style="width:100%;" id="lineWidth" min="1" max="8" value="3">
       </div>
 
-      <!-- Formations -->
       <div class="sidebar-section">
-        <h3>Formations</h3>
+        <h3>Defense Formations</h3>
         <div class="formation-list">
-          <button class="action-btn" data-formation="1-3-1">1-3-1</button>
           <button class="action-btn" data-formation="2-3">2-3 Zone</button>
           <button class="action-btn" data-formation="3-2">3-2 Zone</button>
+          <button class="action-btn" data-formation="1-3-1">1-3-1 Zone</button>
           <button class="action-btn" data-formation="man-to-man">Man-to-Man</button>
-          <button class="action-btn" data-formation="horns">Horns</button>
-          <button class="action-btn" data-formation="box">Box</button>
+          <button class="action-btn" data-formation="box-one">Box & One</button>
         </div>
       </div>
 
-      <!-- Undo/Redo -->
       <div class="sidebar-section">
         <h3>History</h3>
         <div class="undo-redo-btns">
@@ -345,12 +318,11 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="sidebar-section">
         <h3>Actions</h3>
         <button class="action-btn" id="clearDrawings">Clear Drawings</button>
-        <button class="action-btn danger" id="resetAll" style="margin-top: 4px;">Reset All</button>
-        <button class="action-btn" id="exportBtn" style="margin-top: 4px;">Export as PNG</button>
+        <button class="action-btn danger" id="resetAll" style="margin-top:3px;">Reset All</button>
+        <button class="action-btn" id="exportBtn" style="margin-top:3px;">Export PNG</button>
       </div>
     </div>
 
@@ -363,32 +335,76 @@
     </div>
   </div>
 
+  <!-- Mobile bottom toolbar -->
+  <div class="mobile-toolbar">
+    <div class="mobile-toolbar-row" id="mobileTools">
+      <button class="mobile-tool-btn active" data-tool="move">Move</button>
+      <button class="mobile-tool-btn" data-tool="draw">Draw</button>
+      <button class="mobile-tool-btn" data-tool="arrow">Arrow</button>
+      <button class="mobile-tool-btn" data-tool="dashed">Dashed</button>
+      <button class="mobile-tool-btn" data-tool="screen">Screen</button>
+      <button class="mobile-tool-btn" data-tool="zigzag">Dribble</button>
+      <button class="mobile-tool-btn" data-tool="eraser">Eraser</button>
+      <button class="mobile-tool-btn" data-tool="text">Text</button>
+      <button class="mobile-tool-btn" id="mobileMoreBtn">More...</button>
+    </div>
+    <div class="mobile-expand-panel" id="mobilePanel">
+      <button class="mobile-tool-btn" data-court-m="full">Full Court</button>
+      <button class="mobile-tool-btn active" data-court-m="half">Half Court</button>
+      <button class="mobile-tool-btn" data-formation-m="2-3">2-3 Zone</button>
+      <button class="mobile-tool-btn" data-formation-m="3-2">3-2 Zone</button>
+      <button class="mobile-tool-btn" data-formation-m="1-3-1">1-3-1</button>
+      <button class="mobile-tool-btn" data-formation-m="man-to-man">Man</button>
+      <button class="mobile-tool-btn" data-formation-m="box-one">Box&1</button>
+      <button class="mobile-tool-btn" id="mobileUndo">Undo</button>
+      <button class="mobile-tool-btn" id="mobileRedo">Redo</button>
+      <button class="mobile-tool-btn" id="mobileClear">Clear</button>
+      <button class="mobile-tool-btn" id="mobileReset" style="color:#fca5a5;">Reset</button>
+      <button class="mobile-tool-btn" id="mobileExport">Export</button>
+    </div>
+  </div>
+
   <script>
-    // ===== Configuration =====
+    // ===== Court dimensions in feet (NBA) =====
+    const COURT = {
+      width: 50,        // sideline to sideline
+      halfLength: 47,   // baseline to half-court
+      fullLength: 94,
+      basketFromBaseline: 5.25,
+      basketHeight: 10,
+      paintWidth: 16,
+      paintLength: 19,
+      ftCircleRadius: 6,
+      threePointRadius: 23.75,
+      threeCornerDist: 3,   // from sideline
+      restrictedRadius: 4,
+      backboardWidth: 6,
+      rimRadius: 0.75,
+      centerCircleRadius: 6,
+    };
+
+    // ===== Config =====
     const CONFIG = {
-      court: {
-        fullWidth: 940,
-        fullHeight: 500,
-        halfWidth: 500,
-        halfHeight: 470,
-        color: '#c8823c',
-        lineColor: '#ffffff',
-        lineWidth: 2,
-      },
+      margin: 20,
+      courtColor: '#c8823c',
+      paintColor: 'rgba(80, 50, 20, 0.25)',
+      lineColor: '#ffffff',
+      lineWidth: 2,
       player: {
-        radius: 18,
-        fontSize: 14,
+        radius: 16,
+        fontSize: 11,
         offenseColor: '#2563eb',
         defenseColor: '#dc2626',
         ballColor: '#f97316',
         strokeColor: '#ffffff',
         strokeWidth: 2,
       },
+      ballRadius: 8,
     };
 
     // ===== State =====
     const state = {
-      courtType: 'full',
+      courtType: 'half',
       currentTool: 'move',
       penColor: '#ffffff',
       lineWidth: 3,
@@ -402,10 +418,11 @@
       isDrawing: false,
       currentPath: [],
       arrowStart: null,
-      scale: 1,
+      pxPerFt: 10,
+      marginPx: 20,
     };
 
-    // ===== Canvas Setup =====
+    // ===== Canvas =====
     const courtCanvas = document.getElementById('courtCanvas');
     const drawCanvas = document.getElementById('drawCanvas');
     const interactionCanvas = document.getElementById('interactionCanvas');
@@ -414,32 +431,42 @@
     const drawCtx = drawCanvas.getContext('2d');
     const interCtx = interactionCanvas.getContext('2d');
 
+    // Convert court feet to canvas pixels
+    function cx(ft) { return state.marginPx + ft * state.pxPerFt; }
+    function cy(ft) { return state.marginPx + ft * state.pxPerFt; }
+    function sc(ft) { return ft * state.pxPerFt; }
+
     function resizeCanvases() {
       const container = document.querySelector('.court-container');
-      const maxW = container.clientWidth - 32;
-      const maxH = container.clientHeight - 32;
+      const maxW = container.clientWidth - 24;
+      const maxH = container.clientHeight - 24;
 
-      let courtW, courtH;
+      let courtFtW, courtFtH;
       if (state.courtType === 'full') {
-        courtW = CONFIG.court.fullWidth;
-        courtH = CONFIG.court.fullHeight;
+        courtFtW = COURT.width;
+        courtFtH = COURT.fullLength;
       } else {
-        courtW = CONFIG.court.halfWidth;
-        courtH = CONFIG.court.halfHeight;
+        courtFtW = COURT.width;
+        courtFtH = COURT.halfLength;
       }
 
-      const scaleX = maxW / courtW;
-      const scaleY = maxH / courtH;
-      state.scale = Math.min(scaleX, scaleY, 1.2);
+      const totalFtW = courtFtW + CONFIG.margin * 2 / 10;
+      const totalFtH = courtFtH + CONFIG.margin * 2 / 10;
 
-      const w = Math.floor(courtW * state.scale);
-      const h = Math.floor(courtH * state.scale);
+      const scaleX = maxW / (courtFtW * 10 + CONFIG.margin * 2);
+      const scaleY = maxH / (courtFtH * 10 + CONFIG.margin * 2);
+      const scale = Math.min(scaleX, scaleY, 1.3);
+
+      state.pxPerFt = 10 * scale;
+      state.marginPx = CONFIG.margin * scale;
+
+      const w = Math.floor(courtFtW * state.pxPerFt + state.marginPx * 2);
+      const h = Math.floor(courtFtH * state.pxPerFt + state.marginPx * 2);
 
       [courtCanvas, drawCanvas, interactionCanvas].forEach(c => {
         c.width = w;
         c.height = h;
       });
-
       canvasWrapper.style.width = w + 'px';
       canvasWrapper.style.height = h + 'px';
 
@@ -453,305 +480,460 @@
       const ctx = courtCtx;
       const w = courtCanvas.width;
       const h = courtCanvas.height;
-      const s = state.scale;
-
       ctx.clearRect(0, 0, w, h);
 
-      // Court background
-      ctx.fillStyle = CONFIG.court.color;
+      // Background
+      ctx.fillStyle = CONFIG.courtColor;
       ctx.fillRect(0, 0, w, h);
 
-      // Court border
-      ctx.strokeStyle = CONFIG.court.lineColor;
-      ctx.lineWidth = CONFIG.court.lineWidth * s;
+      ctx.strokeStyle = CONFIG.lineColor;
+      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
+      ctx.setLineDash([]);
 
-      const margin = 20 * s;
-
-      if (state.courtType === 'full') {
-        drawFullCourt(ctx, w, h, s, margin);
+      if (state.courtType === 'half') {
+        drawHalfCourt(ctx);
       } else {
-        drawHalfCourt(ctx, w, h, s, margin);
+        drawFullCourt(ctx);
       }
     }
 
-    function drawFullCourt(ctx, w, h, s, margin) {
-      // Outer boundary
-      ctx.strokeRect(margin, margin, w - 2 * margin, h - 2 * margin);
+    function drawHalfCourt(ctx) {
+      const cw = COURT.width;
+      const ch = COURT.halfLength;
+
+      // Court boundary
+      ctx.strokeRect(cx(0), cy(0), sc(cw), sc(ch));
+
+      // Basket position (at TOP of court - baseline is y=0)
+      const bx = cw / 2;
+      const by = COURT.basketFromBaseline;
+
+      // Paint area
+      const paintLeft = (cw - COURT.paintWidth) / 2;
+      ctx.fillStyle = CONFIG.paintColor;
+      ctx.fillRect(cx(paintLeft), cy(0), sc(COURT.paintWidth), sc(COURT.paintLength));
+      ctx.strokeRect(cx(paintLeft), cy(0), sc(COURT.paintWidth), sc(COURT.paintLength));
+
+      // Hash marks on paint sides
+      const hashPositions = [7, 8, 11, 14];
+      const hashLen = 0.8;
+      hashPositions.forEach(yy => {
+        // Left side
+        ctx.beginPath();
+        ctx.moveTo(cx(paintLeft - hashLen), cy(yy));
+        ctx.lineTo(cx(paintLeft), cy(yy));
+        ctx.stroke();
+        // Right side
+        ctx.beginPath();
+        ctx.moveTo(cx(paintLeft + COURT.paintWidth), cy(yy));
+        ctx.lineTo(cx(paintLeft + COURT.paintWidth + hashLen), cy(yy));
+        ctx.stroke();
+      });
+
+      // Free throw circle - solid top half (away from basket)
+      ctx.beginPath();
+      ctx.arc(cx(bx), cy(COURT.paintLength), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
+      ctx.stroke();
+
+      // Free throw circle - dashed bottom half (toward basket)
+      ctx.setLineDash([sc(0.5), sc(0.5)]);
+      ctx.beginPath();
+      ctx.arc(cx(bx), cy(COURT.paintLength), sc(COURT.ftCircleRadius), 0, Math.PI);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 3-point line
+      drawThreePointLine(ctx, bx, by, cw, 0);
+
+      // Restricted area
+      ctx.beginPath();
+      ctx.arc(cx(bx), cy(by), sc(COURT.restrictedRadius), 0, Math.PI);
+      ctx.stroke();
+
+      // Backboard
+      const bbW = COURT.backboardWidth;
+      ctx.lineWidth = (CONFIG.lineWidth + 1) * state.pxPerFt / 10;
+      ctx.beginPath();
+      ctx.moveTo(cx(bx - bbW / 2), cy(by - 1.25));
+      ctx.lineTo(cx(bx + bbW / 2), cy(by - 1.25));
+      ctx.stroke();
+      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
+
+      // Rim
+      ctx.beginPath();
+      ctx.arc(cx(bx), cy(by), sc(COURT.rimRadius), 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Center circle (half) at bottom
+      ctx.beginPath();
+      ctx.arc(cx(bx), cy(ch), sc(COURT.centerCircleRadius), Math.PI, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawThreePointLine(ctx, basketX, basketY, courtWidth, baselineY) {
+      const r = COURT.threePointRadius;
+      const cornerX = COURT.threeCornerDist;
+
+      // Calculate where the arc meets the straight corner lines
+      const dx = (courtWidth / 2) - cornerX;
+      const dySquared = r * r - dx * dx;
+      if (dySquared < 0) return;
+      const junctionY = basketY + Math.sqrt(dySquared);
+
+      // Left straight section
+      ctx.beginPath();
+      ctx.moveTo(cx(cornerX), cy(baselineY));
+      ctx.lineTo(cx(cornerX), cy(junctionY));
+      ctx.stroke();
+
+      // Right straight section
+      ctx.beginPath();
+      ctx.moveTo(cx(courtWidth - cornerX), cy(baselineY));
+      ctx.lineTo(cx(courtWidth - cornerX), cy(junctionY));
+      ctx.stroke();
+
+      // Arc from right junction to left junction (going downward/away from basket)
+      const startAngle = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - basketX);
+      const endAngle = Math.atan2(junctionY - basketY, cornerX - basketX);
+
+      ctx.beginPath();
+      ctx.arc(cx(basketX), cy(basketY), sc(r), startAngle, endAngle);
+      ctx.stroke();
+    }
+
+    function drawFullCourt(ctx) {
+      const cw = COURT.width;
+      const ch = COURT.fullLength;
+
+      // Court boundary
+      ctx.strokeRect(cx(0), cy(0), sc(cw), sc(ch));
 
       // Center line
       ctx.beginPath();
-      ctx.moveTo(w / 2, margin);
-      ctx.lineTo(w / 2, h - margin);
+      ctx.moveTo(cx(0), cy(ch / 2));
+      ctx.lineTo(cx(cw), cy(ch / 2));
       ctx.stroke();
 
       // Center circle
       ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 36 * s, 0, Math.PI * 2);
+      ctx.arc(cx(cw / 2), cy(ch / 2), sc(COURT.centerCircleRadius), 0, Math.PI * 2);
       ctx.stroke();
 
-      // Small center circle
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 6 * s, 0, Math.PI * 2);
-      ctx.stroke();
+      // Top half (basket at top, baseline y=0)
+      drawHalfCourtSide(ctx, cw, 0, COURT.basketFromBaseline, false);
 
-      // Left side
-      drawCourtSide(ctx, margin, h, s, false);
-      // Right side
-      drawCourtSide(ctx, w - margin, h, s, true);
+      // Bottom half (basket at bottom, baseline y=94)
+      drawHalfCourtSide(ctx, cw, ch, ch - COURT.basketFromBaseline, true);
     }
 
-    function drawCourtSide(ctx, baseX, h, s, flip) {
-      const dir = flip ? -1 : 1;
-      const margin = 20 * s;
+    function drawHalfCourtSide(ctx, courtWidth, baselineY, basketY, flipped) {
+      const bx = courtWidth / 2;
+      const dir = flipped ? -1 : 1;
 
-      // Three-point line
-      ctx.beginPath();
-      ctx.moveTo(baseX, margin);
-      ctx.lineTo(baseX + dir * 140 * s, margin);
-      ctx.arc(baseX + dir * 55 * s, h / 2, 118 * s, -Math.acos((h / 2 - margin) / (118 * s)), Math.acos((h / 2 - margin) / (118 * s)));
-      ctx.lineTo(baseX, h - margin);
-      ctx.stroke();
+      // Paint
+      const paintLeft = (courtWidth - COURT.paintWidth) / 2;
+      const paintTop = flipped ? baselineY - COURT.paintLength : baselineY;
+      ctx.fillStyle = CONFIG.paintColor;
+      ctx.fillRect(cx(paintLeft), cy(Math.min(baselineY, baselineY - dir * COURT.paintLength)),
+        sc(COURT.paintWidth), sc(COURT.paintLength));
+      ctx.strokeRect(cx(paintLeft), cy(Math.min(baselineY, baselineY - dir * COURT.paintLength)),
+        sc(COURT.paintWidth), sc(COURT.paintLength));
 
-      // Key / Paint area
-      ctx.strokeRect(
-        flip ? baseX - 190 * s : baseX,
-        h / 2 - 60 * s,
-        190 * s,
-        120 * s
-      );
+      // Hash marks
+      const hashPositions = [7, 8, 11, 14];
+      const hashLen = 0.8;
+      hashPositions.forEach(d => {
+        const yy = baselineY + dir * d;
+        ctx.beginPath();
+        ctx.moveTo(cx(paintLeft - hashLen), cy(yy));
+        ctx.lineTo(cx(paintLeft), cy(yy));
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx(paintLeft + COURT.paintWidth), cy(yy));
+        ctx.lineTo(cx(paintLeft + COURT.paintWidth + hashLen), cy(yy));
+        ctx.stroke();
+      });
 
       // Free throw circle
+      const ftY = baselineY + dir * COURT.paintLength;
       ctx.beginPath();
-      ctx.arc(
-        baseX + dir * 190 * s,
-        h / 2,
-        36 * s,
-        flip ? Math.PI / 2 : -Math.PI / 2,
-        flip ? -Math.PI / 2 : Math.PI / 2
-      );
+      if (flipped) {
+        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), 0, Math.PI);
+      } else {
+        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
+      }
       ctx.stroke();
 
-      // Free throw circle dashed
-      ctx.setLineDash([5 * s, 5 * s]);
+      ctx.setLineDash([sc(0.5), sc(0.5)]);
       ctx.beginPath();
-      ctx.arc(
-        baseX + dir * 190 * s,
-        h / 2,
-        36 * s,
-        flip ? -Math.PI / 2 : Math.PI / 2,
-        flip ? Math.PI / 2 : -Math.PI / 2
-      );
+      if (flipped) {
+        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), Math.PI, 2 * Math.PI);
+      } else {
+        ctx.arc(cx(bx), cy(ftY), sc(COURT.ftCircleRadius), 0, Math.PI);
+      }
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Backboard
-      ctx.lineWidth = 3 * s;
-      ctx.beginPath();
-      ctx.moveTo(baseX + dir * 22 * s, h / 2 - 18 * s);
-      ctx.lineTo(baseX + dir * 22 * s, h / 2 + 18 * s);
-      ctx.stroke();
-      ctx.lineWidth = CONFIG.court.lineWidth * s;
+      // 3-point line
+      const r = COURT.threePointRadius;
+      const cornerX = COURT.threeCornerDist;
+      const dx = (courtWidth / 2) - cornerX;
+      const junctionDist = Math.sqrt(r * r - dx * dx);
+      const junctionY = basketY + dir * junctionDist;
 
-      // Rim
+      // Corner straight lines
       ctx.beginPath();
-      ctx.arc(baseX + dir * 31 * s, h / 2, 8 * s, 0, Math.PI * 2);
+      ctx.moveTo(cx(cornerX), cy(baselineY));
+      ctx.lineTo(cx(cornerX), cy(junctionY));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx(courtWidth - cornerX), cy(baselineY));
+      ctx.lineTo(cx(courtWidth - cornerX), cy(junctionY));
+      ctx.stroke();
+
+      // Arc
+      const startAngle = Math.atan2((junctionY - basketY) * dir, dx) * dir;
+      const endAngle = Math.atan2((junctionY - basketY) * dir, -dx) * dir;
+
+      ctx.beginPath();
+      if (flipped) {
+        const sa = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - bx);
+        const ea = Math.atan2(junctionY - basketY, cornerX - bx);
+        ctx.arc(cx(bx), cy(basketY), sc(r), sa, ea, true);
+      } else {
+        const sa = Math.atan2(junctionY - basketY, (courtWidth - cornerX) - bx);
+        const ea = Math.atan2(junctionY - basketY, cornerX - bx);
+        ctx.arc(cx(bx), cy(basketY), sc(r), sa, ea);
+      }
       ctx.stroke();
 
       // Restricted area
       ctx.beginPath();
-      ctx.arc(baseX + dir * 31 * s, h / 2, 20 * s, flip ? Math.PI / 2 : -Math.PI / 2, flip ? -Math.PI / 2 : Math.PI / 2);
+      if (flipped) {
+        ctx.arc(cx(bx), cy(basketY), sc(COURT.restrictedRadius), Math.PI, 2 * Math.PI);
+      } else {
+        ctx.arc(cx(bx), cy(basketY), sc(COURT.restrictedRadius), 0, Math.PI);
+      }
       ctx.stroke();
-    }
-
-    function drawHalfCourt(ctx, w, h, s, margin) {
-      // Outer boundary
-      ctx.strokeRect(margin, margin, w - 2 * margin, h - 2 * margin);
-
-      // Baseline at bottom
-      const baseY = h - margin;
-      const centerX = w / 2;
-
-      // Center circle (half) at top
-      ctx.beginPath();
-      ctx.arc(centerX, margin, 36 * s, 0, Math.PI);
-      ctx.stroke();
-
-      // Three-point line
-      ctx.beginPath();
-      ctx.moveTo(margin, baseY - 140 * s);
-      const threeRadius = 118 * s;
-      const dx = centerX - margin;
-      const angleOffset = Math.acos(Math.min((w / 2 - margin) / threeRadius, 1));
-      ctx.lineTo(margin, baseY);
-      ctx.moveTo(margin, baseY - 140 * s);
-      ctx.arc(centerX, baseY - 55 * s, threeRadius, Math.PI - angleOffset, angleOffset);
-      ctx.lineTo(w - margin, baseY);
-      ctx.stroke();
-
-      // Key / Paint
-      const keyW = 120 * s;
-      const keyH = 190 * s;
-      ctx.strokeRect(centerX - keyW / 2, baseY - keyH, keyW, keyH);
-
-      // Free throw circle
-      ctx.beginPath();
-      ctx.arc(centerX, baseY - keyH, 36 * s, Math.PI, 2 * Math.PI);
-      ctx.stroke();
-
-      ctx.setLineDash([5 * s, 5 * s]);
-      ctx.beginPath();
-      ctx.arc(centerX, baseY - keyH, 36 * s, 0, Math.PI);
-      ctx.stroke();
-      ctx.setLineDash([]);
 
       // Backboard
-      ctx.lineWidth = 3 * s;
+      const bbW = COURT.backboardWidth;
+      const bbY = basketY - dir * 1.25;
+      ctx.lineWidth = (CONFIG.lineWidth + 1) * state.pxPerFt / 10;
       ctx.beginPath();
-      ctx.moveTo(centerX - 18 * s, baseY - 22 * s);
-      ctx.lineTo(centerX + 18 * s, baseY - 22 * s);
+      ctx.moveTo(cx(bx - bbW / 2), cy(bbY));
+      ctx.lineTo(cx(bx + bbW / 2), cy(bbY));
       ctx.stroke();
-      ctx.lineWidth = CONFIG.court.lineWidth * s;
+      ctx.lineWidth = CONFIG.lineWidth * state.pxPerFt / 10;
 
       // Rim
       ctx.beginPath();
-      ctx.arc(centerX, baseY - 31 * s, 8 * s, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Restricted area
-      ctx.beginPath();
-      ctx.arc(centerX, baseY - 31 * s, 20 * s, Math.PI, 2 * Math.PI);
+      ctx.arc(cx(bx), cy(basketY), sc(COURT.rimRadius), 0, Math.PI * 2);
       ctx.stroke();
     }
 
-    // ===== Player Management =====
+    // ===== Players =====
+    const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];
+
+    // 5-Out offense positions (fractions of court)
+    function get5OutPositions() {
+      if (state.courtType === 'half') {
+        return [
+          { x: 0.50, y: 0.58 }, // PG - top of key
+          { x: 0.15, y: 0.40 }, // SG - left wing
+          { x: 0.85, y: 0.40 }, // SF - right wing
+          { x: 0.10, y: 0.12 }, // PF - left corner
+          { x: 0.90, y: 0.12 }, // C - right corner
+        ];
+      } else {
+        return [
+          { x: 0.50, y: 0.22 }, // PG
+          { x: 0.15, y: 0.32 }, // SG
+          { x: 0.85, y: 0.32 }, // SF
+          { x: 0.10, y: 0.44 }, // PF
+          { x: 0.90, y: 0.44 }, // C
+        ];
+      }
+    }
+
     function createDefaultPlayers() {
       state.players = [];
-      const s = state.scale;
       const w = courtCanvas.width;
       const h = courtCanvas.height;
 
-      if (state.courtType === 'full') {
-        // Offense (left side) - standard positions
-        const offensePositions = [
-          { x: 0.28, y: 0.5, label: 'PG' },
-          { x: 0.18, y: 0.25, label: 'SG' },
-          { x: 0.18, y: 0.75, label: 'SF' },
-          { x: 0.10, y: 0.35, label: 'PF' },
-          { x: 0.10, y: 0.65, label: 'C' },
-        ];
-        // Defense (right side)
-        const defensePositions = [
-          { x: 0.72, y: 0.5, label: '1' },
-          { x: 0.82, y: 0.25, label: '2' },
-          { x: 0.82, y: 0.75, label: '3' },
-          { x: 0.90, y: 0.35, label: '4' },
-          { x: 0.90, y: 0.65, label: '5' },
-        ];
+      const offPos = get5OutPositions();
+      offPos.forEach((p, i) => {
+        state.players.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'offense' });
+      });
 
-        offensePositions.forEach(p => {
-          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'offense' });
-        });
-        defensePositions.forEach(p => {
-          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'defense' });
-        });
-      } else {
-        // Half court positions
-        const offensePositions = [
-          { x: 0.50, y: 0.30, label: 'PG' },
-          { x: 0.20, y: 0.45, label: 'SG' },
-          { x: 0.80, y: 0.45, label: 'SF' },
-          { x: 0.30, y: 0.60, label: 'PF' },
-          { x: 0.70, y: 0.60, label: 'C' },
-        ];
-        const defensePositions = [
-          { x: 0.50, y: 0.45, label: '1' },
-          { x: 0.25, y: 0.58, label: '2' },
-          { x: 0.75, y: 0.58, label: '3' },
-          { x: 0.35, y: 0.72, label: '4' },
-          { x: 0.65, y: 0.72, label: '5' },
-        ];
-
-        offensePositions.forEach(p => {
-          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'offense' });
-        });
-        defensePositions.forEach(p => {
-          state.players.push({ x: p.x * w, y: p.y * h, label: p.label, team: 'defense' });
-        });
-      }
+      // Defense in Man-to-Man by default (slightly between offense and basket)
+      const defPositions = getDefenseFormation('man-to-man');
+      defPositions.forEach((p, i) => {
+        state.players.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'defense' });
+      });
 
       // Ball
-      state.players.push({ x: state.players[0].x - 25 * s, y: state.players[0].y - 25 * s, label: '', team: 'ball' });
+      const ballX = offPos[0].x * w + CONFIG.ballRadius * state.pxPerFt / 10 + CONFIG.player.radius * state.pxPerFt / 10;
+      const ballY = offPos[0].y * h;
+      state.players.push({ x: ballX, y: ballY, label: '', team: 'ball' });
+    }
+
+    function getDefenseFormation(name) {
+      const formations = {
+        half: {
+          '2-3': [
+            { x: 0.38, y: 0.35 }, { x: 0.62, y: 0.35 },
+            { x: 0.18, y: 0.18 }, { x: 0.50, y: 0.12 }, { x: 0.82, y: 0.18 },
+          ],
+          '3-2': [
+            { x: 0.25, y: 0.35 }, { x: 0.50, y: 0.38 }, { x: 0.75, y: 0.35 },
+            { x: 0.35, y: 0.18 }, { x: 0.65, y: 0.18 },
+          ],
+          '1-3-1': [
+            { x: 0.50, y: 0.42 }, { x: 0.22, y: 0.28 }, { x: 0.78, y: 0.28 },
+            { x: 0.50, y: 0.28 }, { x: 0.50, y: 0.10 },
+          ],
+          'man-to-man': [
+            { x: 0.50, y: 0.50 }, { x: 0.18, y: 0.34 }, { x: 0.82, y: 0.34 },
+            { x: 0.15, y: 0.14 }, { x: 0.85, y: 0.14 },
+          ],
+          'box-one': [
+            { x: 0.50, y: 0.52 }, // chaser follows PG
+            { x: 0.35, y: 0.28 }, { x: 0.65, y: 0.28 },
+            { x: 0.35, y: 0.12 }, { x: 0.65, y: 0.12 },
+          ],
+        },
+        full: {
+          '2-3': [
+            { x: 0.38, y: 0.14 }, { x: 0.62, y: 0.14 },
+            { x: 0.18, y: 0.08 }, { x: 0.50, y: 0.05 }, { x: 0.82, y: 0.08 },
+          ],
+          '3-2': [
+            { x: 0.25, y: 0.14 }, { x: 0.50, y: 0.16 }, { x: 0.75, y: 0.14 },
+            { x: 0.35, y: 0.07 }, { x: 0.65, y: 0.07 },
+          ],
+          '1-3-1': [
+            { x: 0.50, y: 0.18 }, { x: 0.22, y: 0.12 }, { x: 0.78, y: 0.12 },
+            { x: 0.50, y: 0.12 }, { x: 0.50, y: 0.04 },
+          ],
+          'man-to-man': [
+            { x: 0.50, y: 0.20 }, { x: 0.18, y: 0.30 }, { x: 0.82, y: 0.30 },
+            { x: 0.13, y: 0.42 }, { x: 0.87, y: 0.42 },
+          ],
+          'box-one': [
+            { x: 0.50, y: 0.20 },
+            { x: 0.35, y: 0.12 }, { x: 0.65, y: 0.12 },
+            { x: 0.35, y: 0.05 }, { x: 0.65, y: 0.05 },
+          ],
+        },
+      };
+      return formations[state.courtType][name] || formations[state.courtType]['man-to-man'];
     }
 
     function drawPlayers() {
       const ctx = interCtx;
-      const w = interactionCanvas.width;
-      const h = interactionCanvas.height;
-      ctx.clearRect(0, 0, w, h);
+      ctx.clearRect(0, 0, interactionCanvas.width, interactionCanvas.height);
 
       state.players.forEach(player => {
-        const r = CONFIG.player.radius * state.scale;
+        if (player.team === 'ball') {
+          drawBasketball(ctx, player.x, player.y);
+          return;
+        }
+
+        const r = CONFIG.player.radius * state.pxPerFt / 10;
 
         ctx.beginPath();
         ctx.arc(player.x, player.y, r, 0, Math.PI * 2);
-
-        if (player.team === 'offense') {
-          ctx.fillStyle = CONFIG.player.offenseColor;
-        } else if (player.team === 'defense') {
-          ctx.fillStyle = CONFIG.player.defenseColor;
-        } else {
-          ctx.fillStyle = CONFIG.player.ballColor;
-        }
+        ctx.fillStyle = player.team === 'offense' ? CONFIG.player.offenseColor : CONFIG.player.defenseColor;
         ctx.fill();
-
         ctx.strokeStyle = CONFIG.player.strokeColor;
-        ctx.lineWidth = CONFIG.player.strokeWidth * state.scale;
+        ctx.lineWidth = CONFIG.player.strokeWidth * state.pxPerFt / 10;
         ctx.stroke();
 
         if (player.label) {
           ctx.fillStyle = '#ffffff';
-          ctx.font = `bold ${CONFIG.player.fontSize * state.scale}px sans-serif`;
+          ctx.font = `bold ${CONFIG.player.fontSize * state.pxPerFt / 10}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(player.label, player.x, player.y);
+          ctx.fillText(player.label, player.x, player.y + 0.5);
         }
       });
+    }
+
+    function drawBasketball(ctx, x, y) {
+      const r = CONFIG.ballRadius * state.pxPerFt / 10;
+
+      // Orange ball
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = '#f97316';
+      ctx.fill();
+      ctx.strokeStyle = '#7c2d12';
+      ctx.lineWidth = 1.2 * state.pxPerFt / 10;
+      ctx.stroke();
+
+      // Ball lines
+      ctx.strokeStyle = '#7c2d1280';
+      ctx.lineWidth = 0.8 * state.pxPerFt / 10;
+
+      // Horizontal line
+      ctx.beginPath();
+      ctx.moveTo(x - r, y);
+      ctx.lineTo(x + r, y);
+      ctx.stroke();
+
+      // Vertical line
+      ctx.beginPath();
+      ctx.moveTo(x, y - r);
+      ctx.lineTo(x, y + r);
+      ctx.stroke();
+
+      // Curved lines
+      ctx.beginPath();
+      ctx.arc(x - r * 0.3, y, r * 0.75, -Math.PI * 0.4, Math.PI * 0.4);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(x + r * 0.3, y, r * 0.75, Math.PI - Math.PI * 0.4, Math.PI + Math.PI * 0.4);
+      ctx.stroke();
     }
 
     // ===== Drawing System =====
     function redrawDrawings() {
       const ctx = drawCtx;
       ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-
-      state.drawings.forEach(drawing => {
-        drawSingleDrawing(ctx, drawing);
-      });
+      state.drawings.forEach(d => drawSingleDrawing(ctx, d));
     }
 
-    function drawSingleDrawing(ctx, drawing) {
-      if (drawing.type === 'path') {
-        if (drawing.points.length < 2) return;
+    function drawSingleDrawing(ctx, d) {
+      const s = state.pxPerFt / 10;
+      if (d.type === 'path') {
+        if (d.points.length < 2) return;
         ctx.beginPath();
-        ctx.strokeStyle = drawing.color;
-        ctx.lineWidth = drawing.width * state.scale;
+        ctx.strokeStyle = d.color;
+        ctx.lineWidth = d.width * s;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.setLineDash([]);
-        ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
-        for (let i = 1; i < drawing.points.length; i++) {
-          ctx.lineTo(drawing.points[i].x, drawing.points[i].y);
+        ctx.moveTo(d.points[0].x, d.points[0].y);
+        for (let i = 1; i < d.points.length; i++) {
+          ctx.lineTo(d.points[i].x, d.points[i].y);
         }
         ctx.stroke();
-      } else if (drawing.type === 'arrow') {
-        drawArrowLine(ctx, drawing.from, drawing.to, drawing.color, drawing.width * state.scale, false);
-      } else if (drawing.type === 'dashed') {
-        drawArrowLine(ctx, drawing.from, drawing.to, drawing.color, drawing.width * state.scale, true);
-      } else if (drawing.type === 'text') {
-        ctx.fillStyle = drawing.color;
-        ctx.font = `bold ${14 * state.scale}px sans-serif`;
+      } else if (d.type === 'arrow') {
+        drawArrowLine(ctx, d.from, d.to, d.color, d.width * s, false);
+      } else if (d.type === 'dashed') {
+        drawArrowLine(ctx, d.from, d.to, d.color, d.width * s, true);
+      } else if (d.type === 'screen') {
+        drawScreenSymbol(ctx, d.x, d.y, d.angle, d.color, d.width * s);
+      } else if (d.type === 'zigzag') {
+        drawZigzagLine(ctx, d.from, d.to, d.color, d.width * s);
+      } else if (d.type === 'text') {
+        ctx.fillStyle = d.color;
+        ctx.font = `bold ${14 * s}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(drawing.text, drawing.x, drawing.y);
+        ctx.fillText(d.text, d.x, d.y);
       }
     }
 
@@ -759,25 +941,76 @@
       const dx = to.x - from.x;
       const dy = to.y - from.y;
       const angle = Math.atan2(dy, dx);
-      const headLen = 14 * state.scale;
+      const headLen = 12 * state.pxPerFt / 10;
 
       ctx.beginPath();
       ctx.strokeStyle = color;
       ctx.lineWidth = width;
       ctx.lineCap = 'round';
-
-      if (dashed) {
-        ctx.setLineDash([8 * state.scale, 6 * state.scale]);
-      } else {
-        ctx.setLineDash([]);
-      }
-
+      ctx.setLineDash(dashed ? [7 * state.pxPerFt / 10, 5 * state.pxPerFt / 10] : []);
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(to.x, to.y);
       ctx.stroke();
 
-      // Arrowhead
       ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.fillStyle = color;
+      ctx.moveTo(to.x, to.y);
+      ctx.lineTo(to.x - headLen * Math.cos(angle - Math.PI / 6), to.y - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(to.x - headLen * Math.cos(angle + Math.PI / 6), to.y - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawScreenSymbol(ctx, x, y, angle, color, width) {
+      const len = 14 * state.pxPerFt / 10;
+      const perpAngle = angle + Math.PI / 2;
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(width * 2, 5 * state.pxPerFt / 10);
+      ctx.lineCap = 'round';
+      ctx.setLineDash([]);
+      ctx.moveTo(x - len * Math.cos(perpAngle), y - len * Math.sin(perpAngle));
+      ctx.lineTo(x + len * Math.cos(perpAngle), y + len * Math.sin(perpAngle));
+      ctx.stroke();
+    }
+
+    function drawZigzagLine(ctx, from, to, color, width) {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 5) return;
+
+      const numZigs = Math.max(4, Math.round(dist / (12 * state.pxPerFt / 10)));
+      const nx = -dy / dist;
+      const ny = dx / dist;
+      const amp = 6 * state.pxPerFt / 10;
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.setLineDash([]);
+      ctx.moveTo(from.x, from.y);
+
+      for (let i = 1; i <= numZigs; i++) {
+        const t = i / numZigs;
+        const mx = from.x + dx * t;
+        const my = from.y + dy * t;
+        if (i < numZigs) {
+          const side = (i % 2 === 1) ? 1 : -1;
+          ctx.lineTo(mx + nx * amp * side, my + ny * amp * side);
+        } else {
+          ctx.lineTo(to.x, to.y);
+        }
+      }
+      ctx.stroke();
+
+      // Small arrowhead
+      const angle = Math.atan2(dy, dx);
+      const headLen = 8 * state.pxPerFt / 10;
       ctx.beginPath();
       ctx.fillStyle = color;
       ctx.moveTo(to.x, to.y);
@@ -829,147 +1062,26 @@
       const w = courtCanvas.width;
       const h = courtCanvas.height;
 
-      const formations = {
-        'full': {
-          '1-3-1': {
-            offense: [
-              { x: 0.28, y: 0.5 }, { x: 0.18, y: 0.20 }, { x: 0.18, y: 0.80 },
-              { x: 0.12, y: 0.5 }, { x: 0.05, y: 0.5 },
-            ],
-            defense: [
-              { x: 0.72, y: 0.5 }, { x: 0.82, y: 0.20 }, { x: 0.82, y: 0.80 },
-              { x: 0.88, y: 0.5 }, { x: 0.95, y: 0.5 },
-            ],
-          },
-          '2-3': {
-            offense: [
-              { x: 0.25, y: 0.35 }, { x: 0.25, y: 0.65 }, { x: 0.13, y: 0.25 },
-              { x: 0.13, y: 0.50 }, { x: 0.13, y: 0.75 },
-            ],
-            defense: [
-              { x: 0.75, y: 0.35 }, { x: 0.75, y: 0.65 }, { x: 0.87, y: 0.25 },
-              { x: 0.87, y: 0.50 }, { x: 0.87, y: 0.75 },
-            ],
-          },
-          '3-2': {
-            offense: [
-              { x: 0.22, y: 0.25 }, { x: 0.22, y: 0.50 }, { x: 0.22, y: 0.75 },
-              { x: 0.10, y: 0.35 }, { x: 0.10, y: 0.65 },
-            ],
-            defense: [
-              { x: 0.78, y: 0.25 }, { x: 0.78, y: 0.50 }, { x: 0.78, y: 0.75 },
-              { x: 0.90, y: 0.35 }, { x: 0.90, y: 0.65 },
-            ],
-          },
-          'man-to-man': {
-            offense: [
-              { x: 0.28, y: 0.50 }, { x: 0.20, y: 0.22 }, { x: 0.20, y: 0.78 },
-              { x: 0.10, y: 0.35 }, { x: 0.10, y: 0.65 },
-            ],
-            defense: [
-              { x: 0.32, y: 0.50 }, { x: 0.24, y: 0.22 }, { x: 0.24, y: 0.78 },
-              { x: 0.14, y: 0.35 }, { x: 0.14, y: 0.65 },
-            ],
-          },
-          'horns': {
-            offense: [
-              { x: 0.30, y: 0.50 }, { x: 0.18, y: 0.30 }, { x: 0.18, y: 0.70 },
-              { x: 0.06, y: 0.25 }, { x: 0.06, y: 0.75 },
-            ],
-            defense: [
-              { x: 0.70, y: 0.50 }, { x: 0.82, y: 0.30 }, { x: 0.82, y: 0.70 },
-              { x: 0.94, y: 0.25 }, { x: 0.94, y: 0.75 },
-            ],
-          },
-          'box': {
-            offense: [
-              { x: 0.25, y: 0.50 }, { x: 0.12, y: 0.30 }, { x: 0.12, y: 0.70 },
-              { x: 0.18, y: 0.30 }, { x: 0.18, y: 0.70 },
-            ],
-            defense: [
-              { x: 0.75, y: 0.50 }, { x: 0.88, y: 0.30 }, { x: 0.88, y: 0.70 },
-              { x: 0.82, y: 0.30 }, { x: 0.82, y: 0.70 },
-            ],
-          },
-        },
-        'half': {
-          '1-3-1': {
-            offense: [
-              { x: 0.50, y: 0.25 }, { x: 0.20, y: 0.45 }, { x: 0.80, y: 0.45 },
-              { x: 0.50, y: 0.55 }, { x: 0.50, y: 0.80 },
-            ],
-            defense: [
-              { x: 0.50, y: 0.35 }, { x: 0.28, y: 0.55 }, { x: 0.72, y: 0.55 },
-              { x: 0.50, y: 0.65 }, { x: 0.50, y: 0.85 },
-            ],
-          },
-          '2-3': {
-            offense: [
-              { x: 0.35, y: 0.28 }, { x: 0.65, y: 0.28 }, { x: 0.20, y: 0.55 },
-              { x: 0.50, y: 0.65 }, { x: 0.80, y: 0.55 },
-            ],
-            defense: [
-              { x: 0.40, y: 0.38 }, { x: 0.60, y: 0.38 }, { x: 0.25, y: 0.62 },
-              { x: 0.50, y: 0.72 }, { x: 0.75, y: 0.62 },
-            ],
-          },
-          '3-2': {
-            offense: [
-              { x: 0.20, y: 0.35 }, { x: 0.50, y: 0.28 }, { x: 0.80, y: 0.35 },
-              { x: 0.35, y: 0.60 }, { x: 0.65, y: 0.60 },
-            ],
-            defense: [
-              { x: 0.25, y: 0.45 }, { x: 0.50, y: 0.38 }, { x: 0.75, y: 0.45 },
-              { x: 0.38, y: 0.68 }, { x: 0.62, y: 0.68 },
-            ],
-          },
-          'man-to-man': {
-            offense: [
-              { x: 0.50, y: 0.25 }, { x: 0.18, y: 0.40 }, { x: 0.82, y: 0.40 },
-              { x: 0.30, y: 0.60 }, { x: 0.70, y: 0.60 },
-            ],
-            defense: [
-              { x: 0.50, y: 0.32 }, { x: 0.22, y: 0.46 }, { x: 0.78, y: 0.46 },
-              { x: 0.34, y: 0.66 }, { x: 0.66, y: 0.66 },
-            ],
-          },
-          'horns': {
-            offense: [
-              { x: 0.50, y: 0.22 }, { x: 0.30, y: 0.42 }, { x: 0.70, y: 0.42 },
-              { x: 0.18, y: 0.72 }, { x: 0.82, y: 0.72 },
-            ],
-            defense: [
-              { x: 0.50, y: 0.32 }, { x: 0.35, y: 0.50 }, { x: 0.65, y: 0.50 },
-              { x: 0.23, y: 0.78 }, { x: 0.77, y: 0.78 },
-            ],
-          },
-          'box': {
-            offense: [
-              { x: 0.50, y: 0.25 }, { x: 0.32, y: 0.52 }, { x: 0.68, y: 0.52 },
-              { x: 0.32, y: 0.72 }, { x: 0.68, y: 0.72 },
-            ],
-            defense: [
-              { x: 0.50, y: 0.35 }, { x: 0.38, y: 0.58 }, { x: 0.62, y: 0.58 },
-              { x: 0.38, y: 0.78 }, { x: 0.62, y: 0.78 },
-            ],
-          },
-        },
-      };
-
-      const f = formations[state.courtType][name];
-      if (!f) return;
-
-      const labels = { offense: ['PG', 'SG', 'SF', 'PF', 'C'], defense: ['1', '2', '3', '4', '5'] };
+      // Offense stays 5-out
+      const offPos = get5OutPositions();
+      const defPos = getDefenseFormation(name);
       const newPlayers = [];
 
-      f.offense.forEach((pos, i) => {
-        newPlayers.push({ x: pos.x * w, y: pos.y * h, label: labels.offense[i], team: 'offense' });
+      offPos.forEach((p, i) => {
+        newPlayers.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'offense' });
       });
-      f.defense.forEach((pos, i) => {
-        newPlayers.push({ x: pos.x * w, y: pos.y * h, label: labels.defense[i], team: 'defense' });
+      defPos.forEach((p, i) => {
+        newPlayers.push({ x: p.x * w, y: p.y * h, label: POSITIONS[i], team: 'defense' });
       });
+
       // Ball near PG
-      newPlayers.push({ x: newPlayers[0].x - 25 * state.scale, y: newPlayers[0].y - 25 * state.scale, label: '', team: 'ball' });
+      const ballR = CONFIG.ballRadius * state.pxPerFt / 10;
+      const playerR = CONFIG.player.radius * state.pxPerFt / 10;
+      newPlayers.push({
+        x: newPlayers[0].x + playerR + ballR + 2,
+        y: newPlayers[0].y,
+        label: '', team: 'ball',
+      });
 
       state.players = newPlayers;
       drawPlayers();
@@ -978,20 +1090,18 @@
     // ===== Event Handlers =====
     function getCanvasPos(e) {
       const rect = interactionCanvas.getBoundingClientRect();
-      const touch = e.touches ? e.touches[0] : e;
-      return {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top,
-      };
+      const src = e.touches ? e.touches[0] || e.changedTouches[0] : e;
+      return { x: src.clientX - rect.left, y: src.clientY - rect.top };
     }
 
     function findPlayerAt(pos) {
-      const r = CONFIG.player.radius * state.scale;
+      const r = CONFIG.player.radius * state.pxPerFt / 10;
       for (let i = state.players.length - 1; i >= 0; i--) {
         const p = state.players[i];
+        const pr = p.team === 'ball' ? CONFIG.ballRadius * state.pxPerFt / 10 : r;
         const dx = pos.x - p.x;
         const dy = pos.y - p.y;
-        if (dx * dx + dy * dy <= r * r) return i;
+        if (dx * dx + dy * dy <= (pr + 4) * (pr + 4)) return i;
       }
       return -1;
     }
@@ -1006,17 +1116,18 @@
           saveState();
           state.isDragging = true;
           state.dragPlayer = idx;
-          state.dragOffset = {
-            x: pos.x - state.players[idx].x,
-            y: pos.y - state.players[idx].y,
-          };
+          state.dragOffset = { x: pos.x - state.players[idx].x, y: pos.y - state.players[idx].y };
           interactionCanvas.style.cursor = 'grabbing';
         }
       } else if (state.currentTool === 'draw') {
         saveState();
         state.isDrawing = true;
         state.currentPath = [{ x: pos.x, y: pos.y }];
-      } else if (state.currentTool === 'arrow' || state.currentTool === 'dashed') {
+      } else if (state.currentTool === 'arrow' || state.currentTool === 'dashed' || state.currentTool === 'zigzag') {
+        saveState();
+        state.isDrawing = true;
+        state.arrowStart = { x: pos.x, y: pos.y };
+      } else if (state.currentTool === 'screen') {
         saveState();
         state.isDrawing = true;
         state.arrowStart = { x: pos.x, y: pos.y };
@@ -1035,6 +1146,7 @@
     function onPointerMove(e) {
       e.preventDefault();
       const pos = getCanvasPos(e);
+      const s = state.pxPerFt / 10;
 
       if (state.currentTool === 'move') {
         if (state.isDragging && state.dragPlayer !== null) {
@@ -1042,17 +1154,15 @@
           state.players[state.dragPlayer].y = pos.y - state.dragOffset.y;
           drawPlayers();
         } else {
-          const idx = findPlayerAt(pos);
-          interactionCanvas.style.cursor = idx >= 0 ? 'grab' : 'default';
+          interactionCanvas.style.cursor = findPlayerAt(pos) >= 0 ? 'grab' : 'default';
         }
       } else if (state.currentTool === 'draw' && state.isDrawing) {
-        state.currentPath.push({ x: pos.x, y: pos.y });
-        // Draw live preview
+        state.currentPath.push(pos);
         redrawDrawings();
         const ctx = drawCtx;
         ctx.beginPath();
         ctx.strokeStyle = state.penColor;
-        ctx.lineWidth = state.lineWidth * state.scale;
+        ctx.lineWidth = state.lineWidth * s;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.setLineDash([]);
@@ -1063,14 +1173,24 @@
         ctx.stroke();
       } else if ((state.currentTool === 'arrow' || state.currentTool === 'dashed') && state.isDrawing) {
         redrawDrawings();
-        const isDashed = state.currentTool === 'dashed';
-        drawArrowLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * state.scale, isDashed);
-      } else if (state.currentTool === 'eraser' && e.buttons > 0) {
+        drawArrowLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * s, state.currentTool === 'dashed');
+      } else if (state.currentTool === 'zigzag' && state.isDrawing) {
+        redrawDrawings();
+        drawZigzagLine(drawCtx, state.arrowStart, pos, state.penColor, state.lineWidth * s);
+      } else if (state.currentTool === 'screen' && state.isDrawing) {
+        redrawDrawings();
+        const dx = pos.x - state.arrowStart.x;
+        const dy = pos.y - state.arrowStart.y;
+        const angle = Math.atan2(dy, dx);
+        drawScreenSymbol(drawCtx, state.arrowStart.x, state.arrowStart.y, angle, state.penColor, state.lineWidth * s);
+      } else if (state.currentTool === 'eraser' && (e.buttons > 0 || e.touches)) {
         eraseAt(pos);
       }
     }
 
     function onPointerUp(e) {
+      const s = state.pxPerFt / 10;
+
       if (state.currentTool === 'move' && state.isDragging) {
         state.isDragging = false;
         state.dragPlayer = null;
@@ -1078,12 +1198,7 @@
       } else if (state.currentTool === 'draw' && state.isDrawing) {
         state.isDrawing = false;
         if (state.currentPath.length > 1) {
-          state.drawings.push({
-            type: 'path',
-            points: [...state.currentPath],
-            color: state.penColor,
-            width: state.lineWidth,
-          });
+          state.drawings.push({ type: 'path', points: [...state.currentPath], color: state.penColor, width: state.lineWidth });
         }
         state.currentPath = [];
         redrawDrawings();
@@ -1096,12 +1211,39 @@
           if (Math.sqrt(dx * dx + dy * dy) > 10) {
             state.drawings.push({
               type: state.currentTool === 'dashed' ? 'dashed' : 'arrow',
-              from: { ...state.arrowStart },
-              to: pos,
-              color: state.penColor,
-              width: state.lineWidth,
+              from: { ...state.arrowStart }, to: pos,
+              color: state.penColor, width: state.lineWidth,
             });
           }
+        }
+        state.arrowStart = null;
+        redrawDrawings();
+      } else if (state.currentTool === 'zigzag' && state.isDrawing) {
+        state.isDrawing = false;
+        if (state.arrowStart) {
+          const pos = getCanvasPos(e);
+          const dx = pos.x - state.arrowStart.x;
+          const dy = pos.y - state.arrowStart.y;
+          if (Math.sqrt(dx * dx + dy * dy) > 10) {
+            state.drawings.push({
+              type: 'zigzag', from: { ...state.arrowStart }, to: pos,
+              color: state.penColor, width: state.lineWidth,
+            });
+          }
+        }
+        state.arrowStart = null;
+        redrawDrawings();
+      } else if (state.currentTool === 'screen' && state.isDrawing) {
+        state.isDrawing = false;
+        if (state.arrowStart) {
+          const pos = getCanvasPos(e);
+          const dx = pos.x - state.arrowStart.x;
+          const dy = pos.y - state.arrowStart.y;
+          const angle = Math.atan2(dy, dx);
+          state.drawings.push({
+            type: 'screen', x: state.arrowStart.x, y: state.arrowStart.y, angle,
+            color: state.penColor, width: state.lineWidth,
+          });
         }
         state.arrowStart = null;
         redrawDrawings();
@@ -1109,39 +1251,28 @@
     }
 
     function eraseAt(pos) {
-      const eraserRadius = 20 * state.scale;
+      const eraserRadius = 18 * state.pxPerFt / 10;
       let erased = false;
-
       for (let i = state.drawings.length - 1; i >= 0; i--) {
         const d = state.drawings[i];
+        let hit = false;
         if (d.type === 'path') {
           for (const pt of d.points) {
-            const dx = pt.x - pos.x;
-            const dy = pt.y - pos.y;
-            if (dx * dx + dy * dy < eraserRadius * eraserRadius) {
-              if (!erased) saveState();
-              state.drawings.splice(i, 1);
-              erased = true;
-              break;
-            }
+            if ((pt.x - pos.x) ** 2 + (pt.y - pos.y) ** 2 < eraserRadius ** 2) { hit = true; break; }
           }
-        } else if (d.type === 'arrow' || d.type === 'dashed') {
-          if (distToSegment(pos, d.from, d.to) < eraserRadius) {
-            if (!erased) saveState();
-            state.drawings.splice(i, 1);
-            erased = true;
-          }
+        } else if (d.type === 'arrow' || d.type === 'dashed' || d.type === 'zigzag') {
+          hit = distToSegment(pos, d.from, d.to) < eraserRadius;
+        } else if (d.type === 'screen') {
+          hit = (d.x - pos.x) ** 2 + (d.y - pos.y) ** 2 < eraserRadius ** 2 * 2;
         } else if (d.type === 'text') {
-          const dx = d.x - pos.x;
-          const dy = d.y - pos.y;
-          if (dx * dx + dy * dy < eraserRadius * eraserRadius * 2) {
-            if (!erased) saveState();
-            state.drawings.splice(i, 1);
-            erased = true;
-          }
+          hit = (d.x - pos.x) ** 2 + (d.y - pos.y) ** 2 < eraserRadius ** 2 * 2;
+        }
+        if (hit) {
+          if (!erased) saveState();
+          state.drawings.splice(i, 1);
+          erased = true;
         }
       }
-
       if (erased) redrawDrawings();
     }
 
@@ -1155,53 +1286,62 @@
 
     // ===== Export =====
     function exportPNG() {
-      const exportCanvas = document.createElement('canvas');
-      exportCanvas.width = courtCanvas.width;
-      exportCanvas.height = courtCanvas.height;
-      const ctx = exportCanvas.getContext('2d');
-
+      const c = document.createElement('canvas');
+      c.width = courtCanvas.width;
+      c.height = courtCanvas.height;
+      const ctx = c.getContext('2d');
       ctx.drawImage(courtCanvas, 0, 0);
       ctx.drawImage(drawCanvas, 0, 0);
       ctx.drawImage(interactionCanvas, 0, 0);
-
       const link = document.createElement('a');
       link.download = 'basketball-strategy.png';
-      link.href = exportCanvas.toDataURL('image/png');
+      link.href = c.toDataURL('image/png');
       link.click();
     }
 
-    // ===== UI Event Bindings =====
-    // Tool selection
-    document.querySelectorAll('.tool-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.currentTool = btn.dataset.tool;
-
-        if (state.currentTool === 'eraser') {
-          interactionCanvas.style.cursor = 'crosshair';
-        } else if (state.currentTool === 'draw' || state.currentTool === 'arrow' || state.currentTool === 'dashed') {
-          interactionCanvas.style.cursor = 'crosshair';
-        } else if (state.currentTool === 'text') {
-          interactionCanvas.style.cursor = 'text';
-        } else {
-          interactionCanvas.style.cursor = 'default';
-        }
+    // ===== Tool Selection Helper =====
+    function selectTool(tool) {
+      state.currentTool = tool;
+      // Desktop buttons
+      document.querySelectorAll('.tool-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tool === tool);
       });
+      // Mobile buttons
+      document.querySelectorAll('#mobileTools .mobile-tool-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tool === tool);
+      });
+      // Cursor
+      if (tool === 'move') interactionCanvas.style.cursor = 'default';
+      else if (tool === 'text') interactionCanvas.style.cursor = 'text';
+      else interactionCanvas.style.cursor = 'crosshair';
+    }
+
+    function selectCourtType(type) {
+      state.courtType = type;
+      state.drawings = [];
+      state.undoStack = [];
+      state.redoStack = [];
+      // Desktop buttons
+      document.querySelectorAll('.court-type-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.court === type);
+      });
+      // Mobile buttons
+      document.querySelectorAll('[data-court-m]').forEach(b => {
+        b.classList.toggle('active', b.dataset.courtM === type);
+      });
+      createDefaultPlayers();
+      resizeCanvases();
+    }
+
+    // ===== UI Event Bindings =====
+    // Desktop tool buttons
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectTool(btn.dataset.tool));
     });
 
-    // Court type
+    // Desktop court type
     document.querySelectorAll('.court-type-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.court-type-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.courtType = btn.dataset.court;
-        state.drawings = [];
-        state.undoStack = [];
-        state.redoStack = [];
-        createDefaultPlayers();
-        resizeCanvases();
-      });
+      btn.addEventListener('click', () => selectCourtType(btn.dataset.court));
     });
 
     // Color swatches
@@ -1214,28 +1354,26 @@
     });
 
     // Line width
-    document.getElementById('lineWidth').addEventListener('input', (e) => {
+    document.getElementById('lineWidth').addEventListener('input', e => {
       state.lineWidth = parseInt(e.target.value);
     });
 
-    // Formations
+    // Desktop formations
     document.querySelectorAll('[data-formation]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyFormation(btn.dataset.formation);
-      });
+      btn.addEventListener('click', () => applyFormation(btn.dataset.formation));
     });
 
-    // Undo/Redo
+    // Undo/Redo desktop
     document.getElementById('undoBtn').addEventListener('click', undo);
     document.getElementById('redoBtn').addEventListener('click', redo);
 
     // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
       if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
     });
 
-    // Clear / Reset
+    // Clear / Reset desktop
     document.getElementById('clearDrawings').addEventListener('click', () => {
       saveState();
       state.drawings = [];
@@ -1243,7 +1381,7 @@
     });
 
     document.getElementById('resetAll').addEventListener('click', () => {
-      if (confirm('Reset all players and drawings?')) {
+      if (confirm('Reset all?')) {
         state.drawings = [];
         state.undoStack = [];
         state.redoStack = [];
@@ -1253,21 +1391,53 @@
       }
     });
 
-    // Export
     document.getElementById('exportBtn').addEventListener('click', exportPNG);
 
-    // Canvas events (mouse)
+    // ===== Mobile toolbar bindings =====
+    document.querySelectorAll('#mobileTools .mobile-tool-btn[data-tool]').forEach(btn => {
+      btn.addEventListener('click', () => selectTool(btn.dataset.tool));
+    });
+
+    document.getElementById('mobileMoreBtn').addEventListener('click', () => {
+      document.getElementById('mobilePanel').classList.toggle('open');
+    });
+
+    document.querySelectorAll('[data-court-m]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectCourtType(btn.dataset.courtM);
+        document.getElementById('mobilePanel').classList.remove('open');
+      });
+    });
+
+    document.querySelectorAll('[data-formation-m]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyFormation(btn.dataset.formationM);
+        document.getElementById('mobilePanel').classList.remove('open');
+      });
+    });
+
+    document.getElementById('mobileUndo').addEventListener('click', undo);
+    document.getElementById('mobileRedo').addEventListener('click', redo);
+    document.getElementById('mobileClear').addEventListener('click', () => {
+      saveState(); state.drawings = []; redrawDrawings();
+    });
+    document.getElementById('mobileReset').addEventListener('click', () => {
+      if (confirm('Reset all?')) {
+        state.drawings = []; state.undoStack = []; state.redoStack = [];
+        createDefaultPlayers(); redrawDrawings(); drawPlayers();
+      }
+    });
+    document.getElementById('mobileExport').addEventListener('click', exportPNG);
+
+    // ===== Canvas events =====
     interactionCanvas.addEventListener('mousedown', onPointerDown);
     interactionCanvas.addEventListener('mousemove', onPointerMove);
     interactionCanvas.addEventListener('mouseup', onPointerUp);
     interactionCanvas.addEventListener('mouseleave', onPointerUp);
-
-    // Canvas events (touch)
     interactionCanvas.addEventListener('touchstart', onPointerDown, { passive: false });
     interactionCanvas.addEventListener('touchmove', onPointerMove, { passive: false });
     interactionCanvas.addEventListener('touchend', onPointerUp);
 
-    // Window resize
     window.addEventListener('resize', resizeCanvases);
 
     // ===== Initialize =====
