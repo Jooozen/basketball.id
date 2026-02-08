@@ -190,6 +190,10 @@
         </div>
       </div>
       <div class="sidebar-section">
+        <h3>Mode</h3>
+        <button class="action-btn" id="gameLikeBtn" style="border:2px solid transparent;transition:all 0.15s;">Game-like Mode</button>
+      </div>
+      <div class="sidebar-section">
         <h3>History</h3>
         <div class="undo-redo-btns">
           <button class="action-btn" id="undoBtn">Undo</button>
@@ -231,6 +235,7 @@
       <button class="mobile-tool-btn" data-formation-m="1-3-1">1-3-1</button>
       <button class="mobile-tool-btn" data-formation-m="man-to-man">Man</button>
       <button class="mobile-tool-btn" data-formation-m="box-one">Box&1</button>
+      <button class="mobile-tool-btn" id="mobileGameLike">Game-like</button>
       <button class="mobile-tool-btn" id="mobileUndo">Undo</button>
       <button class="mobile-tool-btn" id="mobileRedo">Redo</button>
       <button class="mobile-tool-btn" id="mobileClear">Clear</button>
@@ -241,7 +246,7 @@
   <script>
     const COURT={width:50,halfLength:47,fullLength:94,basketFromBaseline:5.25,paintWidth:16,paintLength:19,ftCircleRadius:6,threePointRadius:23.75,threeCornerDist:3,restrictedRadius:4,backboardWidth:6,rimRadius:0.75,centerCircleRadius:6};
     const CONFIG={margin:20,courtColor:'#c8823c',paintColor:'rgba(80,50,20,0.25)',lineColor:'#ffffff',lineWidth:2,player:{radius:16,fontSize:11,offenseColor:'#2563eb',defenseColor:'#dc2626',strokeColor:'#ffffff',strokeWidth:2},ballRadius:8};
-    const state={courtType:'half',currentTool:'cursor',penColor:'#ffffff',lineWidth:3,players:[],drawings:[],undoStack:[],redoStack:[],isDragging:false,dragPlayer:null,dragOffset:{x:0,y:0},isDrawing:false,currentPath:[],arrowStart:null,pxPerFt:10,marginPx:20,moveCounter:0,trailPath:[],trailStartPos:null};
+    const state={courtType:'half',currentTool:'cursor',penColor:'#ffffff',lineWidth:3,players:[],drawings:[],undoStack:[],redoStack:[],isDragging:false,dragPlayer:null,dragOffset:{x:0,y:0},isDrawing:false,currentPath:[],arrowStart:null,pxPerFt:10,marginPx:20,moveCounter:0,trailPath:[],trailStartPos:null,gameLikeMode:false};
 
     const courtCanvas=document.getElementById('courtCanvas');
     const drawCanvas=document.getElementById('drawCanvas');
@@ -471,7 +476,7 @@
       } else if(d.type==='pmove'){
         // Move trail: smooth curve + arrowhead (trimmed from magnet)
         const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
-        const gap=CONFIG.player.radius*s+6*s;
+        const gap=CONFIG.player.radius*s+25*s;
         const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
         drawSmoothCurve(ctx,pts);ctx.stroke();
@@ -480,14 +485,14 @@
       } else if(d.type==='dribble'){
         // Dribble trail: zigzag along path + arrowhead (trimmed from magnet)
         const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
-        const gap=CONFIG.player.radius*s+6*s;
+        const gap=CONFIG.player.radius*s+25*s;
         const pts=trimTrailEnd(rawPts,gap);
         drawCurvedZigzag(ctx,pts,d.color,d.width*s);
         drawSeqNumber(ctx,d);
       } else if(d.type==='screen'){
         // Screen trail: smooth curve + perpendicular bar (trimmed from magnet)
         const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
-        const gap=CONFIG.player.radius*s+6*s;
+        const gap=CONFIG.player.radius*s+25*s;
         const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);
         drawSmoothCurve(ctx,pts);ctx.stroke();
@@ -499,7 +504,7 @@
       } else if(d.type==='pass'){
         // Pass trail: dotted smooth curve + arrowhead (trimmed from ball)
         const rawPts=d.points;if(!rawPts||rawPts.length<2)return;
-        const gap=CONFIG.ballRadius*s+6*s;
+        const gap=CONFIG.ballRadius*s+25*s;
         const pts=trimTrailEnd(rawPts,gap);
         ctx.strokeStyle=d.color;ctx.lineWidth=d.width*s;ctx.lineCap='round';ctx.lineJoin='round';
         ctx.setLineDash([7*s,5*s]);
@@ -719,6 +724,7 @@
         if(state.isDragging&&state.dragPlayer!==null){
           state.players[state.dragPlayer].x=pos.x-state.dragOffset.x;
           state.players[state.dragPlayer].y=pos.y-state.dragOffset.y;
+          if(state.gameLikeMode)updateDefensePositions();
           drawPlayers();
         } else {
           interactionCanvas.style.cursor=findPlayerAt(pos)>=0?'grab':'default';
@@ -728,6 +734,8 @@
         state.players[state.dragPlayer].x=pos.x;
         state.players[state.dragPlayer].y=pos.y;
         state.trailPath.push({x:pos.x,y:pos.y});
+        // Game-like mode: update defense positions
+        if(state.gameLikeMode)updateDefensePositions();
         // Dribble: move ball with the player, positioned left/right based on direction
         if(state.currentTool==='dribble'){
           const ballIdx=state.players.findIndex(p=>p.team==='ball');
@@ -833,6 +841,123 @@
     }
     function distToSeg(p,v,w){const l2=(w.x-v.x)**2+(w.y-v.y)**2;if(l2===0)return Math.sqrt((p.x-v.x)**2+(p.y-v.y)**2);let t=((p.x-v.x)*(w.x-v.x)+(p.y-v.y)*(w.y-v.y))/l2;t=Math.max(0,Math.min(1,t));return Math.sqrt((p.x-(v.x+t*(w.x-v.x)))**2+(p.y-(v.y+t*(w.y-v.y)))**2);}
 
+    // ===== Game-like Mode: Defense AI =====
+    // Basketball defensive principles:
+    // 1. Ball-You-Man: Defender stays on the line between ball and their man,
+    //    cheating toward the ball side ("one pass away" = deny, "two+ passes away" = help)
+    // 2. Help side / Ball side: Defenders on the weak side sag into the paint
+    //    to provide help defense and protect the rim
+    // 3. On-ball defender: Stays between ball handler and rim (close pressure)
+    // 4. One pass away: Deny position (close to their man, in passing lane)
+    // 5. Two+ passes away: Help position (sag toward paint/rim, see ball and man)
+    // 6. Screen defense: Defender of screener shows/hedges, then recovers
+    // 7. Protect the paint: Defenders collapse when ball penetrates inside the arc
+
+    function updateDefensePositions(){
+      if(!state.gameLikeMode)return;
+      const rim=getRimPos();
+      const offPlayers=state.players.filter(p=>p.team==='offense');
+      const defPlayers=state.players.filter(p=>p.team==='defense');
+      const ball=state.players.find(p=>p.team==='ball');
+      if(!ball||offPlayers.length!==5||defPlayers.length!==5)return;
+
+      const pR=CONFIG.player.radius*S();
+      const w=courtCanvas.width,h=courtCanvas.height;
+
+      // Find which offense player has the ball (closest to ball)
+      let ballManIdx=0,minBallDist=Infinity;
+      offPlayers.forEach((op,i)=>{
+        const d=Math.sqrt((op.x-ball.x)**2+(op.y-ball.y)**2);
+        if(d<minBallDist){minBallDist=d;ballManIdx=i;}
+      });
+
+      // Determine ball side (left/right of court center)
+      const courtCenterX=cx(COURT.width/2);
+      const ballSide=ball.x<courtCenterX?'left':'right';
+
+      // For each defender, compute ideal position
+      offPlayers.forEach((offP,i)=>{
+        const def=defPlayers[i];
+        const isBallMan=(i===ballManIdx);
+
+        // Vector from rim to offense player
+        const toOffX=offP.x-rim.x,toOffY=offP.y-rim.y;
+        const toOffDist=Math.sqrt(toOffX*toOffX+toOffY*toOffY)||1;
+
+        // Vector from rim to ball
+        const toBallX=ball.x-rim.x,toBallY=ball.y-rim.y;
+        const toBallDist=Math.sqrt(toBallX*toBallX+toBallY*toBallY)||1;
+
+        // Distance from offense player to ball
+        const offToBallDist=Math.sqrt((offP.x-ball.x)**2+(offP.y-ball.y)**2);
+
+        let targetX,targetY;
+
+        if(isBallMan){
+          // ON-BALL DEFENSE: Position between ball handler and rim
+          // Close pressure - stay about 1 player radius + small gap from offense
+          const guardDist=pR*2.5;
+          const dirX=toOffX/toOffDist,dirY=toOffY/toOffDist;
+          // Position slightly toward rim from the ball handler
+          targetX=offP.x-dirX*guardDist;
+          targetY=offP.y-dirY*guardDist;
+        } else {
+          // OFF-BALL DEFENSE: Position based on distance from ball
+          // Calculate "passes away" approximation
+          const passesAway=offToBallDist/(sc(10)); // ~10ft per pass
+
+          if(passesAway<1.8){
+            // ONE PASS AWAY: Deny position
+            // Stay close to man, but in the passing lane (between ball and man)
+            const ballToManX=offP.x-ball.x,ballToManY=offP.y-ball.y;
+            const ballToManDist=Math.sqrt(ballToManX*ballToManX+ballToManY*ballToManY)||1;
+            const denyDist=pR*2.2;
+            // Position on ball-side of the offensive player
+            const denyX=offP.x-(ballToManX/ballToManDist)*denyDist;
+            const denyY=offP.y-(ballToManY/ballToManDist)*denyDist;
+            // Slight cheat toward rim
+            const rimPull=0.15;
+            targetX=denyX+(rim.x-denyX)*rimPull;
+            targetY=denyY+(rim.y-denyY)*rimPull;
+          } else {
+            // TWO+ PASSES AWAY: Help position
+            // Sag toward the paint, maintain vision of ball and man
+            // Position = weighted blend between man and rim, biased toward rim
+            const helpBias=Math.min(0.5,0.25+passesAway*0.05);
+            // Base help position: between man and rim
+            const helpBaseX=offP.x+(rim.x-offP.x)*helpBias;
+            const helpBaseY=offP.y+(rim.y-offP.y)*helpBias;
+            // Also shift toward ball side slightly for help rotation
+            const ballPull=0.12;
+            targetX=helpBaseX+(ball.x-helpBaseX)*ballPull;
+            targetY=helpBaseY+(ball.y-helpBaseY)*ballPull;
+          }
+        }
+
+        // Clamp to court bounds
+        targetX=Math.max(state.marginPx+pR,Math.min(w-state.marginPx-pR,targetX));
+        targetY=Math.max(state.marginPx+pR,Math.min(h-state.marginPx-pR,targetY));
+
+        // Smooth movement (ease toward target)
+        const ease=0.25;
+        def.x+=(targetX-def.x)*ease;
+        def.y+=(targetY-def.y)*ease;
+      });
+    }
+
+    function toggleGameLikeMode(){
+      state.gameLikeMode=!state.gameLikeMode;
+      const btn=document.getElementById('gameLikeBtn');
+      const mBtn=document.getElementById('mobileGameLike');
+      if(state.gameLikeMode){
+        btn.style.borderColor='var(--btn-active)';btn.style.background='rgba(37,99,235,0.2)';
+        if(mBtn){mBtn.style.borderColor='var(--btn-active)';mBtn.style.background='rgba(37,99,235,0.2)';}
+      } else {
+        btn.style.borderColor='transparent';btn.style.background='var(--btn-bg)';
+        if(mBtn){mBtn.style.borderColor='transparent';mBtn.style.background='var(--btn-bg)';}
+      }
+    }
+
     // ===== Export =====
     function exportPNG(){const c=document.createElement('canvas');c.width=courtCanvas.width;c.height=courtCanvas.height;const ctx=c.getContext('2d');ctx.drawImage(courtCanvas,0,0);ctx.drawImage(drawCanvas,0,0);ctx.drawImage(interactionCanvas,0,0);const l=document.createElement('a');l.download='basketball-strategy.png';l.href=c.toDataURL('image/png');l.click();}
 
@@ -864,11 +989,13 @@
     document.getElementById('clearDrawings').addEventListener('click',()=>{saveState();state.drawings=[];state.moveCounter=0;redrawDrawings();});
     document.getElementById('resetAll').addEventListener('click',()=>{if(confirm('Reset all?')){state.drawings=[];state.undoStack=[];state.redoStack=[];state.moveCounter=0;createDefaultPlayers();redrawDrawings();drawPlayers();}});
     document.getElementById('exportBtn').addEventListener('click',exportPNG);
+    document.getElementById('gameLikeBtn').addEventListener('click',toggleGameLikeMode);
     // Mobile
     document.querySelectorAll('#mobileTools .mobile-tool-btn[data-tool]').forEach(b=>{b.addEventListener('click',()=>selectTool(b.dataset.tool));});
     document.getElementById('mobileMoreBtn').addEventListener('click',()=>{document.getElementById('mobilePanel').classList.toggle('open');});
     document.querySelectorAll('[data-court-m]').forEach(b=>{b.addEventListener('click',()=>{selectCourtType(b.dataset.courtM);document.getElementById('mobilePanel').classList.remove('open');});});
     document.querySelectorAll('[data-formation-m]').forEach(b=>{b.addEventListener('click',()=>{applyFormation(b.dataset.formationM);document.getElementById('mobilePanel').classList.remove('open');});});
+    document.getElementById('mobileGameLike').addEventListener('click',toggleGameLikeMode);
     document.getElementById('mobileUndo').addEventListener('click',undo);
     document.getElementById('mobileRedo').addEventListener('click',redo);
     document.getElementById('mobileClear').addEventListener('click',()=>{saveState();state.drawings=[];state.moveCounter=0;redrawDrawings();});
