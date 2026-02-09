@@ -1054,34 +1054,34 @@
 
     const PLAYER_LABELS=['PG','SG','SF','PF','C'];
 
-    // ===== 5-Out Standard Positions =====
-    // All 5 players start outside the 3-point line
-    const FIVE_OUT={PG:'TopKey',SG:'WingL',SF:'WingR',PF:'CornerL',C:'CornerR'};
+    // ===== Basketball Timing Principles =====
+    // 1. アクション→リアクション: 攻撃のアクションに対して守備がリアクションし、その隙を次のアクションで突く
+    // 2. 1アクション=1判断: 各ステップは一つのバスケ判断/アクションに対応
+    // 3. スクリーン使用は同時: スクリーンユーザーとスクリーナーのロールは連動（同時移動が正しい）
+    // 4. パスは崩れた後: ディフェンスが置き去りにされてからパスを出す
 
-    // ===== Tactics Data (all start from 5-out) =====
     const TACTICS_DATA={tactics:[
       {
         id:'pattern_1',
         name:'P&R Tag & Backdoor',
         description:'ピック＆ロールから逆サイドのタグを逆手に取ったバックドア',
-        explanation:'Cがコーナーから上がってボールスクリーン。PGがドライブし、Cがリムへロール。X4がタグに入った瞬間、PFがバックドアを突いてノーマークのレイアップ。',
+        explanation:'CがPGにボールスクリーンをセット。PGがドライブしCがロール。X4がCにタグ（ヘルプ）に入った瞬間を見逃さず、PFがバックドアカット。DFが置き去りになった瞬間にPGがパス。',
         initPositions:{PG:'TopKey',SG:'WingL',SF:'CornerL',PF:'WingR',C:'CornerR'},
         ballHandler:'PG',
         steps:[
           {
             step:1,
-            action:'C pops up to set screen',
-            description:'Cがコーナーから上がりPGにボールスクリーンをセット',
+            action:'C sets ball screen',
+            description:'CがコーナーからPGの位置まで上がりボールスクリーンをセット',
             moves:[
-              {player:'C',from:'CornerR',to:'BallScreenTop',path:'linear',role:'screener'},
-              {player:'PG',from:'TopKey',to:'TopKey',state:'dribbling'}
+              {player:'C',from:'CornerR',to:'BallScreenTop',path:'linear',role:'screener'}
             ]
           },
           {
             step:2,
-            action:'PG drives, C rolls',
-            description:'PGがスクリーンを使い右へドライブ。Cはリムへロール',
-            condition:'X5がスクリーンヘッジ → Cのロールがフリー',
+            action:'PG drives + C rolls',
+            description:'PGがスクリーンを使い右へドライブ。Cは同時にリムへロール（P&Rの連動アクション）',
+            condition:'X5がヘッジ → Cのロールレーンが空く',
             moves:[
               {player:'PG',from:'TopKey',to:'SlotR',path:'curved_right',state:'dribbling'},
               {player:'C',from:'BallScreenTop',to:'PaintCenter',path:'roll_dive'}
@@ -1089,20 +1089,20 @@
           },
           {
             step:3,
-            action:'PF Backdoor Cut!',
-            description:'X4がCのタグに入った瞬間、PFがバックドアカット！',
-            condition:'X4がCへタグ → PFのバックドアが空く',
+            action:'PF reads tag & backdoor cuts',
+            description:'X4がCのロールにタグ（ヘルプ）に入る → PFがそれを見てバックドアカット！',
+            condition:'X4がCへタグ → PFのバックドアレーンが空く',
+            defenseDelay:{PF:0.75},
             moves:[
-              {player:'PF',from:'WingR',to:'DunkerR',path:'backdoor'},
-              {player:'PG',from:'SlotR',to:'SlotR',state:'dribbling'}
+              {player:'PF',from:'WingR',to:'DunkerR',path:'backdoor'}
             ]
           },
           {
             step:4,
-            action:'PG → PF Pass & Layup!',
-            description:'PGからPFへバウンスパス → ノーマークレイアップ！',
+            action:'PG passes to open PF',
+            description:'PFがDFを置き去りにした瞬間、PGがバウンスパス → ノーマークレイアップ！',
             moves:[
-              {player:'PG',action:'pass',target:'PF',passType:'bounce'},
+              {player:'PG',action:'pass',target:'PF',passType:'bounce',passAt:0.4},
               {player:'PF',action:'layup',at:'Rim'}
             ]
           }
@@ -1112,46 +1112,69 @@
         id:'pattern_2',
         name:'Pin-down to High-Low',
         description:'ピンダウンからハイロー展開でインサイドを崩す',
-        explanation:'PGからSFへパス後、PGがSGにピンダウンスクリーン。SGがカールカットで注目を集め、CがハイポストにフラッシュしてX5を釣り出す。空いたローポストにPFが飛び込む。',
+        explanation:'PGからSFへパス後、PGがSGにピンダウンスクリーン。SGのカールで注意を引き、CがハイポストにフラッシュしX5を釣り出す。空いたローポストにPFが飛び込みハイローフィード。',
         initPositions:{PG:'TopKey',SG:'CornerL',SF:'WingR',PF:'CornerR',C:'WingL'},
         ballHandler:'PG',
         steps:[
           {
             step:1,
-            action:'PG passes to SF, screens for SG',
-            description:'PGからSFへパス。PGはSGにピンダウンスクリーン',
+            action:'PG passes to SF',
+            description:'PGからSFへエントリーパス。ボールをサイドに展開',
             moves:[
-              {player:'PG',action:'pass',target:'SF'},
-              {player:'PG',from:'TopKey',to:'PinDownL',path:'linear',role:'screener'}
+              {player:'PG',action:'pass',target:'SF',passAt:0.3}
             ]
           },
           {
             step:2,
-            action:'SG curls off screen',
-            description:'SGがスクリーンを使いカールカット。PGはコーナーへフェイド',
-            condition:'X2がスクリーンにトレイル → SGカールでフリー',
+            action:'PG sets pin-down for SG',
+            description:'パス後、PGがSGのDF（X2）にピンダウンスクリーンをセットしに移動',
+            moves:[
+              {player:'PG',from:'TopKey',to:'PinDownL',path:'linear',role:'screener'}
+            ]
+          },
+          {
+            step:3,
+            action:'SG curls + PG fades',
+            description:'SGがスクリーンを使いカールカット。PGはコーナーへフェード（連動アクション）',
+            condition:'X2がスクリーンにトレイル → SGがフリーでカール',
             moves:[
               {player:'SG',from:'CornerL',to:'FreeThrow',path:'curl_around_screen'},
               {player:'PG',from:'PinDownL',to:'CornerL',path:'linear'}
             ]
           },
           {
-            step:3,
-            action:'C flashes to High Post',
-            description:'CがウィングからハイポストへフラッシュしSFからパスを受ける',
+            step:4,
+            action:'C flashes to high post',
+            description:'SGのカールにDFの注意が集まる隙に、Cがウィングからハイポストへフラッシュ',
             moves:[
-              {player:'C',from:'WingL',to:'ElbowL',path:'flash'},
-              {player:'SF',action:'pass',target:'C'}
+              {player:'C',from:'WingL',to:'ElbowL',path:'flash'}
             ]
           },
           {
-            step:4,
-            action:'C → PF High-Low Feed!',
-            description:'X5がエルボーに釣り出され、CからPFへハイローフィード！',
-            condition:'X5がハイポストに出る → ゴール下にスペース',
+            step:5,
+            action:'SF passes to C',
+            description:'ハイポストに位置取ったCにSFからパス',
             moves:[
-              {player:'PF',from:'CornerR',to:'DunkerR',path:'flash'},
-              {player:'C',action:'pass',target:'PF',passType:'high_low'}
+              {player:'SF',action:'pass',target:'C',passAt:0.3}
+            ]
+          },
+          {
+            step:6,
+            action:'PF dives to low post',
+            description:'X5がCのハイポストまで釣り出された → ゴール下が空きPFがダイブ！',
+            condition:'X5がエルボーに出る → ゴール下にスペースが生まれる',
+            defenseDelay:{PF:0.7},
+            moves:[
+              {player:'PF',from:'CornerR',to:'DunkerR',path:'flash'}
+            ]
+          },
+          {
+            step:7,
+            action:'C feeds PF high-low',
+            description:'DFが置き去りになったPFにCからハイローフィード → イージーバスケット！',
+            moves:[
+              {player:'C',action:'pass',target:'PF',passType:'high_low',passAt:0.4},
+              {player:'PF',action:'layup',at:'Rim'}
             ]
           }
         ]
@@ -1160,43 +1183,51 @@
         id:'pattern_3',
         name:'Spanish P&R (Stack)',
         description:'スクリーナーにスクリーンでDFの判断コストを爆発させる',
-        explanation:'CがボールスクリーンをセットしSGがX5にバックスクリーン。3人が絡みDFのスイッチ判断をフリーズさせ、リムへのダイブを創出。三体問題。',
+        explanation:'CがPGにボールスクリーンをセットし、SGがCのDF（X5）にバックスクリーン。PGのドライブ→Cのロール→SGのバックスクリーンの三者連動で、DFのスイッチ判断を崩壊させる。三体問題。',
         initPositions:{PG:'TopKey',SG:'WingL',SF:'CornerR',PF:'CornerL',C:'WingR'},
         ballHandler:'PG',
         steps:[
           {
             step:1,
-            action:'C & SG set double screen',
-            description:'CがPGにボールスクリーン。SGがCのDF（X5）にバックスクリーン',
+            action:'C sets ball screen',
+            description:'CがウィングからPGの位置に上がりボールスクリーンをセット',
             moves:[
-              {player:'C',from:'WingR',to:'BallScreenTop',path:'linear',role:'screener'},
-              {player:'SG',from:'WingL',to:'ElbowR',path:'linear',role:'screener'}
+              {player:'C',from:'WingR',to:'BallScreenTop',path:'linear',role:'screener'}
             ]
           },
           {
             step:2,
-            action:'PG attacks left',
-            description:'PGがスクリーンを使って左方向にアタック',
+            action:'SG slides to back-screen spot',
+            description:'SGが逆サイドからエルボー付近へ移動。X5にバックスクリーンを仕掛ける準備',
+            moves:[
+              {player:'SG',from:'WingL',to:'ElbowR',path:'linear',role:'screener'}
+            ]
+          },
+          {
+            step:3,
+            action:'PG drives off screen',
+            description:'PGがCのスクリーンを使って左方向にアタック',
             moves:[
               {player:'PG',from:'TopKey',to:'SlotL',path:'curved_left',state:'dribbling'}
             ]
           },
           {
-            step:3,
-            action:'C dives to rim!',
-            description:'SGのバックスクリーンでX5が剥がされ、Cがフリーでリムへダイブ',
-            condition:'X5がバックスクリーンにハマる → Cフリー',
+            step:4,
+            action:'C rolls free + SG screens X5',
+            description:'SGがX5にバックスクリーン！X5が引っかかりCがフリーでリムへダイブ。SGはトップへポップ',
+            condition:'X5がバックスクリーンにハマる → Cがリムでフリー',
+            defenseDelay:{C:0.8},
             moves:[
               {player:'C',from:'BallScreenTop',to:'DunkerL',path:'roll_dive'},
               {player:'SG',from:'ElbowR',to:'TopR',path:'linear'}
             ]
           },
           {
-            step:4,
-            action:'PG → C Lob Pass!',
-            description:'判断が遅れたDFを尻目にPGからCへロブパス → ダンク！',
+            step:5,
+            action:'PG lob pass to C',
+            description:'DFの判断が遅れた隙にPGからCへロブパス → ダンク！',
             moves:[
-              {player:'PG',action:'pass',target:'C',passType:'lob'},
+              {player:'PG',action:'pass',target:'C',passType:'lob',passAt:0.4},
               {player:'C',action:'dunk',at:'Rim'}
             ]
           }
@@ -1318,11 +1349,12 @@
     // ===== Animation State =====
     const anim={
       active:false, playing:false, tactic:null, stepIdx:0,
-      progress:0, lastTime:0, stepDuration:1800,
+      progress:0, lastTime:0, stepDuration:1400,
       frame:null, stepStartPositions:{}, passAnim:null,
       stepPaths:{},
       ballHolder:null,
-      stepPause:0 // ms remaining in inter-step pause
+      stepPause:0, // ms remaining in inter-step pause
+      defenseDelays:{} // {playerLabel: freezeRatio} for current step
     };
 
     function getPlayerByLabel(label){
@@ -1369,6 +1401,8 @@
       if(!anim.tactic)return;
       const step=anim.tactic.steps[anim.stepIdx];
       if(!step||!step.moves)return;
+      // Load defense delays for this step
+      anim.defenseDelays=step.defenseDelay||{};
       step.moves.forEach(move=>{
         if(move.action==='pass'||move.action==='layup'||move.action==='dunk')return;
         if(!move.from||!move.to||move.from===move.to)return;
@@ -1430,7 +1464,7 @@
     function stopTacticAnim(){
       pauseTacticAnim();
       anim.active=false;anim.tactic=null;anim.stepIdx=0;anim.progress=0;
-      anim.passAnim=null;anim.stepPaths={};anim.ballHolder=null;anim.stepPause=0;
+      anim.passAnim=null;anim.stepPaths={};anim.ballHolder=null;anim.stepPause=0;anim.defenseDelays={};
       document.querySelectorAll('.tactics-btn').forEach(b=>b.classList.remove('active'));
       document.getElementById('playbackControls').style.display='none';
       document.getElementById('stepInfo').style.display='none';
@@ -1474,7 +1508,7 @@
       // Clamp progress to valid range
       const t=Math.max(0,Math.min(1,anim.progress));
       applyStepInterpolation(t);
-      updateDefensePositions_tactic();
+      updateDefensePositions_tactic(anim.progress);
       drawPlayers();
       redrawDrawings();
       if(anim.passAnim)drawPassAnimation();
@@ -1483,7 +1517,9 @@
     }
 
     // ===== Defense reaction during tactics =====
-    function updateDefensePositions_tactic(){
+    // defenseDelay: {playerLabel: freezeRatio} — defender is frozen (caught by screen)
+    // for the first freezeRatio portion of the step, then slowly recovers
+    function updateDefensePositions_tactic(t){
       const rim=getRimPos();
       const offPlayers=state.players.filter(p=>p.team==='offense');
       const defPlayers=state.players.filter(p=>p.team==='defense');
@@ -1530,8 +1566,21 @@
         }
         targetX=Math.max(state.marginPx+pR,Math.min(w-state.marginPx-pR,targetX));
         targetY=Math.max(state.marginPx+pR,Math.min(h-state.marginPx-pR,targetY));
-        def.x+=(targetX-def.x)*0.15;
-        def.y+=(targetY-def.y)*0.15;
+
+        // Defense delay: freeze defender when beaten by screen/action
+        const delay=anim.defenseDelays[offP.label]||0;
+        let chaseSpeed=0.15;
+        if(delay>0&&t!==undefined){
+          if(t<delay){
+            chaseSpeed=0.008; // nearly frozen — defender caught by screen
+          } else {
+            const recovery=(t-delay)/(1-delay);
+            chaseSpeed=0.008+recovery*0.06; // slow recovery, still behind
+          }
+        }
+
+        def.x+=(targetX-def.x)*chaseSpeed;
+        def.y+=(targetY-def.y)*chaseSpeed;
       });
     }
 
@@ -1544,7 +1593,8 @@
 
       step.moves.forEach(move=>{
         if(move.action==='pass'){
-          if(t>=0.3&&!anim.passAnim){
+          const passAt=move.passAt||0.3;
+          if(t>=passAt&&!anim.passAnim){
             const fromP=getPlayerByLabel(move.player);
             const toP=getPlayerByLabel(move.target);
             if(fromP&&toP){
@@ -1590,13 +1640,13 @@
     }
 
     // ===== Step End =====
+    // No trails during playbook — clean animation only
     function applyStepEnd(){
       if(!anim.tactic)return;
       const step=anim.tactic.steps[anim.stepIdx];
       if(!step||!step.moves)return;
 
       step.moves.forEach(move=>{
-        // Skip non-movement actions
         if(move.action==='pass'||move.action==='layup'||move.action==='dunk')return;
         if(!move.from||!move.to||move.from===move.to)return;
 
@@ -1607,37 +1657,21 @@
           player.x=tp.x;player.y=tp.y;
         }
 
-        // Draw trail for this movement
-        const path=anim.stepPaths[move.player];
-        if(path&&path.length>1){
-          state.moveCounter++;
-          const trailType=move.state==='dribbling'?'dribble':
-                          (move.role==='screener'?'screen':'pmove');
-          state.drawings.push({type:trailType,points:[...path],color:'#facc15',width:3,seq:state.moveCounter});
-        }
-
         if(move.state==='dribbling'){
           anim.ballHolder=move.player;
           updateBallPosition();
         }
       });
 
-      // Handle pass trail
+      // Handle pass completion (no trail, just transfer ball)
       if(anim.passAnim){
         const toP=getPlayerByLabel(anim.passAnim.toLabel);
         if(toP){
-          state.moveCounter++;
-          state.drawings.push({
-            type:'pass',
-            points:[anim.passAnim.from,{x:toP.x,y:toP.y}],
-            color:'#facc15',width:3,seq:state.moveCounter
-          });
           anim.ballHolder=anim.passAnim.toLabel;
           updateBallPosition();
         }
         anim.passAnim=null;
       }
-      redrawDrawings();
     }
 
     // ===== Pass Animation Drawing =====
