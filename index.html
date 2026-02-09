@@ -1002,47 +1002,348 @@
       }
     }
 
-    // ===== Tactics Animation Engine =====
-    const TACTICS_DATA={"tactics":[{"id":"pattern_1","name":"P&R Tag & Backdoor","description":"ピック＆ロールから逆サイドのヘルプを逆手に取ったバックドアカット","explanation":"2:2（PGとC）の動きに対し、逆サイドのDF（X4）がカバーに入る「タグ」を攻略。X4がタグに入った瞬間、PFはバックドアを突き、最も成功率の高いノーマークのレイアップを創出します。","steps":[{"step":1,"action":"C Screen for PG","description":"CがPGに向かってスクリーンをセット","actors":{"C":{"from":"ElbowL","to":"TopRight","path":"linear"},"PG":{"from":"Top","to":"Top","state":"dribbling"}}},{"step":2,"action":"PG Drive & C Dive","description":"PGがスクリーンを使ってドライブ、Cはダイブ","condition":"X1がトラップ → PGドライブのチャンス","actors":{"PG":{"from":"Top","to":"PaintRight","path":"curved"},"C":{"from":"TopRight","to":"Rim","path":"linear"}}},{"step":3,"action":"PF Backdoor!","description":"X4がCのヘルプに入った瞬間、PFがバックドアカット！","condition":"X4がCのヘルプ → PFのバックドアが空く","actors":{"PF":{"from":"CornerR","to":"Rim","path":"v-cut"}}},{"step":4,"action":"Pass & Layup","description":"PGからPFへパス → ノーマークのレイアップ！","actors":{"PG":{"action":"pass","target":"PF"},"PF":{"action":"layup","at":"Rim"}}}]},{"id":"pattern_2","name":"Pin-down to High-Low","description":"オフボールスクリーンでズレを作り、ハイポスト経由でローポストを崩す","explanation":"外側のスクリーン（ピンダウン）でズレを作り、あえてCがハイポストへ上がることでゴール下のDFを引き出し、スペースを「掃除」。PFが飛び込み最短距離で得点。","steps":[{"step":1,"action":"PG→SF Pass, PG Screen","description":"PGからSFへパス、PGがSGにスクリーン","actors":{"PG":{"from":"Top","to":"ScreenPosL","path":"linear"},"SF":{"from":"WingR","to":"WingR","state":"receiving"}}},{"step":2,"action":"SG Curl Cut","description":"SGがカールカットでペイントへ侵入","condition":"X2がスクリーンに引っかかる → SGフリー","actors":{"SG":{"from":"CornerL","to":"Paint","path":"curved"}}},{"step":3,"action":"C Flash High","description":"Cがハイポストへフラッシュ、SFからパス","actors":{"C":{"from":"LowPostR","to":"ElbowR","path":"linear"},"SF":{"action":"pass","target":"C"}}},{"step":4,"action":"High-Low Feed!","description":"X5が釣り出された瞬間、CからPFへハイローフィード！","condition":"X5がハイポストに出る → ローポストが空く","actors":{"PF":{"from":"DunkerR","to":"Rim","path":"linear"},"C":{"action":"pass","target":"PF"}}}]},{"id":"pattern_3","name":"Spanish P&R","description":"スクリーナーにスクリーンをかけ、DFの判断を爆発させる","explanation":"ボールスクリーナー（C）に対してさらにSGがスクリーン。3人目が加わることで「誰がダイブを止め、誰がポップを追うか」の判断コストを爆発させ、DFをフリーズさせます。","steps":[{"step":1,"action":"Double Screen Setup","description":"CがPGにスクリーン、SGがCのDFにスクリーン","actors":{"C":{"from":"ElbowR","to":"Top","path":"linear"},"SG":{"from":"WingL","to":"TopScreen","path":"curved"}}},{"step":2,"action":"PG Penetration","description":"PGがスクリーンを使ってペイントへ侵入","actors":{"PG":{"from":"Top","to":"Paint","path":"curved"}}},{"step":3,"action":"C Dive & SG Pop","description":"Cがリムへダイブ、SGはポップアウト","condition":"X5がスクリーンにハマる → Cフリーでダイブ","actors":{"C":{"from":"Top","to":"Rim","path":"linear"},"SG":{"from":"TopScreen","to":"TopLeft","path":"linear"}}},{"step":4,"action":"Lob to Rim!","description":"判断が遅れた瞬間にCへのロブパス → ダンク！","actors":{"PG":{"action":"pass","target":"C"},"C":{"action":"dunk"}}}]}]};
+    // ===== Basketball Knowledge Engine =====
+    // Comprehensive court grid system with named positions (in feet, half-court)
+    // Court: 50ft wide (x: 0=left sideline, 50=right), 47ft deep (y: 0=baseline, 47=halfcourt)
+    // Rim at (25, 5.25), FT line at y=19, 3pt arc radius=23.75ft from rim
 
-    // Court position map (in feet, half-court coordinates)
-    const COURT_POS={
-      Top:{x:25,y:40},TopLeft:{x:15,y:38},TopRight:{x:35,y:38},TopScreen:{x:28,y:36},
-      ElbowL:{x:17,y:19},ElbowR:{x:33,y:19},
-      WingL:{x:7,y:26},WingR:{x:43,y:26},
-      CornerL:{x:3,y:7},CornerR:{x:47,y:7},
-      Rim:{x:25,y:5.25},Paint:{x:25,y:13},PaintRight:{x:31,y:12},PaintLeft:{x:19,y:12},
-      LowPostL:{x:19,y:8},LowPostR:{x:31,y:8},
-      HighPostL:{x:19,y:16},HighPostR:{x:31,y:16},
-      DunkerL:{x:21,y:5.5},DunkerR:{x:29,y:5.5},
-      ScreenPosL:{x:15,y:20},FTLine:{x:25,y:19}
+    const COURT_GRID={
+      // === Rim & Restricted Area ===
+      Rim:            {x:25,   y:5.25,  zone:'paint',    description:'バスケット'},
+      DunkerL:        {x:21,   y:4.5,   zone:'paint',    description:'ダンカースポット左'},
+      DunkerR:        {x:29,   y:4.5,   zone:'paint',    description:'ダンカースポット右'},
+      // === Low Post (ブロック付近, y≈7-9) ===
+      LowPostL:       {x:19,   y:8,     zone:'paint',    description:'ローポスト左'},
+      LowPostR:       {x:31,   y:8,     zone:'paint',    description:'ローポスト右'},
+      LowBlockL:      {x:17,   y:7,     zone:'paint',    description:'ローブロック左'},
+      LowBlockR:      {x:33,   y:7,     zone:'paint',    description:'ローブロック右'},
+      // === Mid Post (ミッドポスト, y≈12-14) ===
+      MidPostL:       {x:17,   y:13,    zone:'paint',    description:'ミッドポスト左'},
+      MidPostR:       {x:33,   y:13,    zone:'paint',    description:'ミッドポスト右'},
+      PaintCenter:    {x:25,   y:12,    zone:'paint',    description:'ペイント中央'},
+      PaintLow:       {x:25,   y:8,     zone:'paint',    description:'ペイント下'},
+      PaintHigh:      {x:25,   y:16,    zone:'paint',    description:'ペイント上'},
+      PaintL:         {x:20,   y:12,    zone:'paint',    description:'ペイント左'},
+      PaintR:         {x:30,   y:12,    zone:'paint',    description:'ペイント右'},
+      // === High Post / Elbow (フリースローライン付近, y≈19) ===
+      ElbowL:         {x:17,   y:19,    zone:'elbow',    description:'エルボー左'},
+      ElbowR:         {x:33,   y:19,    zone:'elbow',    description:'エルボー右'},
+      FreeThrow:      {x:25,   y:19,    zone:'elbow',    description:'フリースローライン'},
+      HighPostL:      {x:19,   y:17,    zone:'elbow',    description:'ハイポスト左'},
+      HighPostR:      {x:31,   y:17,    zone:'elbow',    description:'ハイポスト右'},
+      // === Short Corner (ショートコーナー, 3pt線の内側コーナー) ===
+      ShortCornerL:   {x:7,    y:8,     zone:'short_corner', description:'ショートコーナー左'},
+      ShortCornerR:   {x:43,   y:8,     zone:'short_corner', description:'ショートコーナー右'},
+      // === Corner 3pt (コーナースリー, y≈5-7, 3pt線の外側) ===
+      CornerL:        {x:2,    y:7,     zone:'perimeter', description:'コーナー3左'},
+      CornerR:        {x:48,   y:7,     zone:'perimeter', description:'コーナー3右'},
+      // === Wing (ウィング, 3ptライン外, 45度付近) ===
+      WingL:          {x:6,    y:24,    zone:'perimeter', description:'ウィング左'},
+      WingR:          {x:44,   y:24,    zone:'perimeter', description:'ウィング右'},
+      WingExtL:       {x:4,    y:18,    zone:'perimeter', description:'ウィング延長左'},
+      WingExtR:       {x:46,   y:18,    zone:'perimeter', description:'ウィング延長右'},
+      // === Slot / Guard Spot (スロット, 3ptアーク45度〜トップ間) ===
+      SlotL:          {x:13,   y:30,    zone:'perimeter', description:'スロット左'},
+      SlotR:          {x:37,   y:30,    zone:'perimeter', description:'スロット右'},
+      // === Top of Key / Point (トップ, 3ptアーク頂上付近) ===
+      TopKey:         {x:25,   y:31,    zone:'perimeter', description:'トップオブキー'},
+      TopL:           {x:18,   y:32,    zone:'perimeter', description:'トップ左'},
+      TopR:           {x:32,   y:32,    zone:'perimeter', description:'トップ右'},
+      // === Top Extended (ハーフコート寄り) ===
+      TopExtended:    {x:25,   y:38,    zone:'perimeter', description:'トップ延長'},
+      // === Screen Spots (スクリーン位置) ===
+      BallScreenTop:  {x:27,   y:30,    zone:'perimeter', description:'ボールスクリーン位置トップ'},
+      PinDownL:       {x:17,   y:15,    zone:'elbow',     description:'ピンダウン位置左'},
+      PinDownR:       {x:33,   y:15,    zone:'elbow',     description:'ピンダウン位置右'},
     };
-    function courtPos(name){const p=COURT_POS[name];if(!p)return{x:cx(25),y:cy(25)};return{x:cx(p.x),y:cy(p.y)};}
 
-    // Position name to player label mapping for each tactic pattern
+    function courtPos(name){
+      const p=COURT_GRID[name];
+      if(!p)return{x:cx(25),y:cy(25)};
+      return{x:cx(p.x),y:cy(p.y)};
+    }
+
+    // === Basketball Movement Principles ===
+    // 1. スペーシング: オフェンス選手間は最低12-15ft(約4m)の間隔を保つ
+    // 2. ボールサイド/ヘルプサイド: ボールのある側とない側を意識
+    // 3. カット: バスケットに向かう動き (Vカット, Lカット, カールカット, バックドア)
+    // 4. スクリーン: 味方のDFの進路を塞ぐ静止した壁
+    // 5. ロール/ポップ: スクリーン後のダイブ(リムへ)またはポップアウト(外へ)
+    // 6. ペイントタッチ優先: 最もリングに近いフリーの選手を最優先
+
+    const BASKETBALL_RULES={
+      MIN_SPACING_FT: 12,        // 選手間の最小間隔(ft)
+      SCREEN_CONTACT_DIST_FT: 2, // スクリーンの接触距離
+      CUT_SPEED_MULT: 1.3,       // カット時の速度倍率
+      PASS_ANGLE_MIN: 15,        // 最小パス角度(度)
+      THREE_POINT_RADIUS: 23.75, // 3ptラインの半径
+    };
+
+    // === Position Labels ===
     const PLAYER_LABELS=['PG','SG','SF','PF','C'];
 
-    // Initial positions for each tactic (before step 1)
-    const TACTIC_INIT_POS={
-      pattern_1:{PG:'Top',SG:'WingL',SF:'WingR',PF:'CornerR',C:'ElbowL'},
-      pattern_2:{PG:'Top',SG:'CornerL',SF:'WingR',PF:'DunkerR',C:'LowPostR'},
-      pattern_3:{PG:'Top',SG:'WingL',SF:'WingR',PF:'CornerR',C:'ElbowR'}
-    };
+    // ===== Tactics Data (with correct grid positions) =====
+    const TACTICS_DATA={"tactics":[
+      {
+        "id":"pattern_1",
+        "name":"P&R Tag & Backdoor",
+        "description":"ピック＆ロールから逆サイドのヘルプを逆手に取ったバックドアカット",
+        "explanation":"2:2（PGとC）のPnRに対し、逆サイドX4が「タグ」でヘルプ。その瞬間PFがバックドアを突き、ノーマークのレイアップを創出。ペイントでのフリーが最優先目標。",
+        "initPositions":{"PG":"TopKey","SG":"WingL","SF":"CornerL","PF":"CornerR","C":"HighPostL"},
+        "ballHandler":"PG",
+        "steps":[
+          {
+            "step":1,
+            "action":"C sets Ball Screen",
+            "description":"CがPGの右側にボールスクリーンをセットしに行く",
+            "moves":[
+              {"player":"C","from":"HighPostL","to":"BallScreenTop","path":"linear","role":"screener"},
+              {"player":"PG","from":"TopKey","to":"TopKey","state":"dribbling"}
+            ]
+          },
+          {
+            "step":2,
+            "action":"PG uses screen, C rolls",
+            "description":"PGがスクリーンを使って右ドライブ。Cはリムへロールダイブ",
+            "condition":"X1がスクリーンに引っかかる → PGドライブのチャンス",
+            "moves":[
+              {"player":"PG","from":"TopKey","to":"SlotR","path":"curved_right","state":"dribbling"},
+              {"player":"C","from":"BallScreenTop","to":"PaintCenter","path":"roll_dive"}
+            ],
+            "defenseReaction":{"X5":"help_on_roll","X4":"tag_roller"}
+          },
+          {
+            "step":3,
+            "action":"PF Backdoor Cut!",
+            "description":"X4がCのタグに入った瞬間、PFがバックドアカットでリムへ！",
+            "condition":"X4がCへタグ → PFのバックドアが空く",
+            "moves":[
+              {"player":"PF","from":"CornerR","to":"DunkerR","path":"backdoor"},
+              {"player":"PG","from":"SlotR","to":"SlotR","state":"dribbling"}
+            ]
+          },
+          {
+            "step":4,
+            "action":"PG→PF Pass & Layup!",
+            "description":"PGからPFへバウンスパス → ノーマークのレイアップ！",
+            "moves":[
+              {"player":"PG","action":"pass","target":"PF","passType":"bounce"},
+              {"player":"PF","action":"layup","at":"Rim"}
+            ]
+          }
+        ]
+      },
+      {
+        "id":"pattern_2",
+        "name":"Pin-down to High-Low",
+        "description":"オフボールスクリーンでズレを作り、ハイポスト経由でローポストを崩す",
+        "explanation":"ピンダウンスクリーンでSGをフリーにし、Cがハイポストに上がることでX5を釣り出す。掃除されたローポストにPFが飛び込みフィニッシュ。",
+        "initPositions":{"PG":"TopKey","SG":"CornerL","SF":"WingR","PF":"LowPostR","C":"LowPostL"},
+        "ballHandler":"PG",
+        "steps":[
+          {
+            "step":1,
+            "action":"PG→SF Pass, PG Pin-down",
+            "description":"PGからウィングのSFへパス。PGはSGにピンダウンスクリーンへ",
+            "moves":[
+              {"player":"PG","action":"pass","target":"SF"},
+              {"player":"PG","from":"TopKey","to":"PinDownL","path":"linear","role":"screener","afterPass":true}
+            ]
+          },
+          {
+            "step":2,
+            "action":"SG Curl Cut",
+            "description":"SGがスクリーンを使ってカールカット。ペイントへ侵入",
+            "condition":"X2がスクリーンにトレイル → SGがカールでフリー",
+            "moves":[
+              {"player":"SG","from":"CornerL","to":"FreeThrow","path":"curl_around_screen"},
+              {"player":"PG","from":"PinDownL","to":"CornerL","path":"linear","role":"fade"}
+            ]
+          },
+          {
+            "step":3,
+            "action":"C Flash to High Post",
+            "description":"Cがハイポストにフラッシュ。SFからパスを受ける",
+            "moves":[
+              {"player":"C","from":"LowPostL","to":"ElbowL","path":"flash"},
+              {"player":"SF","action":"pass","target":"C"}
+            ]
+          },
+          {
+            "step":4,
+            "action":"C→PF High-Low Feed!",
+            "description":"X5がエルボーに釣り出され、CからPFへハイローフィード！",
+            "condition":"X5がハイポストに出る → ローポストにスペース出現",
+            "moves":[
+              {"player":"PF","from":"LowPostR","to":"DunkerR","path":"seal_move"},
+              {"player":"C","action":"pass","target":"PF","passType":"high_low"}
+            ]
+          }
+        ]
+      },
+      {
+        "id":"pattern_3",
+        "name":"Spanish P&R (Stack)",
+        "description":"スクリーナーにスクリーンをかけてDFの判断コストを爆発させる",
+        "explanation":"CのボールスクリーンにSGがバックスクリーンを追加。3人が絡むことでDFのスイッチ判断をフリーズさせ、リムへのダイブを創出する三体問題。",
+        "initPositions":{"PG":"TopKey","SG":"WingL","SF":"CornerR","PF":"CornerL","C":"ElbowR"},
+        "ballHandler":"PG",
+        "steps":[
+          {
+            "step":1,
+            "action":"C Ball Screen + SG Back Screen",
+            "description":"CがPGにボールスクリーン。同時にSGがX5にバックスクリーン",
+            "moves":[
+              {"player":"C","from":"ElbowR","to":"BallScreenTop","path":"linear","role":"screener"},
+              {"player":"SG","from":"WingL","to":"ElbowR","path":"linear","role":"back_screener"}
+            ]
+          },
+          {
+            "step":2,
+            "action":"PG Attacks off Screen",
+            "description":"PGがスクリーンを使って左方向にアタック",
+            "moves":[
+              {"player":"PG","from":"TopKey","to":"SlotL","path":"curved_left","state":"dribbling"}
+            ]
+          },
+          {
+            "step":3,
+            "action":"C Dive to Rim!",
+            "description":"SGのバックスクリーンでX5が剥がれ、Cがフリーでリムへダイブ！",
+            "condition":"X5がSGのスクリーンにハマる → Cフリーでダイブ",
+            "moves":[
+              {"player":"C","from":"BallScreenTop","to":"DunkerL","path":"roll_dive"},
+              {"player":"SG","from":"ElbowR","to":"TopR","path":"linear","role":"pop"}
+            ]
+          },
+          {
+            "step":4,
+            "action":"PG→C Lob Pass!",
+            "description":"判断が遅れたDFを尻目に、PGからCへロブパス → ダンク！",
+            "moves":[
+              {"player":"PG","action":"pass","target":"C","passType":"lob"},
+              {"player":"C","action":"dunk","at":"Rim"}
+            ]
+          }
+        ]
+      }
+    ]};
 
-    const anim={
-      active:false,playing:false,tactic:null,stepIdx:0,
-      progress:0,lastTime:0,stepDuration:1800,
-      frame:null,stepStartPositions:{},passAnim:null
-    };
+    // ===== Movement Path Calculator =====
+    // Generates realistic basketball movement paths using Bezier curves
 
-    // Easing functions
+    function calcPathPoints(fromName,toName,pathType,numPts){
+      numPts=numPts||20;
+      const fp=courtPos(fromName),tp=courtPos(toName);
+      const rimP=courtPos('Rim');
+      const pts=[];
+
+      if(pathType==='linear'||!pathType){
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          pts.push({x:fp.x+(tp.x-fp.x)*t,y:fp.y+(tp.y-fp.y)*t});
+        }
+      }
+      else if(pathType==='curved_right'){
+        // ドリブルで右に膨らむカーブ
+        const dx=tp.x-fp.x,dy=tp.y-fp.y;
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const bulge=Math.sin(t*Math.PI)*0.2;
+          pts.push({x:fp.x+dx*t+Math.abs(dy)*bulge,y:fp.y+dy*t-Math.abs(dx)*bulge*0.3});
+        }
+      }
+      else if(pathType==='curved_left'){
+        const dx=tp.x-fp.x,dy=tp.y-fp.y;
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const bulge=Math.sin(t*Math.PI)*0.2;
+          pts.push({x:fp.x+dx*t-Math.abs(dy)*bulge,y:fp.y+dy*t-Math.abs(dx)*bulge*0.3});
+        }
+      }
+      else if(pathType==='roll_dive'){
+        // ロールダイブ: スクリーン後にリムへ向かう弧を描く
+        const dx=tp.x-fp.x,dy=tp.y-fp.y;
+        const perpX=-dy*0.4,perpY=dx*0.4;
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const curve=Math.sin(t*Math.PI)*0.5;
+          const ease=t<0.3?easeInQuad(t/0.3)*0.3:0.3+0.7*easeOutQuad((t-0.3)/0.7);
+          pts.push({
+            x:fp.x+(tp.x-fp.x)*ease+perpX*curve*(1-t),
+            y:fp.y+(tp.y-fp.y)*ease+perpY*curve*(1-t)
+          });
+        }
+      }
+      else if(pathType==='backdoor'){
+        // バックドア: まず外に一歩フェイク→リムへ急加速
+        const fakeX=fp.x+(fp.x>cx(25)?sc(5):-sc(5)), fakeY=fp.y+sc(3);
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          if(t<0.25){
+            // フェイクステップ（外に向かう）
+            const t2=t/0.25;
+            pts.push({x:fp.x+(fakeX-fp.x)*easeOutQuad(t2),y:fp.y+(fakeY-fp.y)*easeOutQuad(t2)});
+          } else {
+            // 急反転してリムへダッシュ
+            const t2=(t-0.25)/0.75;
+            const et=easeExplosive(t2);
+            pts.push({x:fakeX+(tp.x-fakeX)*et,y:fakeY+(tp.y-fakeY)*et});
+          }
+        }
+      }
+      else if(pathType==='curl_around_screen'){
+        // カールカット: スクリーンの周りを回り込む
+        const midX=(fp.x+tp.x)/2,midY=(fp.y+tp.y)/2;
+        const dx=tp.x-fp.x,dy=tp.y-fp.y;
+        // スクリーンの外側を回る制御点
+        const cp1={x:fp.x,y:fp.y+(tp.y-fp.y)*0.4};
+        const cp2={x:fp.x+(tp.x-fp.x)*0.3,y:tp.y+Math.abs(dx)*0.15};
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const et=easeInOutCubic(t);
+          pts.push(bezierPoint(fp,cp1,cp2,tp,et));
+        }
+      }
+      else if(pathType==='flash'){
+        // フラッシュ: 一気にポジションへ飛び出す（加速重視）
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const et=easeExplosive(t);
+          pts.push({x:fp.x+(tp.x-fp.x)*et,y:fp.y+(tp.y-fp.y)*et});
+        }
+      }
+      else if(pathType==='seal_move'){
+        // シールムーブ: DFを抑えてリム方向に少しずつ押す
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          const et=easeInOutCubic(t);
+          // リム方向に若干弧を描く
+          const curve=Math.sin(t*Math.PI)*sc(2);
+          const toRimX=(rimP.x-fp.x),toRimY=(rimP.y-fp.y);
+          const len=Math.sqrt(toRimX*toRimX+toRimY*toRimY)||1;
+          pts.push({
+            x:fp.x+(tp.x-fp.x)*et+(-toRimY/len)*curve,
+            y:fp.y+(tp.y-fp.y)*et+(toRimX/len)*curve
+          });
+        }
+      }
+      else {
+        // Fallback: linear
+        for(let i=0;i<=numPts;i++){
+          const t=i/numPts;
+          pts.push({x:fp.x+(tp.x-fp.x)*t,y:fp.y+(tp.y-fp.y)*t});
+        }
+      }
+      return pts;
+    }
+
+    // ===== Easing Functions =====
     function easeInOutCubic(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
     function easeOutQuad(t){return 1-(1-t)*(1-t);}
     function easeInQuad(t){return t*t;}
-    // Explosive start, smooth finish (for basketball cuts)
-    function easeExplosive(t){return t<0.2?t*t*25*0.04:0.04+0.96*easeOutQuad((t-0.2)/0.8);}
+    function easeExplosive(t){return t<0.15?t*t/0.15*0.15:0.15+0.85*easeOutQuad((t-0.15)/0.85);}
 
-    // Bezier curve interpolation
     function bezierPoint(p0,p1,p2,p3,t){
       const u=1-t;
       return{
@@ -1051,81 +1352,80 @@
       };
     }
 
-    function interpolatePosition(from,to,t,pathType){
-      const fp=courtPos(from),tp=courtPos(to);
-      const et=easeInOutCubic(t);
-      if(pathType==='linear'){
-        return{x:fp.x+(tp.x-fp.x)*et,y:fp.y+(tp.y-fp.y)*et};
-      } else if(pathType==='curved'){
-        // Cubic bezier with bulge
-        const midX=(fp.x+tp.x)/2,midY=(fp.y+tp.y)/2;
-        const dx=tp.x-fp.x,dy=tp.y-fp.y;
-        const perpX=-dy*0.35,perpY=dx*0.35;
-        const cp1={x:fp.x+dx*0.25+perpX,y:fp.y+dy*0.25+perpY};
-        const cp2={x:fp.x+dx*0.75+perpX*0.5,y:fp.y+dy*0.75+perpY*0.5};
-        return bezierPoint(fp,cp1,cp2,tp,et);
-      } else if(pathType==='v-cut'){
-        // V-cut: go toward basket first, then sharp cut to target
-        const rimP=courtPos('Rim');
-        const cutPoint=0.4;
-        const et2=easeExplosive(t);
-        if(et2<cutPoint){
-          const t2=et2/cutPoint;
-          const midPt={x:fp.x+(rimP.x-fp.x)*0.3,y:fp.y+(rimP.y-fp.y)*0.5};
-          return{x:fp.x+(midPt.x-fp.x)*t2,y:fp.y+(midPt.y-fp.y)*t2};
-        } else {
-          const t2=(et2-cutPoint)/(1-cutPoint);
-          const midPt={x:fp.x+(rimP.x-fp.x)*0.3,y:fp.y+(rimP.y-fp.y)*0.5};
-          const et3=easeExplosive(t2);
-          return{x:midPt.x+(tp.x-midPt.x)*et3,y:midPt.y+(tp.y-midPt.y)*et3};
-        }
-      }
-      return{x:fp.x+(tp.x-fp.x)*et,y:fp.y+(tp.y-fp.y)*et};
-    }
+    // ===== Animation State =====
+    const anim={
+      active:false,playing:false,tactic:null,stepIdx:0,
+      progress:0,lastTime:0,stepDuration:2200,
+      frame:null,stepStartPositions:{},passAnim:null,
+      stepPaths:{}, // pre-computed paths for current step
+      ballHolder:null // label of player holding ball
+    };
 
+    // ===== Setup Tactic =====
     function setupTacticPositions(tacticId){
-      const init=TACTIC_INIT_POS[tacticId];if(!init)return;
+      const tactic=TACTICS_DATA.tactics.find(t=>t.id===tacticId);
+      if(!tactic||!tactic.initPositions)return;
       const w=courtCanvas.width,h=courtCanvas.height;
-      // Reset players to initial tactic positions
       state.players=[];
+      // Offense at defined grid positions
       PLAYER_LABELS.forEach(label=>{
-        const posName=init[label];
+        const posName=tactic.initPositions[label];
         const p=courtPos(posName);
         state.players.push({x:p.x,y:p.y,label:label,team:'offense'});
       });
-      // Add defense (man-to-man near each offense)
-      const defPos=getDefenseFormation('man-to-man');
+      // Defense: position each defender between their man and the rim
+      const rim=getRimPos();
       PLAYER_LABELS.forEach((label,i)=>{
-        state.players.push({x:defPos[i].x*w,y:defPos[i].y*h,label:label,team:'defense'});
+        const off=state.players[i];
+        const toRimX=rim.x-off.x,toRimY=rim.y-off.y;
+        const d=Math.sqrt(toRimX*toRimX+toRimY*toRimY)||1;
+        const guardDist=CONFIG.player.radius*S()*2.5;
+        state.players.push({
+          x:off.x+toRimX/d*guardDist,
+          y:off.y+toRimY/d*guardDist,
+          label:label,team:'defense'
+        });
       });
-      // Ball near PG
-      const pg=state.players[0];
-      const bR=CONFIG.ballRadius*S(),pR=CONFIG.player.radius*S();
-      state.players.push({x:pg.x+pR+bR+2,y:pg.y,label:'',team:'ball'});
-      // Position defense using game-like AI
-      const savedMode=state.gameLikeMode;
+      // Ball with ball handler
+      anim.ballHolder=tactic.ballHandler||'PG';
+      const handler=getPlayerByLabel(anim.ballHolder);
+      const pR=CONFIG.player.radius*S(),bR=CONFIG.ballRadius*S();
+      state.players.push({x:handler.x+pR+bR+2,y:handler.y,label:'',team:'ball'});
+      // Settle defense with AI
+      const saved=state.gameLikeMode;
       state.gameLikeMode=true;
-      for(let i=0;i<20;i++)updateDefensePositions();
-      state.gameLikeMode=savedMode;
+      for(let i=0;i<30;i++)updateDefensePositions();
+      state.gameLikeMode=saved;
     }
 
     function getPlayerByLabel(label){
       return state.players.find(p=>p.team==='offense'&&p.label===label);
     }
 
+    // ===== Pre-compute paths for a step =====
+    function precomputeStepPaths(){
+      anim.stepPaths={};anim.passAnim=null;
+      if(!anim.tactic)return;
+      const step=anim.tactic.steps[anim.stepIdx];
+      if(!step||!step.moves)return;
+      step.moves.forEach(move=>{
+        if(move.action==='pass'||move.action==='layup'||move.action==='dunk')return;
+        if(!move.from||!move.to||move.from===move.to)return;
+        anim.stepPaths[move.player]=calcPathPoints(move.from,move.to,move.path,30);
+      });
+    }
+
+    // ===== Select & Play =====
     function selectTactic(id){
       stopTacticAnim();
       const tactic=TACTICS_DATA.tactics.find(t=>t.id===id);
       if(!tactic)return;
       anim.tactic=tactic;anim.stepIdx=0;anim.progress=0;anim.active=true;
-      // Clear drawings
       state.drawings=[];state.moveCounter=0;redrawDrawings();
-      // Setup positions
       setupTacticPositions(id);
-      // Save start positions for step 0
       saveStepStartPositions();
+      precomputeStepPaths();
       drawPlayers();
-      // Update UI
       document.querySelectorAll('.tactics-btn').forEach(b=>b.classList.toggle('active',b.dataset.tacticId===id));
       document.getElementById('playbackControls').style.display='flex';
       document.getElementById('stepInfo').style.display='block';
@@ -1149,7 +1449,7 @@
       if(!step)return;
       document.getElementById('stepTitle').textContent=`Step ${step.step}: ${step.action}`;
       document.getElementById('stepDesc').textContent=step.description||'';
-      document.getElementById('stepCondition').textContent=step.condition?`IF: ${step.condition}`:'';
+      document.getElementById('stepCondition').textContent=step.condition?`⚡ ${step.condition}`:'';
     }
 
     function playTacticAnim(){
@@ -1160,23 +1460,23 @@
       document.getElementById('tacticPlay').classList.add('playing');
       anim.frame=requestAnimationFrame(tacticAnimLoop);
     }
-
     function pauseTacticAnim(){
       anim.playing=false;
       if(anim.frame)cancelAnimationFrame(anim.frame);
       document.getElementById('tacticPlay').textContent='▶ Play';
       document.getElementById('tacticPlay').classList.remove('playing');
     }
-
     function stopTacticAnim(){
       pauseTacticAnim();
-      anim.active=false;anim.tactic=null;anim.stepIdx=0;anim.progress=0;anim.passAnim=null;
+      anim.active=false;anim.tactic=null;anim.stepIdx=0;anim.progress=0;
+      anim.passAnim=null;anim.stepPaths={};anim.ballHolder=null;
       document.querySelectorAll('.tactics-btn').forEach(b=>b.classList.remove('active'));
       document.getElementById('playbackControls').style.display='none';
       document.getElementById('stepInfo').style.display='none';
       document.getElementById('tacticExplanation').style.display='none';
     }
 
+    // ===== Animation Loop =====
     function tacticAnimLoop(timestamp){
       if(!anim.playing)return;
       const dt=timestamp-anim.lastTime;
@@ -1185,165 +1485,219 @@
 
       if(anim.progress>=1){
         anim.progress=1;
+        applyStepInterpolation(1);
         applyStepEnd();
-        // Move to next step
         if(anim.stepIdx<anim.tactic.steps.length-1){
           anim.stepIdx++;anim.progress=0;
           saveStepStartPositions();
+          precomputeStepPaths();
           updateStepInfo();
+          // Pause briefly between steps for readability
+          anim.lastTime=timestamp+400;
         } else {
-          // Animation complete
           pauseTacticAnim();
           return;
         }
       }
 
       applyStepInterpolation(anim.progress);
+      // Defense always reacts
+      updateDefensePositions_tactic();
       drawPlayers();
-      // Update defense in game-like mode
-      if(state.gameLikeMode)updateDefensePositions();
       redrawDrawings();
-      // Draw pass animation if active
       if(anim.passAnim)drawPassAnimation();
 
       anim.frame=requestAnimationFrame(tacticAnimLoop);
     }
 
+    // ===== Defense reaction during tactics =====
+    function updateDefensePositions_tactic(){
+      const rim=getRimPos();
+      const offPlayers=state.players.filter(p=>p.team==='offense');
+      const defPlayers=state.players.filter(p=>p.team==='defense');
+      const ball=state.players.find(p=>p.team==='ball');
+      if(!ball||offPlayers.length!==5||defPlayers.length!==5)return;
+      const pR=CONFIG.player.radius*S();
+      const w=courtCanvas.width,h=courtCanvas.height;
+
+      // Find ball man
+      let ballManIdx=0,minD=Infinity;
+      offPlayers.forEach((op,i)=>{
+        const d=Math.sqrt((op.x-ball.x)**2+(op.y-ball.y)**2);
+        if(d<minD){minD=d;ballManIdx=i;}
+      });
+
+      offPlayers.forEach((offP,i)=>{
+        const def=defPlayers[i];
+        const isBallMan=(i===ballManIdx);
+        const toOffX=offP.x-rim.x,toOffY=offP.y-rim.y;
+        const toOffDist=Math.sqrt(toOffX*toOffX+toOffY*toOffY)||1;
+        const offToBallDist=Math.sqrt((offP.x-ball.x)**2+(offP.y-ball.y)**2);
+        let targetX,targetY;
+
+        if(isBallMan){
+          const guardDist=pR*2.5;
+          targetX=offP.x-(toOffX/toOffDist)*guardDist;
+          targetY=offP.y-(toOffY/toOffDist)*guardDist;
+        } else {
+          const passesAway=offToBallDist/sc(10);
+          if(passesAway<1.8){
+            const bToMX=offP.x-ball.x,bToMY=offP.y-ball.y;
+            const bToMD=Math.sqrt(bToMX*bToMX+bToMY*bToMY)||1;
+            const denyDist=pR*2.2;
+            targetX=offP.x-(bToMX/bToMD)*denyDist;
+            targetY=offP.y-(bToMY/bToMD)*denyDist;
+            targetX+=(rim.x-targetX)*0.15;
+            targetY+=(rim.y-targetY)*0.15;
+          } else {
+            const helpBias=Math.min(0.5,0.25+passesAway*0.05);
+            targetX=offP.x+(rim.x-offP.x)*helpBias;
+            targetY=offP.y+(rim.y-offP.y)*helpBias;
+            targetX+=(ball.x-targetX)*0.12;
+            targetY+=(ball.y-targetY)*0.12;
+          }
+        }
+        targetX=Math.max(state.marginPx+pR,Math.min(w-state.marginPx-pR,targetX));
+        targetY=Math.max(state.marginPx+pR,Math.min(h-state.marginPx-pR,targetY));
+        def.x+=(targetX-def.x)*0.18;
+        def.y+=(targetY-def.y)*0.18;
+      });
+    }
+
+    // ===== Apply Step Interpolation =====
     function applyStepInterpolation(t){
       if(!anim.tactic)return;
       const step=anim.tactic.steps[anim.stepIdx];
-      if(!step||!step.actors)return;
+      if(!step||!step.moves)return;
 
-      Object.entries(step.actors).forEach(([key,actor])=>{
-        if(actor.action==='pass'){
-          // Trigger pass animation at t=0.3
+      step.moves.forEach(move=>{
+        // Handle pass
+        if(move.action==='pass'){
           if(t>=0.3&&!anim.passAnim){
-            const fromPlayer=getPlayerByLabel(key)||getPlayerByLabel(key.replace('_move',''));
-            const toPlayer=getPlayerByLabel(actor.target);
-            if(fromPlayer&&toPlayer){
-              anim.passAnim={from:{x:fromPlayer.x,y:fromPlayer.y},toLabel:actor.target,startT:t};
-              // Move ball to target at end
+            const fromP=getPlayerByLabel(move.player);
+            const toP=getPlayerByLabel(move.target);
+            if(fromP&&toP){
+              anim.passAnim={from:{x:fromP.x,y:fromP.y},toLabel:move.target,startT:t,passType:move.passType};
             }
           }
-          if(anim.passAnim&&t>=0.7){
-            const toPlayer=getPlayerByLabel(anim.passAnim.toLabel);
-            if(toPlayer){
-              const ball=state.players.find(p=>p.team==='ball');
-              if(ball){
-                const pR=CONFIG.player.radius*S(),bR=CONFIG.ballRadius*S();
-                ball.x=toPlayer.x+pR+bR+2;ball.y=toPlayer.y;
-              }
-            }
+          if(anim.passAnim&&t>=0.75){
+            anim.ballHolder=anim.passAnim.toLabel;
+            updateBallPosition();
           }
           return;
         }
-        if(actor.action==='layup'||actor.action==='dunk')return;
-        if(!actor.from||!actor.to)return;
+        if(move.action==='layup'||move.action==='dunk')return;
+        if(!move.from||!move.to||move.from===move.to)return;
 
-        // Find the actual label (handle PG_move etc)
-        const label=key.replace('_move','');
-        const player=getPlayerByLabel(label);
+        const player=getPlayerByLabel(move.player);
         if(!player)return;
-        const startPos=anim.stepStartPositions[label];
-        if(!startPos)return;
 
-        // If from matches current position name, interpolate from saved start
-        const target=courtPos(actor.to);
-        const pos=interpolatePosition(actor.from,actor.to,t,actor.path||'linear');
-        player.x=pos.x;player.y=pos.y;
+        // Use pre-computed path
+        const path=anim.stepPaths[move.player];
+        if(path&&path.length>1){
+          const idx=Math.min(Math.floor(easeInOutCubic(t)*(path.length-1)),path.length-1);
+          const nextIdx=Math.min(idx+1,path.length-1);
+          const localT=easeInOutCubic(t)*(path.length-1)-idx;
+          player.x=path[idx].x+(path[nextIdx].x-path[idx].x)*localT;
+          player.y=path[idx].y+(path[nextIdx].y-path[idx].y)*localT;
+        }
 
-        // If this player is dribbling, move ball with them
-        if(actor.state==='dribbling'||key==='PG'){
-          const ball=state.players.find(p=>p.team==='ball');
-          if(ball){
-            const pR=CONFIG.player.radius*S(),bR=CONFIG.ballRadius*S();
-            ball.x=player.x+pR+bR+2;ball.y=player.y;
-          }
+        // Move ball with dribbling player
+        if(move.state==='dribbling'){
+          anim.ballHolder=move.player;
+          updateBallPosition();
         }
       });
     }
 
+    function updateBallPosition(){
+      if(!anim.ballHolder)return;
+      const holder=getPlayerByLabel(anim.ballHolder);
+      const ball=state.players.find(p=>p.team==='ball');
+      if(!holder||!ball)return;
+      const pR=CONFIG.player.radius*S(),bR=CONFIG.ballRadius*S();
+      ball.x=holder.x+pR+bR+2;ball.y=holder.y;
+    }
+
+    // ===== Step End =====
     function applyStepEnd(){
       if(!anim.tactic)return;
       const step=anim.tactic.steps[anim.stepIdx];
-      if(!step||!step.actors)return;
+      if(!step||!step.moves)return;
 
-      // Draw trails for completed movements
-      Object.entries(step.actors).forEach(([key,actor])=>{
-        if(actor.action)return; // skip pass/layup/dunk
-        if(!actor.from||!actor.to||actor.from===actor.to)return;
-        const fromP=courtPos(actor.from),toP=courtPos(actor.to);
-        state.moveCounter++;
-        const trailType=actor.state==='dribbling'?'dribble':'pmove';
-        // Build a simple trail path
-        const pts=[fromP];
-        if(actor.path==='curved'){
-          const dx=toP.x-fromP.x,dy=toP.y-fromP.y;
-          const perpX=-dy*0.3,perpY=dx*0.3;
-          for(let i=1;i<=8;i++){
-            const t2=i/9;
-            const cx2=fromP.x+dx*t2+perpX*Math.sin(t2*Math.PI);
-            const cy2=fromP.y+dy*t2+perpY*Math.sin(t2*Math.PI);
-            pts.push({x:cx2,y:cy2});
-          }
-        } else if(actor.path==='v-cut'){
-          const rimP=courtPos('Rim');
-          const midPt={x:fromP.x+(rimP.x-fromP.x)*0.3,y:fromP.y+(rimP.y-fromP.y)*0.5};
-          pts.push(midPt);
+      step.moves.forEach(move=>{
+        if(move.action&&move.action!=='pass')return;
+        if(move.action==='pass')return; // passes handled separately
+        if(!move.from||!move.to||move.from===move.to)return;
+
+        // Snap player to final position
+        const player=getPlayerByLabel(move.player);
+        if(player){
+          const tp=courtPos(move.to);
+          player.x=tp.x;player.y=tp.y;
         }
-        pts.push(toP);
-        state.drawings.push({type:trailType,points:pts,color:'#facc15',width:3,seq:state.moveCounter});
+
+        // Draw trail
+        const path=anim.stepPaths[move.player];
+        if(path&&path.length>1){
+          state.moveCounter++;
+          const trailType=move.state==='dribbling'?'dribble':
+                          move.role==='screener'?'screen':'pmove';
+          state.drawings.push({type:trailType,points:[...path],color:'#facc15',width:3,seq:state.moveCounter});
+        }
       });
 
-      // Handle pass trails
+      // Handle pass trail
       if(anim.passAnim){
-        const toPlayer=getPlayerByLabel(anim.passAnim.toLabel);
-        if(toPlayer){
+        const toP=getPlayerByLabel(anim.passAnim.toLabel);
+        if(toP){
           state.moveCounter++;
           state.drawings.push({
             type:'pass',
-            points:[anim.passAnim.from,{x:toPlayer.x,y:toPlayer.y}],
+            points:[anim.passAnim.from,{x:toP.x,y:toP.y}],
             color:'#facc15',width:3,seq:state.moveCounter
           });
+          anim.ballHolder=anim.passAnim.toLabel;
+          updateBallPosition();
         }
         anim.passAnim=null;
       }
-
       redrawDrawings();
     }
 
+    // ===== Pass Animation Drawing =====
     function drawPassAnimation(){
       if(!anim.passAnim)return;
-      const toPlayer=getPlayerByLabel(anim.passAnim.toLabel);
-      if(!toPlayer)return;
+      const toP=getPlayerByLabel(anim.passAnim.toLabel);
+      if(!toP)return;
       const t=Math.min(1,(anim.progress-anim.passAnim.startT)/0.4);
       if(t<0||t>1)return;
-      const from=anim.passAnim.from;
-      const to={x:toPlayer.x,y:toPlayer.y};
+      const from=anim.passAnim.from,to={x:toP.x,y:toP.y};
       const s=S();
       const ctx=drawCtx;
-      // Animated ball along pass path
-      const bx=from.x+(to.x-from.x)*easeOutQuad(t);
-      const by=from.y+(to.y-from.y)*easeOutQuad(t);
+      const et=easeOutQuad(t);
+      const bx=from.x+(to.x-from.x)*et,by=from.y+(to.y-from.y)*et;
+      // Ball
       ctx.beginPath();ctx.arc(bx,by,CONFIG.ballRadius*s*0.7,0,Math.PI*2);
       ctx.fillStyle='#f97316';ctx.fill();
       ctx.strokeStyle='#7c2d12';ctx.lineWidth=1*s;ctx.stroke();
-      // Dashed line from start to current pos
+      // Trail
       ctx.setLineDash([5*s,4*s]);ctx.strokeStyle='#facc1580';ctx.lineWidth=2*s;
       ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(bx,by);ctx.stroke();
       ctx.setLineDash([]);
     }
 
+    // ===== Step Controls =====
     function tacticStepForward(){
       if(!anim.tactic)return;
       pauseTacticAnim();
-      // Complete current step instantly
       anim.progress=1;
       applyStepInterpolation(1);
       applyStepEnd();
       if(anim.stepIdx<anim.tactic.steps.length-1){
         anim.stepIdx++;anim.progress=0;
         saveStepStartPositions();
+        precomputeStepPaths();
         updateStepInfo();
       }
       drawPlayers();redrawDrawings();
@@ -1352,24 +1706,26 @@
     function tacticStepBack(){
       if(!anim.tactic||anim.stepIdx<=0)return;
       pauseTacticAnim();
-      // Re-setup and replay up to previous step
-      anim.stepIdx--;anim.progress=0;
+      const targetStep=anim.stepIdx-1;
       state.drawings=[];state.moveCounter=0;
       setupTacticPositions(anim.tactic.id);
-      // Replay all steps up to current
-      for(let i=0;i<anim.stepIdx;i++){
-        anim.stepIdx=i;anim.progress=1;
+      // Replay up to target step
+      for(let i=0;i<=targetStep;i++){
+        anim.stepIdx=i;anim.progress=0;
         saveStepStartPositions();
+        precomputeStepPaths();
+        anim.progress=1;
         applyStepInterpolation(1);
         applyStepEnd();
       }
-      anim.stepIdx=Math.max(0,anim.stepIdx);
+      anim.stepIdx=targetStep;anim.progress=0;
       saveStepStartPositions();
+      precomputeStepPaths();
       updateStepInfo();
       drawPlayers();redrawDrawings();
     }
 
-    // Build tactics UI
+    // ===== Build Tactics UI =====
     function buildTacticsUI(){
       const panel=document.getElementById('tacticsPanel');
       TACTICS_DATA.tactics.forEach(t=>{
