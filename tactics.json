@@ -3,45 +3,44 @@
     {
       "id": "pattern_1",
       "name": "P&R Tag & Backdoor",
-      "description": "ピック＆ロールから逆サイドのヘルプを逆手に取ったバックドアカット",
-      "explanation": "2:2（PGとC）のPnRに対し、逆サイドX4が「タグ」でヘルプ。その瞬間PFがバックドアを突き、ノーマークのレイアップを創出。ペイントでのフリーが最優先目標。",
-      "initPositions": {"PG": "TopKey", "SG": "WingL", "SF": "CornerL", "PF": "CornerR", "C": "HighPostL"},
+      "description": "ピック＆ロールから逆サイドのタグを逆手に取ったバックドア",
+      "explanation": "Cがコーナーから上がってボールスクリーン。PGがドライブし、Cがリムへロール。X4がタグに入った瞬間、PFがバックドアを突いてノーマークのレイアップ。",
+      "initPositions": {"PG": "TopKey", "SG": "WingL", "SF": "CornerL", "PF": "WingR", "C": "CornerR"},
       "ballHandler": "PG",
       "steps": [
         {
           "step": 1,
-          "action": "C sets Ball Screen",
-          "description": "CがPGの右側にボールスクリーンをセットしに行く",
+          "action": "C pops up to set screen",
+          "description": "Cがコーナーから上がりPGにボールスクリーンをセット",
           "moves": [
-            {"player": "C", "from": "HighPostL", "to": "BallScreenTop", "path": "linear", "role": "screener"},
+            {"player": "C", "from": "CornerR", "to": "BallScreenTop", "path": "linear", "role": "screener"},
             {"player": "PG", "from": "TopKey", "to": "TopKey", "state": "dribbling"}
           ]
         },
         {
           "step": 2,
-          "action": "PG uses screen, C rolls",
-          "description": "PGがスクリーンを使って右ドライブ。Cはリムへロールダイブ",
-          "condition": "X1がスクリーンに引っかかる → PGドライブのチャンス",
+          "action": "PG drives, C rolls",
+          "description": "PGがスクリーンを使い右へドライブ。Cはリムへロール",
+          "condition": "X5がスクリーンヘッジ → Cのロールがフリー",
           "moves": [
             {"player": "PG", "from": "TopKey", "to": "SlotR", "path": "curved_right", "state": "dribbling"},
             {"player": "C", "from": "BallScreenTop", "to": "PaintCenter", "path": "roll_dive"}
-          ],
-          "defenseReaction": {"X5": "help_on_roll", "X4": "tag_roller"}
+          ]
         },
         {
           "step": 3,
           "action": "PF Backdoor Cut!",
-          "description": "X4がCのタグに入った瞬間、PFがバックドアカットでリムへ！",
+          "description": "X4がCのタグに入った瞬間、PFがバックドアカット！",
           "condition": "X4がCへタグ → PFのバックドアが空く",
           "moves": [
-            {"player": "PF", "from": "CornerR", "to": "DunkerR", "path": "backdoor"},
+            {"player": "PF", "from": "WingR", "to": "DunkerR", "path": "backdoor"},
             {"player": "PG", "from": "SlotR", "to": "SlotR", "state": "dribbling"}
           ]
         },
         {
           "step": 4,
-          "action": "PG→PF Pass & Layup!",
-          "description": "PGからPFへバウンスパス → ノーマークのレイアップ！",
+          "action": "PG → PF Pass & Layup!",
+          "description": "PGからPFへバウンスパス → ノーマークレイアップ！",
           "moves": [
             {"player": "PG", "action": "pass", "target": "PF", "passType": "bounce"},
             {"player": "PF", "action": "layup", "at": "Rim"}
@@ -52,46 +51,46 @@
     {
       "id": "pattern_2",
       "name": "Pin-down to High-Low",
-      "description": "オフボールスクリーンでズレを作り、ハイポスト経由でローポストを崩す",
-      "explanation": "ピンダウンスクリーンでSGをフリーにし、Cがハイポストに上がることでX5を釣り出す。掃除されたローポストにPFが飛び込みフィニッシュ。",
-      "initPositions": {"PG": "TopKey", "SG": "CornerL", "SF": "WingR", "PF": "LowPostR", "C": "LowPostL"},
+      "description": "ピンダウンからハイロー展開でインサイドを崩す",
+      "explanation": "PGからSFへパス後、PGがSGにピンダウンスクリーン。SGがカールカットで注目を集め、CがハイポストにフラッシュしてX5を釣り出す。空いたローポストにPFが飛び込む。",
+      "initPositions": {"PG": "TopKey", "SG": "CornerL", "SF": "WingR", "PF": "CornerR", "C": "WingL"},
       "ballHandler": "PG",
       "steps": [
         {
           "step": 1,
-          "action": "PG→SF Pass, PG Pin-down",
-          "description": "PGからウィングのSFへパス。PGはSGにピンダウンスクリーンへ",
+          "action": "PG passes to SF, screens for SG",
+          "description": "PGからSFへパス。PGはSGにピンダウンスクリーン",
           "moves": [
             {"player": "PG", "action": "pass", "target": "SF"},
-            {"player": "PG", "from": "TopKey", "to": "PinDownL", "path": "linear", "role": "screener", "afterPass": true}
+            {"player": "PG", "from": "TopKey", "to": "PinDownL", "path": "linear", "role": "screener"}
           ]
         },
         {
           "step": 2,
-          "action": "SG Curl Cut",
-          "description": "SGがスクリーンを使ってカールカット。ペイントへ侵入",
-          "condition": "X2がスクリーンにトレイル → SGがカールでフリー",
+          "action": "SG curls off screen",
+          "description": "SGがスクリーンを使いカールカット。PGはコーナーへフェイド",
+          "condition": "X2がスクリーンにトレイル → SGカールでフリー",
           "moves": [
             {"player": "SG", "from": "CornerL", "to": "FreeThrow", "path": "curl_around_screen"},
-            {"player": "PG", "from": "PinDownL", "to": "CornerL", "path": "linear", "role": "fade"}
+            {"player": "PG", "from": "PinDownL", "to": "CornerL", "path": "linear"}
           ]
         },
         {
           "step": 3,
-          "action": "C Flash to High Post",
-          "description": "Cがハイポストにフラッシュ。SFからパスを受ける",
+          "action": "C flashes to High Post",
+          "description": "CがウィングからハイポストへフラッシュしSFからパスを受ける",
           "moves": [
-            {"player": "C", "from": "LowPostL", "to": "ElbowL", "path": "flash"},
+            {"player": "C", "from": "WingL", "to": "ElbowL", "path": "flash"},
             {"player": "SF", "action": "pass", "target": "C"}
           ]
         },
         {
           "step": 4,
-          "action": "C→PF High-Low Feed!",
+          "action": "C → PF High-Low Feed!",
           "description": "X5がエルボーに釣り出され、CからPFへハイローフィード！",
-          "condition": "X5がハイポストに出る → ローポストにスペース出現",
+          "condition": "X5がハイポストに出る → ゴール下にスペース",
           "moves": [
-            {"player": "PF", "from": "LowPostR", "to": "DunkerR", "path": "seal_move"},
+            {"player": "PF", "from": "CornerR", "to": "DunkerR", "path": "flash"},
             {"player": "C", "action": "pass", "target": "PF", "passType": "high_low"}
           ]
         }
@@ -100,23 +99,23 @@
     {
       "id": "pattern_3",
       "name": "Spanish P&R (Stack)",
-      "description": "スクリーナーにスクリーンをかけてDFの判断コストを爆発させる",
-      "explanation": "CのボールスクリーンにSGがバックスクリーンを追加。3人が絡むことでDFのスイッチ判断をフリーズさせ、リムへのダイブを創出する三体問題。",
-      "initPositions": {"PG": "TopKey", "SG": "WingL", "SF": "CornerR", "PF": "CornerL", "C": "ElbowR"},
+      "description": "スクリーナーにスクリーンでDFの判断コストを爆発させる",
+      "explanation": "CがボールスクリーンをセットしSGがX5にバックスクリーン。3人が絡みDFのスイッチ判断をフリーズさせ、リムへのダイブを創出。三体問題。",
+      "initPositions": {"PG": "TopKey", "SG": "WingL", "SF": "CornerR", "PF": "CornerL", "C": "WingR"},
       "ballHandler": "PG",
       "steps": [
         {
           "step": 1,
-          "action": "C Ball Screen + SG Back Screen",
-          "description": "CがPGにボールスクリーン。同時にSGがX5にバックスクリーン",
+          "action": "C & SG set double screen",
+          "description": "CがPGにボールスクリーン。SGがCのDF（X5）にバックスクリーン",
           "moves": [
-            {"player": "C", "from": "ElbowR", "to": "BallScreenTop", "path": "linear", "role": "screener"},
-            {"player": "SG", "from": "WingL", "to": "ElbowR", "path": "linear", "role": "back_screener"}
+            {"player": "C", "from": "WingR", "to": "BallScreenTop", "path": "linear", "role": "screener"},
+            {"player": "SG", "from": "WingL", "to": "ElbowR", "path": "linear", "role": "screener"}
           ]
         },
         {
           "step": 2,
-          "action": "PG Attacks off Screen",
+          "action": "PG attacks left",
           "description": "PGがスクリーンを使って左方向にアタック",
           "moves": [
             {"player": "PG", "from": "TopKey", "to": "SlotL", "path": "curved_left", "state": "dribbling"}
@@ -124,18 +123,18 @@
         },
         {
           "step": 3,
-          "action": "C Dive to Rim!",
-          "description": "SGのバックスクリーンでX5が剥がれ、Cがフリーでリムへダイブ！",
-          "condition": "X5がSGのスクリーンにハマる → Cフリーでダイブ",
+          "action": "C dives to rim!",
+          "description": "SGのバックスクリーンでX5が剥がされ、Cがフリーでリムへダイブ",
+          "condition": "X5がバックスクリーンにハマる → Cフリー",
           "moves": [
             {"player": "C", "from": "BallScreenTop", "to": "DunkerL", "path": "roll_dive"},
-            {"player": "SG", "from": "ElbowR", "to": "TopR", "path": "linear", "role": "pop"}
+            {"player": "SG", "from": "ElbowR", "to": "TopR", "path": "linear"}
           ]
         },
         {
           "step": 4,
-          "action": "PG→C Lob Pass!",
-          "description": "判断が遅れたDFを尻目に、PGからCへロブパス → ダンク！",
+          "action": "PG → C Lob Pass!",
+          "description": "判断が遅れたDFを尻目にPGからCへロブパス → ダンク！",
           "moves": [
             {"player": "PG", "action": "pass", "target": "C", "passType": "lob"},
             {"player": "C", "action": "dunk", "at": "Rim"}
