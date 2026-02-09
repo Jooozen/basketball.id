@@ -1,0 +1,138 @@
+{
+  "tactics": [
+    {
+      "id": "pattern_1",
+      "name": "P&R Tag & Backdoor",
+      "description": "ピック＆ロールから逆サイドのヘルプを逆手に取ったバックドアカット",
+      "explanation": "2:2（PGとC）の動きに対し、逆サイドのDF（X4）がカバーに入る「タグ」を攻略。X4がタグに入った瞬間、PFはバックドアを突き、最も成功率の高いノーマークのレイアップを創出します。",
+      "steps": [
+        {
+          "step": 1,
+          "action": "C move to PG for Screen",
+          "description": "CがPGに向かってスクリーンをセット",
+          "actors": {
+            "C": {"from": "ElbowL", "to": "TopRight", "path": "linear"},
+            "PG": {"from": "Top", "to": "Top", "state": "dribbling"}
+          }
+        },
+        {
+          "step": 2,
+          "action": "PG Drive & C Dive",
+          "description": "PGがスクリーンを使ってドライブ、Cはダイブ",
+          "condition": "X1がトラップ → PGドライブのチャンス",
+          "actors": {
+            "PG": {"from": "Top", "to": "PaintRight", "path": "curved"},
+            "C": {"from": "TopRight", "to": "Rim", "path": "linear"}
+          }
+        },
+        {
+          "step": 3,
+          "action": "PF Backdoor Reaction",
+          "description": "X4がCのヘルプに入った瞬間、PFがバックドアカット！",
+          "condition": "X4がCのヘルプ → PFのバックドアが空く",
+          "actors": {
+            "PF": {"from": "CornerR", "to": "Rim", "path": "v-cut"}
+          }
+        },
+        {
+          "step": 4,
+          "action": "Final Pass & Finish",
+          "description": "PGからPFへパス → ノーマークのレイアップ！",
+          "actors": {
+            "PG": {"action": "pass", "target": "PF"},
+            "PF": {"action": "layup", "at": "Rim"}
+          }
+        }
+      ]
+    },
+    {
+      "id": "pattern_2",
+      "name": "Pin-down to High-Low",
+      "description": "オフボールスクリーンでズレを作り、ハイポスト経由でローポストを崩す",
+      "explanation": "外側のスクリーン（ピンダウン）でズレを作り、あえてCがハイポストへ上がることでゴール下のDFを引き出し、スペースを「掃除」。掃除されたスペースにPFが飛び込み最短距離で得点します。",
+      "steps": [
+        {
+          "step": 1,
+          "action": "PG Pass to SF, Screen for SG",
+          "description": "PGからSFへパス、PGがSGにスクリーン",
+          "actors": {
+            "PG": {"action": "pass", "target": "SF"},
+            "PG_move": {"from": "Top", "to": "CornerL", "path": "linear"}
+          }
+        },
+        {
+          "step": 2,
+          "action": "SG Curl Cut to Paint",
+          "description": "SGがカールカットでペイントへ侵入",
+          "condition": "X2がスクリーンに引っかかる → SGフリー",
+          "actors": {
+            "SG": {"from": "CornerL", "to": "Paint", "path": "curved"}
+          }
+        },
+        {
+          "step": 3,
+          "action": "C Flash to High Post",
+          "description": "Cがハイポストへフラッシュ、SFからパス受け",
+          "actors": {
+            "C": {"from": "LowPostR", "to": "ElbowR", "path": "linear"},
+            "SF": {"action": "pass", "target": "C"}
+          }
+        },
+        {
+          "step": 4,
+          "action": "High-Low Feed",
+          "description": "X5が釣り出された瞬間、CからPFへハイローフィード！",
+          "condition": "X5がハイポストに出る → ローポストが空く",
+          "actors": {
+            "PF": {"from": "DunkerR", "to": "Rim", "path": "linear"},
+            "C": {"action": "pass", "target": "PF"}
+          }
+        }
+      ]
+    },
+    {
+      "id": "pattern_3",
+      "name": "Spanish P&R (Stack)",
+      "description": "スクリーナーにスクリーンをかけ、ヘルプディフェンスを混乱させる",
+      "explanation": "ボールスクリーナー（C）に対してさらにスクリーン（SG）をかける。通常P&Rの守備は2人で成立するが、3人目が加わることで「誰がダイブを止め、誰がポップを追うか」の判断コストを爆発させ、DFをフリーズさせます。",
+      "steps": [
+        {
+          "step": 1,
+          "action": "C Screen for PG, SG Screen for C",
+          "description": "CがPGにスクリーン、さらにSGがCのDFにスクリーン",
+          "actors": {
+            "C": {"from": "ElbowR", "to": "Top", "path": "linear"},
+            "SG": {"from": "WingL", "to": "Top", "path": "curved"}
+          }
+        },
+        {
+          "step": 2,
+          "action": "PG Penetration",
+          "description": "PGがスクリーンを使ってペイントへ侵入",
+          "actors": {
+            "PG": {"from": "Top", "to": "Paint", "path": "curved"}
+          }
+        },
+        {
+          "step": 3,
+          "action": "C Dive & SG Popout",
+          "description": "Cがリムへダイブ、SGはポップアウト",
+          "condition": "X5がスクリーンにハマる → Cフリーでダイブ",
+          "actors": {
+            "C": {"from": "Top", "to": "Rim", "path": "linear"},
+            "SG": {"from": "Top", "to": "TopLeft", "path": "linear"}
+          }
+        },
+        {
+          "step": 4,
+          "action": "Primary Choice: Rim Feed",
+          "description": "判断が遅れた瞬間にCへのロブパス → ダンク！",
+          "actors": {
+            "PG": {"action": "pass", "target": "C"},
+            "C": {"action": "dunk"}
+          }
+        }
+      ]
+    }
+  ]
+}
